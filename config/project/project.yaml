@@ -1,4 +1,4 @@
-dateModified: 1756814157
+dateModified: 1756816676
 email:
   fromEmail: ed@theblueocean.com
   fromName: 'Blue Green Sheet'
@@ -6,9 +6,17 @@ email:
 meta:
   __names__:
     3f4d4956-32f9-4440-8020-d01946127d8e: 'Blue Green Sheet' # Blue Green Sheet
+    6c8238d6-303b-4cb8-8e3d-dc9cba292c2a: New # New
     62b64a73-e162-4b39-97d4-ac8246ccc3e5: 'Blue Green Sheet' # Blue Green Sheet
+    0279dfbc-1019-4d0b-83dc-034b6e185d12: 'Contact Form' # Contact Form
+plugins:
+  formie:
+    edition: standard
+    enabled: true
+    licenseKey: M5VU2U4U4XPKMV74PCOE7X7Q
+    schemaVersion: 3.4.10
 system:
-  edition: solo
+  edition: pro
   live: true
   name: 'Blue Green Sheet'
   schemaVersion: 5.8.0.3
