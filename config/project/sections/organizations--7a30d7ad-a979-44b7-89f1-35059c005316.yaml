@@ -1,0 +1,31 @@
+defaultPlacement: end
+enableVersioning: true
+entryTypes:
+  -
+    uid: abe08477-7396-48a3-b1cb-3e492e201e56 # Organizations
+handle: organizations
+maxAuthors: 1
+name: Organizations
+previewTargets:
+  -
+    __assoc__:
+      -
+        - label
+        - 'Primary entry page'
+      -
+        - urlFormat
+        - '{url}'
+      -
+        - refresh
+        - '1'
+propagationMethod: all
+siteSettings:
+  62b64a73-e162-4b39-97d4-ac8246ccc3e5: # Blue Green Sheet
+    enabledByDefault: true
+    hasUrls: true
+    template: organizations/_entry.twig
+    uriFormat: 'organizations/{slug}'
+structure:
+  maxLevels: null
+  uid: 6e0783b8-7968-450b-a19c-c2d5dd701975
+type: structure

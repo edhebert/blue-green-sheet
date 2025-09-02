@@ -1,26 +1,83 @@
-dateModified: 1756816676
+dateModified: 1756852628
+elementSources:
+  craft\elements\Entry:
+    -
+      key: '*'
+      type: native
+    -
+      heading: 'Website Sections'
+      key: 'heading:b9543fed-514b-41c1-add8-d999d5487ca7'
+      type: heading
+    -
+      defaultSort:
+        - structure
+        - asc
+      defaultViewMode: ''
+      disabled: false
+      key: 'section:7a30d7ad-a979-44b7-89f1-35059c005316' # Organizations
+      tableAttributes:
+        - status
+        - postDate
+        - expiryDate
+        - authors
+        - link
+      type: native
 email:
   fromEmail: ed@theblueocean.com
   fromName: 'Blue Green Sheet'
   transportType: craft\mail\transportadapters\Sendmail
+fs:
+  assets:
+    hasUrls: true
+    name: Assets
+    settings:
+      path: images
+    type: craft\fs\Local
+    url: $DDEV_PRIMARY_URL/images
 meta:
   __names__:
     3f4d4956-32f9-4440-8020-d01946127d8e: 'Blue Green Sheet' # Blue Green Sheet
+    5de740b2-aa13-48eb-b460-549297b24e7d: Logos # Logos
     6c8238d6-303b-4cb8-8e3d-dc9cba292c2a: New # New
+    7a30d7ad-a979-44b7-89f1-35059c005316: Organizations # Organizations
+    8d320b8b-673d-44d8-9299-bdb93b2c4381: 'Wide 250' # Wide 250
+    9d8645b3-7788-49d7-92ef-e3c2e0aca352: Logo # Logo
+    12d880c0-a281-4f27-a40b-135b2f5b4654: 'Type of Organization' # Type of Organization
+    21bd4595-df6f-4876-9708-5bfadad51b42: Website # Website
+    52fe2c65-e3d8-4977-bb85-532fd2435450: 'Organization Name' # Organization Name
     62b64a73-e162-4b39-97d4-ac8246ccc3e5: 'Blue Green Sheet' # Blue Green Sheet
     0279dfbc-1019-4d0b-83dc-034b6e185d12: 'Contact Form' # Contact Form
+    abe08477-7396-48a3-b1cb-3e492e201e56: Organizations # Organizations
+    c45f4f70-03b7-49a3-9ef7-6537ed9018d2: Address # Address
 plugins:
+  cp-css:
+    edition: standard
+    enabled: true
+    schemaVersion: 2.0.0
+    settings:
+      additionalCss: "/* Sidebar background color */\r\n/* #global-sidebar {\r\n    background: #333f4d;\r\n} */\r\n\r\n/* Header background color */\r\n/* #main-container #main #header {\r\n    background: #ebedef;\r\n} */\r\n\r\n/* H1 tags */\r\n/* h1 {\r\n    color: #29323d;\r\n} */\r\n\r\n\r\n/* Standard button color */\r\n.btn.submit {\r\n    background: #3568aa !important;\r\n}\r\n/* Hover button color */\r\n .btn.submit:not(.disabled):not(.inactive):hover,\r\n.btn.submit:not(.disabled):not(.inactive).hover {\r\n    background: #3b83e1 !important;\r\n}\r\n/* Active button color */\r\n .btn.submit:not(.disabled):not(.inactive):active,\r\n.btn.submit:not(.disabled):not(.inactive).active {\r\n    background: #3568aa !important;\r\n} \r\n\r\n.btn.submit:not(.disabled,.inactive,.loading)[aria-expanded=true] {\r\n    background: #3568aa !important;\r\n}"
+      cacheBusting: true
+      cssFile: ''
+  dashboard-begone:
+    edition: standard
+    enabled: true
+    schemaVersion: 1.0.0
   formie:
     edition: standard
     enabled: true
     licenseKey: M5VU2U4U4XPKMV74PCOE7X7Q
     schemaVersion: 3.4.10
+  servd-asset-storage:
+    edition: standard
+    enabled: false
+    schemaVersion: 3.0.0
 system:
   edition: pro
   live: true
   name: 'Blue Green Sheet'
+  retryDuration: null
   schemaVersion: 5.8.0.3
-  timeZone: America/Los_Angeles
+  timeZone: America/New_York
 users:
   allowPublicRegistration: false
   defaultGroup: null

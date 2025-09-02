@@ -1,0 +1,45 @@
+columnSuffix: null
+handle: organizationType
+instructions: null
+name: 'Type of Organization'
+searchable: true
+settings:
+  customOptions: false
+  options:
+    -
+      __assoc__:
+        -
+          - label
+          - School
+        -
+          - value
+          - school
+        -
+          - icon
+          - ''
+        -
+          - color
+          - ''
+        -
+          - default
+          - ''
+    -
+      __assoc__:
+        -
+          - label
+          - 'Recruiter / Consulting Firm'
+        -
+          - value
+          - recruiter
+        -
+          - icon
+          - ''
+        -
+          - color
+          - ''
+        -
+          - default
+          - ''
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\RadioButtons
