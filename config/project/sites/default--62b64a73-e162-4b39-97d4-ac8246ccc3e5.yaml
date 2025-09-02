@@ -1,0 +1,8 @@
+baseUrl: $PRIMARY_SITE_URL
+handle: default
+hasUrls: true
+language: en
+name: 'Blue Green Sheet'
+primary: true
+siteGroup: 3f4d4956-32f9-4440-8020-d01946127d8e # Blue Green Sheet
+sortOrder: 1
