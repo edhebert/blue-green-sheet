@@ -1,0 +1,45 @@
+columnSuffix: null
+handle: country
+instructions: 'Choose whether this organization or job is within the USA or International'
+name: Country
+searchable: false
+settings:
+  customOptions: false
+  options:
+    -
+      __assoc__:
+        -
+          - label
+          - 'United States'
+        -
+          - value
+          - unitedStates
+        -
+          - icon
+          - ''
+        -
+          - color
+          - ''
+        -
+          - default
+          - '1'
+    -
+      __assoc__:
+        -
+          - label
+          - International
+        -
+          - value
+          - international
+        -
+          - icon
+          - ''
+        -
+          - color
+          - ''
+        -
+          - default
+          - ''
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\Dropdown

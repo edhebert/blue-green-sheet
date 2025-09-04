@@ -1,26 +1,101 @@
-dateModified: 1756852628
+dateModified: 1757010089
 elementSources:
   craft\elements\Entry:
     -
       key: '*'
       type: native
     -
-      heading: 'Website Sections'
+      heading: 'Content Sections'
       key: 'heading:b9543fed-514b-41c1-add8-d999d5487ca7'
       type: heading
     -
       defaultSort:
-        - structure
+        - title
         - asc
       defaultViewMode: ''
       disabled: false
       key: 'section:7a30d7ad-a979-44b7-89f1-35059c005316' # Organizations
       tableAttributes:
         - status
-        - postDate
-        - expiryDate
-        - authors
         - link
+        - 'field:21bd4595-df6f-4876-9708-5bfadad51b42' # Website
+        - 'field:12d880c0-a281-4f27-a40b-135b2f5b4654' # Type of Organization
+        - 'field:9d8645b3-7788-49d7-92ef-e3c2e0aca352' # Logo
+      type: native
+  craft\elements\User:
+    -
+      defaultSort:
+        - lastName
+        - asc
+      defaultViewMode: ''
+      disabled: false
+      key: '*'
+      tableAttributes:
+        - status
+        - fullName
+        - email
+        - 'field:a026cacb-2f40-4011-b87d-a1beb7552037' # Organization
+      type: native
+    -
+      defaultSort:
+        - id
+        - asc
+      defaultViewMode: ''
+      disabled: false
+      key: admins
+      tableAttributes:
+        - status
+        - fullName
+        - email
+        - dateCreated
+        - lastLoginDate
+      type: native
+    -
+      heading: 'Account Type'
+      key: 'heading:2981424f-c72b-41c9-a1b0-96b3cff022a6'
+      type: heading
+    -
+      defaultSort:
+        - id
+        - asc
+      defaultViewMode: ''
+      disabled: false
+      key: credentialed
+      tableAttributes:
+        - status
+        - fullName
+        - email
+        - dateCreated
+        - lastLoginDate
+      type: native
+    -
+      defaultSort:
+        - id
+        - asc
+      defaultViewMode: ''
+      disabled: false
+      key: inactive
+      tableAttributes:
+        - status
+        - fullName
+        - email
+        - dateCreated
+        - lastLoginDate
+      type: native
+    -
+      heading: Groups
+      key: 'heading:3b252fe0-6f0c-4c5b-a781-d5954e7ad469'
+      type: heading
+    -
+      defaultSort:
+        - lastName
+        - asc
+      defaultViewMode: ''
+      disabled: false
+      key: 'group:1ccad001-55ba-4d90-83b5-00addcccf854' # Job Posters
+      tableAttributes:
+        - username
+        - 'field:a026cacb-2f40-4011-b87d-a1beb7552037' # Organization
       type: native
 email:
   fromEmail: ed@theblueocean.com
@@ -34,22 +109,39 @@ fs:
       path: images
     type: craft\fs\Local
     url: $DDEV_PRIMARY_URL/images
+graphql:
+  publicToken:
+    enabled: false
+    expiryDate: null
 meta:
   __names__:
+    0d0aac89-9a3b-4d6e-add7-8a1c3a679b77: 'Multi Line Text' # Multi Line Text
+    1a3f5855-170a-4899-beb8-07ee6d556899: TBO # TBO
+    1ccad001-55ba-4d90-83b5-00addcccf854: 'Job Posters' # Job Posters
     3f4d4956-32f9-4440-8020-d01946127d8e: 'Blue Green Sheet' # Blue Green Sheet
     5de740b2-aa13-48eb-b460-549297b24e7d: Logos # Logos
     6c8238d6-303b-4cb8-8e3d-dc9cba292c2a: New # New
+    7a6fec95-2ed4-4d18-b669-9108357adc40: 'Single Line Text' # Single Line Text
     7a30d7ad-a979-44b7-89f1-35059c005316: Organizations # Organizations
+    08ba6143-f9a0-4d77-bc74-910ce8990214: 'Job Poster' # Job Poster
     8d320b8b-673d-44d8-9299-bdb93b2c4381: 'Wide 250' # Wide 250
     9d8645b3-7788-49d7-92ef-e3c2e0aca352: Logo # Logo
     12d880c0-a281-4f27-a40b-135b2f5b4654: 'Type of Organization' # Type of Organization
     21bd4595-df6f-4876-9708-5bfadad51b42: Website # Website
     52fe2c65-e3d8-4977-bb85-532fd2435450: 'Organization Name' # Organization Name
     62b64a73-e162-4b39-97d4-ac8246ccc3e5: 'Blue Green Sheet' # Blue Green Sheet
+    192d4098-f32f-441e-901a-202b4a587a5d: Organization # Organization
     0279dfbc-1019-4d0b-83dc-034b6e185d12: 'Contact Form' # Contact Form
+    714bebd8-ef6b-4ca1-9139-6f662b0071dd: Simple # Simple
+    6407ff57-cf24-424a-8a4f-34c0137e2feb: Country # Country
+    a026cacb-2f40-4011-b87d-a1beb7552037: Organization # Organization
     abe08477-7396-48a3-b1cb-3e492e201e56: Organizations # Organizations
-    c45f4f70-03b7-49a3-9ef7-6537ed9018d2: Address # Address
+    db17bc24-8930-4e0e-ab38-c2565b80dae6: 'Rich Text' # Rich Text
 plugins:
+  ckeditor:
+    edition: standard
+    enabled: true
+    schemaVersion: 3.0.0.0
   cp-css:
     edition: standard
     enabled: true
@@ -62,6 +154,10 @@ plugins:
     edition: standard
     enabled: true
     schemaVersion: 1.0.0
+  feed-me:
+    edition: standard
+    enabled: true
+    schemaVersion: 5.1.1
   formie:
     edition: standard
     enabled: true
@@ -71,6 +167,11 @@ plugins:
     edition: standard
     enabled: false
     schemaVersion: 3.0.0
+  timber:
+    edition: standard
+    enabled: true
+    licenseKey: M453J2OTHQA8P3KHNICCE5RI
+    schemaVersion: 1.0.0
 system:
   edition: pro
   live: true
@@ -78,10 +179,3 @@ system:
   retryDuration: null
   schemaVersion: 5.8.0.3
   timeZone: America/New_York
-users:
-  allowPublicRegistration: false
-  defaultGroup: null
-  photoSubpath: null
-  photoVolumeUid: null
-  require2fa: false
-  requireEmailVerification: true

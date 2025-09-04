@@ -72,6 +72,125 @@ fieldLayouts:
             warning: null
             width: 100
           -
+            dateAdded: '2025-09-04T11:52:34+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: 7a6fec95-2ed4-4d18-b669-9108357adc40 # Single Line Text
+            handle: orgPhone
+            includeInCards: false
+            instructions: null
+            label: Phone
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 1f12e80a-d943-430c-81f9-203ccda73939
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-09-04T11:52:34+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: 7a6fec95-2ed4-4d18-b669-9108357adc40 # Single Line Text
+            handle: orgLocation
+            includeInCards: false
+            instructions: null
+            label: Location
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 3477aafb-3a58-46f2-a851-40a957d8ea1d
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-09-04T11:52:34+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: 7a6fec95-2ed4-4d18-b669-9108357adc40 # Single Line Text
+            handle: orgCity
+            includeInCards: false
+            instructions: null
+            label: City
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: e04bb6ad-8bc7-4c2b-8d79-d78d813e397e
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-09-04T11:52:34+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: 7a6fec95-2ed4-4d18-b669-9108357adc40 # Single Line Text
+            handle: orgState
+            includeInCards: false
+            instructions: null
+            label: State
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 1d75690b-7301-422f-9fba-b0b7ce5006a6
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-09-04T11:52:34+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: 7a6fec95-2ed4-4d18-b669-9108357adc40 # Single Line Text
+            handle: orgZip
+            includeInCards: false
+            instructions: null
+            label: 'Zip Code'
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: e3e4eab2-4619-4743-a298-ac9673b62a8b
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-09-04T18:01:08+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: 6407ff57-cf24-424a-8a4f-34c0137e2feb # Country
+            handle: null
+            includeInCards: false
+            instructions: null
+            label: null
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: c097ba9c-d4ba-47b6-8357-435ebd2a5778
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-09-04T11:52:34+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: db17bc24-8930-4e0e-ab38-c2565b80dae6 # Rich Text
+            handle: orgDescription
+            includeInCards: false
+            instructions: null
+            label: Description
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 49737ab6-27a2-49ee-a1f0-e25510663d61
+            userCondition: null
+            warning: null
+            width: 100
+          -
             dateAdded: '2025-09-02T13:55:13+00:00'
             editCondition: null
             elementCondition: null

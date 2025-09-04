@@ -1,0 +1,9 @@
+enabled: '1'
+handle: organization
+name: Organization
+settings:
+  createDraft: null
+  defaultAuthorId: null
+  entryTypeSection: null
+sortOrder: 1
+type: verbb\formie\integrations\elements\Entry

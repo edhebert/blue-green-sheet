@@ -13,11 +13,11 @@ previewTargets:
         - label
         - 'Primary entry page'
       -
-        - urlFormat
-        - '{url}'
-      -
         - refresh
         - '1'
+      -
+        - urlFormat
+        - '{url}'
 propagationMethod: all
 siteSettings:
   62b64a73-e162-4b39-97d4-ac8246ccc3e5: # Blue Green Sheet
@@ -26,6 +26,6 @@ siteSettings:
     template: organizations/_entry.twig
     uriFormat: 'organizations/{slug}'
 structure:
-  maxLevels: null
+  maxLevels: 1
   uid: 6e0783b8-7968-450b-a19c-c2d5dd701975
 type: structure

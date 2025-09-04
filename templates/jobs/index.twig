@@ -1,0 +1,832 @@
+{# Get current filter parameters and normalize to arrays #}
+{% set regionParams = craft.app.request.getParam('region') %}
+{% set categoryParams = craft.app.request.getParam('category') %}
+{% set stateParam = craft.app.request.getParam('state') %}
+
+{# Ensure regions and categories are arrays #}
+{% if regionParams is null %}
+    {% set regionParams = [] %}
+{% elseif regionParams is not iterable %}
+    {% set regionParams = [regionParams] %}
+{% endif %}
+
+{% if categoryParams is null %}
+    {% set categoryParams = [] %}
+{% elseif categoryParams is not iterable %}
+    {% set categoryParams = [categoryParams] %}
+{% endif %}
+
+{% set currentFilters = {
+    region: regionParams,
+    category: categoryParams,
+    state: stateParam
+} %}
+
+{# Build job query based on active filters #}
+{% set jobQuery = craft.entries().section('jobPostings') %}
+
+{% if currentFilters.region|length %}
+    {% set jobQuery = jobQuery.relatedTo(['or'] ~ currentFilters.region) %}
+{% endif %}
+
+{% if currentFilters.category|length %}
+    {% set jobQuery = jobQuery.relatedTo(['or'] ~ currentFilters.category) %}
+{% endif %}
+
+{% if currentFilters.state %}
+    {% set jobQuery = jobQuery.stateField(currentFilters.state) %}
+{% endif %}
+
+{# Execute query #}
+{% set jobs = jobQuery.all() %}
+
+<div class="job-listings-container">
+    {# Sidebar Filters #}
+    <aside class="job-filters-sidebar">
+        <h3>Filter Jobs</h3>
+        
+        {# Clear All Filters #}
+        {% if currentFilters.region|length or currentFilters.category|length or currentFilters.state %}
+            <div class="clear-filters-section">
+                <a href="{{ craft.app.request.url|split('?')[0] }}" class="clear-all-filters">
+                    Clear All Filters
+                </a>
+            </div>
+        {% endif %}
+
+        {# Regions Menu (Multi-select) #}
+        <div class="filter-section">
+            <h4>
+                Regions
+                {% if currentFilters.region|length %}
+                    <span class="active-count">{{ currentFilters.region|length }}</span>
+                {% endif %}
+            </h4>
+            <div class="filter-checkboxes regions-checkboxes">
+                {% for region in craft.categories().group('regions').all() %}
+                    {% set isActive = region.id in currentFilters.region %}
+                    <label class="filter-checkbox {{ isActive ? 'active' : '' }}">
+                        <input type="checkbox" 
+                               data-filter-type="region" 
+                               data-filter-value="{{ region.id }}"
+                               {{ isActive ? 'checked' : '' }}>
+                        <span class="checkbox-custom"></span>
+                        <span class="checkbox-label">{{ region.title }}</span>
+                        {% if isActive %}
+                            <span class="active-indicator">✓</span>
+                        {% endif %}
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        {# Job Categories Menu (Multi-select) #}
+        <div class="filter-section">
+            <h4>
+                Job Category
+                {% if currentFilters.category|length %}
+                    <span class="active-count">{{ currentFilters.category|length }}</span>
+                {% endif %}
+            </h4>
+            <div class="filter-checkboxes categories-checkboxes">
+                {% for category in craft.categories().group('jobCategories').all() %}
+                    {% set isActive = category.id in currentFilters.category %}
+                    <label class="filter-checkbox {{ isActive ? 'active' : '' }}">
+                        <input type="checkbox" 
+                               data-filter-type="category" 
+                               data-filter-value="{{ category.id }}"
+                               {{ isActive ? 'checked' : '' }}>
+                        <span class="checkbox-custom"></span>
+                        <span class="checkbox-label">{{ category.title }}</span>
+                        {% if isActive %}
+                            <span class="active-indicator">✓</span>
+                        {% endif %}
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        {# States Accordion Menu (Single select) #}
+        <div class="filter-section">
+            <h4>
+                <button class="accordion-toggle {{ currentFilters.state ? 'has-active' : '' }}" 
+                        data-target="states-accordion">
+                    States
+                    <span class="accordion-icon">▼</span>
+                    {% if currentFilters.state %}
+                        <span class="active-count">1</span>
+                    {% endif %}
+                </button>
+            </h4>
+            <div id="states-accordion" class="accordion-content {{ currentFilters.state ? 'show' : '' }}">
+                <div class="filter-radio-group states-radios">
+                    {# Clear state option #}
+                    <label class="filter-radio {{ not currentFilters.state ? 'active' : '' }}">
+                        <input type="radio" 
+                               name="state-filter"
+                               data-filter-type="state" 
+                               data-filter-value=""
+                               {{ not currentFilters.state ? 'checked' : '' }}>
+                        <span class="radio-custom"></span>
+                        <span class="radio-label">All States</span>
+                    </label>
+                    
+                    {# Get state options from field definition #}
+                    {% set sampleJob = craft.entries().section('jobPostings').one() %}
+                    {% if sampleJob and sampleJob.stateField %}
+                        {% for option in sampleJob.stateField.options %}
+                            {% set isActive = currentFilters.state == option.value %}
+                            <label class="filter-radio {{ isActive ? 'active' : '' }}">
+                                <input type="radio" 
+                                       name="state-filter"
+                                       data-filter-type="state" 
+                                       data-filter-value="{{ option.value }}"
+                                       {{ isActive ? 'checked' : '' }}>
+                                <span class="radio-custom"></span>
+                                <span class="radio-label">{{ option.label }}</span>
+                                {% if isActive %}
+                                    <span class="active-indicator">✓</span>
+                                {% endif %}
+                            </label>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {# Active Filters Summary #}
+        {% if currentFilters.region|length or currentFilters.category|length or currentFilters.state %}
+            <div class="active-filters-summary">
+                <h5>Active Filters:</h5>
+                <div class="active-filters-list">
+                    {% if currentFilters.region|length %}
+                        {% for regionId in currentFilters.region %}
+                            {% set regionName = craft.categories().id(regionId).one().title %}
+                            <span class="active-filter-tag">
+                                Region: {{ regionName }}
+                                <button class="remove-filter" 
+                                        data-filter-type="region" 
+                                        data-filter-value="{{ regionId }}">×</button>
+                            </span>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    {% if currentFilters.category|length %}
+                        {% for categoryId in currentFilters.category %}
+                            {% set categoryName = craft.categories().id(categoryId).one().title %}
+                            <span class="active-filter-tag">
+                                Category: {{ categoryName }}
+                                <button class="remove-filter" 
+                                        data-filter-type="category" 
+                                        data-filter-value="{{ categoryId }}">×</button>
+                            </span>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    {% if currentFilters.state %}
+                        <span class="active-filter-tag">
+                            State: {{ currentFilters.state }}
+                            <button class="remove-filter" 
+                                    data-filter-type="state" 
+                                    data-filter-value="">×</button>
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    </aside>
+
+    {# Main Content Area #}
+    <main class="job-listings-main">
+        <div class="results-header">
+            <h1>Job Postings</h1>
+            <p class="results-count">{{ jobs|length }} job{{ jobs|length != 1 ? 's' : '' }} found</p>
+        </div>
+
+        {# Job Results #}
+        {% if jobs|length %}
+            <div class="job-grid">
+                {% for job in jobs %}
+                    <article class="job-card">
+                        <h3><a href="{{ job.url }}">{{ job.title }}</a></h3>
+                        
+                        <div class="job-meta">
+                            {% if job.jobCategory|length %}
+                                <span class="job-category">{{ job.jobCategory.one().title }}</span>
+                            {% endif %}
+                            
+                            {% if job.region|length %}
+                                <span class="job-region">{{ job.region.one().title }}</span>
+                            {% endif %}
+                            
+                            {% if job.stateField %}
+                                <span class="job-state">{{ job.stateField }}</span>
+                            {% endif %}
+                        </div>
+
+                        {% if job.summary %}
+                            <p class="job-summary">{{ job.summary|truncatewords(20) }}</p>
+                        {% endif %}
+
+                        <div class="job-actions">
+                            <a href="{{ job.url }}" class="btn-view-job">View Details</a>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-results">
+                <h2>No jobs found</h2>
+                <p>Try adjusting your filters to see more results.</p>
+                <a href="{{ craft.app.request.url|split('?')[0] }}" class="btn-clear-filters">Clear All Filters</a>
+            </div>
+        {% endif %}
+    </main>
+</div>
+
+{# CSS Styles #}
+<style>
+/* Layout */
+.job-listings-container {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Sidebar Styles */
+.job-filters-sidebar {
+    background: #f8f9fa;
+    padding: 25px;
+    border-radius: 8px;
+    height: fit-content;
+    position: sticky;
+    top: 20px;
+}
+
+.job-filters-sidebar h3 {
+    margin: 0 0 20px 0;
+    color: #333;
+    font-size: 1.4em;
+}
+
+.clear-filters-section {
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.clear-all-filters {
+    color: #dc3545;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9em;
+}
+
+.clear-all-filters:hover {
+    text-decoration: underline;
+}
+
+/* Filter Sections */
+.filter-section {
+    margin-bottom: 30px;
+}
+
+.filter-section h4 {
+    margin: 0 0 15px 0;
+    color: #495057;
+    font-size: 1.1em;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Checkbox Styles */
+.filter-checkboxes {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.filter-checkbox {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.filter-checkbox:hover {
+    background: #f8f9fa;
+    border-color: #adb5bd;
+}
+
+.filter-checkbox.active {
+    background: #e3f2fd;
+    border-color: #007bff;
+}
+
+.filter-checkbox input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.checkbox-custom {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #dee2e6;
+    border-radius: 3px;
+    margin-right: 10px;
+    position: relative;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.filter-checkbox.active .checkbox-custom {
+    background: #007bff;
+    border-color: #007bff;
+}
+
+.filter-checkbox.active .checkbox-custom::after {
+    content: "✓";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.checkbox-label {
+    flex: 1;
+    color: #495057;
+    font-size: 0.9em;
+}
+
+.filter-checkbox.active .checkbox-label {
+    color: #007bff;
+    font-weight: 500;
+}
+
+/* Radio Button Styles for States */
+.filter-radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.filter-radio {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.filter-radio:hover {
+    background: #f8f9fa;
+    border-color: #adb5bd;
+}
+
+.filter-radio.active {
+    background: #e3f2fd;
+    border-color: #007bff;
+}
+
+.filter-radio input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.radio-custom {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #dee2e6;
+    border-radius: 50%;
+    margin-right: 10px;
+    position: relative;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.filter-radio.active .radio-custom {
+    border-color: #007bff;
+}
+
+.filter-radio.active .radio-custom::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    background: #007bff;
+    border-radius: 50%;
+}
+
+.radio-label {
+    flex: 1;
+    color: #495057;
+    font-size: 0.9em;
+}
+
+.filter-radio.active .radio-label {
+    color: #007bff;
+    font-weight: 500;
+}
+
+/* Active Count Badge */
+.active-count {
+    background: #007bff;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 0.75em;
+    font-weight: 500;
+}
+
+/* Accordion Styles */
+.accordion-toggle {
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    padding: 0;
+    font: inherit;
+    color: #495057;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.accordion-toggle.has-active {
+    color: #007bff;
+}
+
+.accordion-icon {
+    transition: transform 0.2s ease;
+    font-size: 0.8em;
+}
+
+.accordion-toggle[aria-expanded="true"] .accordion-icon {
+    transform: rotate(180deg);
+}
+
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    margin-top: 15px;
+}
+
+.accordion-content.show {
+    max-height: 400px;
+}
+
+/* Active Filters Summary */
+.active-filters-summary {
+    background: white;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+    margin-top: 20px;
+}
+
+.active-filters-summary h5 {
+    margin: 0 0 10px 0;
+    color: #495057;
+    font-size: 0.9em;
+    font-weight: 600;
+}
+
+.active-filters-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.active-filter-tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #007bff;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+}
+
+.remove-filter {
+    background: none;
+    border: none;
+    color: white;
+    font-weight: bold;
+    margin-left: 6px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    font-size: inherit;
+}
+
+.remove-filter:hover {
+    color: #ffdddd;
+}
+
+.active-indicator {
+    margin-left: auto;
+    font-size: 0.8em;
+    color: #007bff;
+}
+
+.filter-checkbox.active .active-indicator,
+.filter-radio.active .active-indicator {
+    color: #007bff;
+}
+
+/* Main Content Area */
+.job-listings-main {
+    min-height: 400px;
+}
+
+.results-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 25px;
+}
+
+.results-header h1 {
+    margin: 0;
+    color: #333;
+}
+
+.results-count {
+    color: #6c757d;
+    margin: 0;
+    font-size: 0.95em;
+}
+
+/* Job Grid */
+.job-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+.job-card {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    transition: box-shadow 0.2s ease;
+}
+
+.job-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.job-card h3 {
+    margin: 0 0 12px 0;
+}
+
+.job-card h3 a {
+    color: #333;
+    text-decoration: none;
+}
+
+.job-card h3 a:hover {
+    color: #007bff;
+}
+
+.job-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.job-meta span {
+    background: #e9ecef;
+    color: #495057;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: 500;
+}
+
+.job-summary {
+    color: #6c757d;
+    font-size: 0.9em;
+    line-height: 1.4;
+    margin: 12px 0;
+}
+
+.btn-view-job {
+    display: inline-block;
+    background: #007bff;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.9em;
+    font-weight: 500;
+    transition: background 0.2s ease;
+}
+
+.btn-view-job:hover {
+    background: #0056b3;
+}
+
+/* No Results */
+.no-results {
+    text-align: center;
+    padding: 60px 20px;
+    color: #6c757d;
+}
+
+.no-results h2 {
+    color: #495057;
+    margin-bottom: 10px;
+}
+
+.btn-clear-filters {
+    display: inline-block;
+    background: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    margin-top: 15px;
+}
+
+.btn-clear-filters:hover {
+    background: #0056b3;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .job-listings-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .job-filters-sidebar {
+        position: static;
+    }
+    
+    .job-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+{# JavaScript for Multi-Select Filtering #}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get current URL without query string
+    const baseUrl = window.location.pathname;
+    
+    // Function to get current URL parameters
+    function getCurrentParams() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return {
+            region: urlParams.getAll('region[]'),
+            category: urlParams.getAll('category[]'),
+            state: urlParams.get('state') || ''
+        };
+    }
+    
+    // Function to build new URL with updated filters
+    function buildFilterUrl(filterType, filterValue, action = 'toggle') {
+        const params = getCurrentParams();
+        
+        if (filterType === 'region' || filterType === 'category') {
+            const currentValues = params[filterType];
+            
+            if (action === 'toggle') {
+                const index = currentValues.indexOf(filterValue.toString());
+                if (index > -1) {
+                    // Remove if exists
+                    currentValues.splice(index, 1);
+                } else {
+                    // Add if doesn't exist
+                    currentValues.push(filterValue.toString());
+                }
+            } else if (action === 'remove') {
+                const index = currentValues.indexOf(filterValue.toString());
+                if (index > -1) {
+                    currentValues.splice(index, 1);
+                }
+            }
+            
+            params[filterType] = currentValues;
+        } else if (filterType === 'state') {
+            params.state = filterValue;
+        }
+        
+        // Build URL
+        const urlParams = new URLSearchParams();
+        
+        // Add region parameters
+        params.region.forEach(value => {
+            if (value) urlParams.append('region[]', value);
+        });
+        
+        // Add category parameters
+        params.category.forEach(value => {
+            if (value) urlParams.append('category[]', value);
+        });
+        
+        // Add state parameter
+        if (params.state) {
+            urlParams.append('state', params.state);
+        }
+        
+        const queryString = urlParams.toString();
+        return baseUrl + (queryString ? '?' + queryString : '');
+    }
+    
+    // Handle checkbox changes for regions and categories
+    document.querySelectorAll('input[type="checkbox"][data-filter-type]').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const filterType = this.dataset.filterType;
+            const filterValue = this.dataset.filterValue;
+            const newUrl = buildFilterUrl(filterType, filterValue, 'toggle');
+            window.location.href = newUrl;
+        });
+    });
+    
+    // Handle radio changes for states
+    document.querySelectorAll('input[type="radio"][data-filter-type="state"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            const filterValue = this.dataset.filterValue;
+            const newUrl = buildFilterUrl('state', filterValue);
+            window.location.href = newUrl;
+        });
+    });
+    
+    // Handle remove filter buttons
+    document.querySelectorAll('.remove-filter').forEach(button => {
+        button.addEventListener('click', function() {
+            const filterType = this.dataset.filterType;
+            const filterValue = this.dataset.filterValue;
+            
+            let newUrl;
+            if (filterType === 'state') {
+                newUrl = buildFilterUrl('state', '');
+            } else {
+                newUrl = buildFilterUrl(filterType, filterValue, 'remove');
+            }
+            
+            window.location.href = newUrl;
+        });
+    });
+    
+    // Accordion toggle functionality
+    const accordionToggles = document.querySelectorAll('.accordion-toggle');
+    
+    accordionToggles.forEach(toggle => {
+        toggle.addEventListener('click', function() {
+            const target = document.getElementById(this.dataset.target);
+            const isExpanded = this.getAttribute('aria-expanded') === 'true';
+            
+            // Close all accordions first
+            accordionToggles.forEach(otherToggle => {
+                const otherTarget = document.getElementById(otherToggle.dataset.target);
+                otherToggle.setAttribute('aria-expanded', 'false');
+                otherTarget.classList.remove('show');
+            });
+            
+            // Toggle current accordion
+            if (!isExpanded) {
+                this.setAttribute('aria-expanded', 'true');
+                target.classList.add('show');
+            }
+        });
+    });
+    
+    // Initialize accordion state based on active filters
+    const statesAccordion = document.getElementById('states-accordion');
+    if (statesAccordion && statesAccordion.classList.contains('show')) {
+        document.querySelector('[data-target="states-accordion"]').setAttribute('aria-expanded', 'true');
+    }
+});
+</script>

@@ -1,0 +1,10 @@
+enabled: '1'
+handle: jobPoster
+name: 'Job Poster'
+settings:
+  activateUser: false
+  address: null
+  mergeUserGroups: false
+  sendActivationEmail: true
+sortOrder: 2
+type: verbb\formie\integrations\elements\User
