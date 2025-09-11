@@ -1,0 +1,51 @@
+defaultPlacement: end
+fieldLayouts:
+  20e2acb2-23ce-4d23-907d-ebf3e90d2e88:
+    cardThumbAlignment: end
+    tabs:
+      -
+        elementCondition: null
+        elements:
+          -
+            autocapitalize: true
+            autocomplete: false
+            autocorrect: true
+            class: null
+            dateAdded: '2025-09-05T17:56:28+00:00'
+            disabled: false
+            elementCondition: null
+            id: null
+            includeInCards: false
+            inputType: null
+            instructions: null
+            label: null
+            max: null
+            min: null
+            name: null
+            orientation: null
+            placeholder: null
+            providesThumbs: false
+            readonly: false
+            requirable: false
+            size: null
+            step: null
+            tip: null
+            title: null
+            type: craft\fieldlayoutelements\TitleField
+            uid: 858fe838-6b5b-4504-9940-813366241de3
+            userCondition: null
+            warning: null
+            width: 100
+        name: Content
+        uid: dab4763a-2525-4804-b093-d669f2a8a922
+        userCondition: null
+handle: jobRegion
+name: 'Job Region'
+siteSettings:
+  62b64a73-e162-4b39-97d4-ac8246ccc3e5: # Blue Green Sheet
+    hasUrls: true
+    template: job-region/_category.twig
+    uriFormat: 'job-region/{slug}'
+structure:
+  maxLevels: 1
+  uid: 3a129179-baf0-4bd5-929b-b114e5b9924c

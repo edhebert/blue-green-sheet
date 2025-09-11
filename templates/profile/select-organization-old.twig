@@ -1,0 +1,105 @@
+{# templates/profile/select-organization.twig #}
+{% requireLogin %}
+{% extends "_layout" %}
+
+{% block content %}
+{% set organizations = craft.entries.section('organizations').orderBy('title').all() %}
+
+<div class="organization-selection-container">
+    <h2>Complete Your Profile</h2>
+    <p>Please select your organization from the list below.</p>
+
+    {% if errors is defined %}
+        <div class="error-messages">
+            {% for error in errors %}
+                <p class="error">{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="post" accept-charset="UTF-8" id="organizationForm" class="organization-form">
+        {{ csrfInput() }}
+        {{ actionInput('users/save-user') }}
+        {{ hiddenInput('userId', currentUser.id) }}
+
+        <div class="form-group">
+            <label for="organizationSelect">Select Your Organization *</label>
+            <select id="organizationSelect" name="fields[organization][]" required>
+                <option value="">-- Choose your organization --</option>
+                {% for org in organizations %}
+                    <option value="{{ org.id }}" 
+                            data-type="{{ org.organizationType ?? 'other' }}">
+                        {{ org.title }} 
+                        {% if org.organizationType %}({{ org.organizationType|title }}){% endif %}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Complete Profile</button>
+        </div>
+    </form>
+</div>
+
+<style>
+.organization-selection-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.form-group select,
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+.btn-primary {
+    background: #1976d2;
+    color: white;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+.error {
+    color: #d32f2f;
+    margin-bottom: 1rem;
+}
+</style>
+
+<script>
+// No JavaScript needed - Craft handles the redirect
+</script>
+{% endblock %}

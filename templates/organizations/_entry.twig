@@ -8,8 +8,9 @@
 <body>
 
 {{ entry.title }}
-<img src="{{ entry.logo.one().getUrl('wide250') }}" alt="{{ entry.title }}">
-
+{% if entry.logo.one()|length %}
+    <img src="{{ entry.logo.one().getUrl('wide250') }}" alt="{{ entry.title }}">
+{% endif %}
 </body>
 </html>
 

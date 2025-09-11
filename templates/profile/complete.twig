@@ -1,0 +1,86 @@
+{# templates/profile/complete.twig #}
+{% requireLogin %}
+{% extends "_layout" %}
+
+{% block content %}
+<div class="profile-complete-container">
+    <div class="success-message">
+        <h2>Profile Complete!</h2>
+        
+        {% set userOrg = currentUser.organization.one() %}
+        {% if userOrg %}
+            <p>Your profile has been successfully updated with <strong>{{ userOrg.title }}</strong>.</p>
+        {% endif %}
+        
+        <p>You can now start posting jobs and managing your listings.</p>
+        
+        <div class="next-actions">
+            <h3>What would you like to do next?</h3>
+            <div class="action-buttons">
+                <a href="/jobs/post" class="btn btn-primary">Post a Job</a>
+                <a href="/profile" class="btn btn-secondary">View My Profile</a>
+                <a href="/jobs" class="btn btn-secondary">Browse Jobs</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.profile-complete-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    text-align: center;
+}
+
+.success-message {
+    background: #f8f9fa;
+    border: 1px solid #d4edda;
+    border-radius: 8px;
+    padding: 2rem;
+}
+
+.next-actions {
+    margin-top: 2rem;
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+    align-items: center;
+}
+
+@media (min-width: 768px) {
+    .action-buttons {
+        flex-direction: row;
+        justify-content: center;
+    }
+}
+
+.btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    min-width: 150px;
+    text-align: center;
+}
+
+.btn-primary {
+    background: #1976d2;
+    color: white;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+</style>
+{% endblock %}

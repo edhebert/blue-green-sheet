@@ -1,0 +1,59 @@
+{# templates/registration/success.twig #}
+{% extends "_layout" %}
+
+{% block content %}
+<div class="success-container">
+    <div class="success-message">
+        <h2>Registration Successful!</h2>
+        <p>Thank you for registering! We've sent an activation email to your email address.</p>
+        <p>Please check your email and click the activation link to complete your registration.</p>
+        
+        <div class="next-steps">
+            <h3>What's Next?</h3>
+            <ol>
+                <li>Check your email for the activation message</li>
+                <li>Click the activation link in the email</li>
+                <li>Complete your profile by selecting your organization</li>
+                <li>Start posting jobs!</li>
+            </ol>
+        </div>
+        
+        <p><a href="/" class="btn btn-primary">Return to Home</a></p>
+    </div>
+</div>
+
+<style>
+.success-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    text-align: center;
+}
+
+.success-message {
+    background: #f8f9fa;
+    border: 1px solid #d4edda;
+    border-radius: 8px;
+    padding: 2rem;
+}
+
+.next-steps {
+    text-align: left;
+    margin: 2rem 0;
+}
+
+.next-steps ol {
+    padding-left: 1.5rem;
+}
+
+.btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: #1976d2;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    margin-top: 1rem;
+}
+</style>
+{% endblock %}

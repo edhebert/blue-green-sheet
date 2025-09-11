@@ -1,0 +1,319 @@
+{% requireLogin %}
+{% extends "_layout.twig" %}
+
+{% block title %}Select Organization · {{ siteName }}{% endblock %}
+
+{% block content %}
+  {# Existing orgs + current selection #}
+  {% set orgsQuery      = craft.entries.section('organizations').orderBy('title asc') %}
+  {% set organizations  = orgsQuery.all() %}
+  {% set currentOrg     = currentUser.organization.one() %}
+
+  {# If we just created a new org, preselect it #}
+  {% set newOrgId = craft.app.request.getParam('newOrgId') %}
+  {% if newOrgId %}
+    {% set currentOrg = craft.entries.id(newOrgId).one() ?? currentOrg %}
+  {% endif %}
+
+  {# Derive section/type ids from any existing org entry #}
+  {% set orgSample       = orgsQuery.one() %}
+  {% set orgSectionId    = orgSample ? orgSample.sectionId : null %}
+  {% set orgEntryTypeId  = orgSample ? orgSample.typeId : null %}
+
+  {# Dynamic options from Craft fields #}
+  {% set orgTypeOptions = craft.projectTools.options('organizationType') %}
+  {% set countryOptions = craft.projectTools.options('country') %}
+  {% set stateOptions   = craft.projectTools.options('state') %}
+
+  {# --- Auto-attach new org to user (after create) --- #}
+  {% if newOrgId %}
+    <form id="autoAttachOrg" method="post" class="d-none">
+      {{ csrfInput() }}
+      {{ actionInput('users/save-user') }}
+      {{ hiddenInput('userId', currentUser.id) }}
+      {{ redirectInput('profile') }}
+      {{ hiddenInput('fields[organization][]', newOrgId) }}
+    </form>
+    <script>document.addEventListener('DOMContentLoaded',()=>{document.getElementById('autoAttachOrg')?.submit();});</script>
+    <noscript>
+      <div class="container" style="max-width: 720px;">
+        <div class="alert alert-info">We created your organization. Click below to finish linking it to your profile.</div>
+        <form method="post">
+          {{ csrfInput() }} {{ actionInput('users/save-user') }}
+          {{ hiddenInput('userId', currentUser.id) }} {{ redirectInput('profile') }}
+          {{ hiddenInput('fields[organization][]', newOrgId) }}
+          <button class="btn btn-primary">Link organization and continue</button>
+        </form>
+      </div>
+    </noscript>
+  {% endif %}
+
+  <div class="container" style="max-width: 860px;">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h1 class="h4 mb-2">Complete Your Profile</h1>
+        <p class="text-muted mb-4">Choose your organization, or add it if it’s not listed.</p>
+
+        {# Select existing organization — saves to current user #}
+        <form method="post" class="mb-4">
+          {{ csrfInput() }} {{ actionInput('users/save-user') }}
+          {{ hiddenInput('userId', currentUser.id) }} {{ redirectInput('profile') }}
+          <div class="mb-3">
+            <label for="organizationSelect" class="form-label">Select Your Organization</label>
+            <select id="organizationSelect" name="fields[organization][]" class="form-select" required>
+              <option value="">— Choose —</option>
+              {% for org in organizations %}
+                <option value="{{ org.id }}" {% if currentOrg and currentOrg.id == org.id %}selected{% endif %}>{{ org.title }}</option>
+              {% endfor %}
+            </select>
+            <div class="form-text">Saving will replace any previously selected organization.</div>
+          </div>
+          <button type="submit" class="btn btn-primary">Save and continue</button>
+        </form>
+
+        <hr class="my-4">
+
+        {# Revealable "Add new organization" section #}
+        <div class="d-flex align-items-center justify-content-between">
+          <h2 class="h6 mb-0">Don’t see your organization?</h2>
+          <button class="btn btn-outline-secondary btn-sm" type="button"
+                  data-bs-toggle="collapse" data-bs-target="#addOrgCollapse"
+                  aria-expanded="false" aria-controls="addOrgCollapse">
+            Add your organization
+          </button>
+        </div>
+
+        <div id="addOrgCollapse" class="collapse mt-3">
+          <div class="border rounded p-3 bg-light">
+            {% if not orgSectionId or not orgEntryTypeId %}
+              <div class="alert alert-warning mb-0">We couldn’t derive the Organizations section/type from existing entries.</div>
+            {% else %}
+              <form id="addOrgForm" method="post" enctype="multipart/form-data" novalidate>
+                {{ csrfInput() }} {{ actionInput('entries/save-entry') }}
+                {{ hiddenInput('sectionId', orgSectionId) }}
+                {{ hiddenInput('entryTypeId', orgEntryTypeId) }}
+                {{ redirectInput('profile/select-organization?newOrgId={id}') }}
+
+                {# Client-side error summary #}
+                <div class="alert alert-danger d-none client-error-summary" role="alert"></div>
+
+                <div class="mb-3">
+                  <label for="orgTitle" class="form-label">Organization Name *</label>
+                  <input type="text" id="orgTitle" name="title" class="form-control" required>
+                </div>
+
+                <fieldset class="mb-3">
+                  <legend class="form-label">Type of Organization *</legend>
+                  {% for opt in orgTypeOptions %}
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio"
+                             id="orgType-{{ loop.index }}"
+                             name="fields[organizationType]"
+                             value="{{ opt.value }}">
+                      <label class="form-check-label" for="orgType-{{ loop.index }}">{{ opt.label }}</label>
+                    </div>
+                  {% endfor %}
+                </fieldset>
+
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label for="website" class="form-label">Website</label>
+                    <input type="url" id="website" name="fields[website]" class="form-control" placeholder="https://example.com">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="orgPhone" class="form-label">Phone</label>
+                    <input type="text" id="orgPhone" name="fields[orgPhone]" class="form-control">
+                  </div>
+                </div>
+
+                <div class="mb-3 mt-3">
+                  <label for="country" class="form-label">Country *</label>
+                  <select id="country" name="fields[country]" class="form-select" required>
+                    <option value="">— Select —</option>
+                    {% for opt in countryOptions %}
+                      <option value="{{ opt.value }}">{{ opt.label }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+                {# International block #}
+                <div class="mb-3" data-show-when="country:international">
+                  <label for="orgLocation" class="form-label">Location (City / Country) *</label>
+                  <input type="text" id="orgLocation" name="fields[orgLocation]" class="form-control" data-required-when-shown>
+                </div>
+
+                {# US block #}
+                <div class="row g-3" data-show-when="country:unitedStates">
+                  <div class="col-md-5">
+                    <label for="orgCity" class="form-label">City *</label>
+                    <input type="text" id="orgCity" name="fields[orgCity]" class="form-control" data-required-when-shown>
+                  </div>
+                  <div class="col-md-3">
+                    <label for="orgState" class="form-label">State *</label>
+                    <select id="orgState" name="fields[orgState]" class="form-select" data-required-when-shown>
+                      <option value="">— Select —</option>
+                      {% for opt in stateOptions %}
+                        <option value="{{ opt.value }}">{{ opt.label }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="col-md-4">
+                    <label for="orgZip" class="form-label">Zip Code *</label>
+                    <input type="text" id="orgZip" name="fields[orgZip]" class="form-control" data-required-when-shown>
+                  </div>
+                </div>
+
+                <div class="mb-3 mt-3">
+                  <label for="orgDescription" class="form-label">Description</label>
+                  <textarea id="orgDescription" name="fields[orgDescription]" class="form-control" rows="4"></textarea>
+                </div>
+
+                <div class="mb-3">
+                  <label for="logo" class="form-label">Logo</label>
+                  <input type="file" id="logo" name="fields[logo][]" class="form-control" accept="image/*">
+                </div>
+
+                <div class="d-grid gap-2 d-sm-flex">
+                  <button type="submit" class="btn btn-success">Create organization</button>
+                  <button type="button" class="btn btn-outline-secondary"
+                          data-bs-toggle="collapse" data-bs-target="#addOrgCollapse">Cancel</button>
+                </div>
+              </form>
+            {% endif %}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  {# Show/hide + client-side validation (with summary) #}
+  <script>
+  (function(){
+    function getValue(el){
+      if(!el) return '';
+      var t=(el.type||el.tagName).toLowerCase();
+      if(t==='radio'){
+        var g=document.querySelectorAll('input[name="'+el.name+'"]');
+        for(var i=0;i<g.length;i++) if(g[i].checked) return g[i].value;
+        return '';
+      }
+      return (el.value||'').trim();
+    }
+    function disableWithin(node,on){
+      var i=node.querySelectorAll('input,select,textarea');
+      for(var j=0;j<i.length;j++) i[j].disabled=on;
+    }
+    function parseConds(expr){
+      return (expr||'').split(/\s*,\s*/).filter(Boolean).map(function(g){
+        var m=g.split(':'); return {name:m[0], values:(m[1]||'').split('|')};
+      });
+    }
+    function matches(conds){
+      for(var i=0;i<conds.length;i++){
+        var c=conds[i];
+        var ctrls=document.querySelectorAll('[name="fields['+c.name+']"],[name="fields['+c.name+'][]"]');
+        if(!ctrls.length) return false;
+        var ok=false;
+        for(var j=0;j<ctrls.length;j++){
+          if(c.values.indexOf(getValue(ctrls[j]))!==-1){ ok=true; break; }
+        }
+        if(!ok) return false;
+      }
+      return true;
+    }
+    function applyVisibility(){
+      var blocks=document.querySelectorAll('[data-show-when]');
+      for(var i=0;i<blocks.length;i++){
+        var b=blocks[i];
+        var conds=parseConds(b.getAttribute('data-show-when'));
+        var show=matches(conds);
+        b.style.display=show?'':'none';
+        disableWithin(b,!show);
+        var reqs=b.querySelectorAll('[data-required-when-shown]');
+        for(var r=0;r<reqs.length;r++) reqs[r].required=show;
+      }
+    }
+
+    document.addEventListener('change',function(e){
+      if(!e.target) return;
+      var n=e.target.getAttribute('name')||'';
+      if(n.indexOf('fields[')===0) applyVisibility();
+    });
+
+    document.addEventListener('DOMContentLoaded',function(){
+      applyVisibility();
+
+      var form=document.getElementById('addOrgForm');
+      if(!form) return;
+
+      form.addEventListener('submit',function(e){
+        applyVisibility();
+
+        var errors=[], first=null;
+        var summary=form.querySelector('.client-error-summary');
+        if(summary){ summary.classList.add('d-none'); summary.innerHTML=''; }
+
+        function pushError(el,label){
+          errors.push({el:el, name:label});
+          if(!first) first=el;
+          if(el) el.classList.add('is-invalid');
+        }
+        function clearInvalid(){
+          var inv=form.querySelectorAll('.is-invalid');
+          for(var k=0;k<inv.length;k++) inv[k].classList.remove('is-invalid');
+        }
+        clearInvalid();
+
+        // Always
+        var title=document.getElementById('orgTitle');
+        if(!getValue(title)) pushError(title,'Organization Name');
+
+        // Radio: org type
+        var typeRadios=form.querySelectorAll('input[name="fields[organizationType]"]');
+        var typeOK=false; for(var i=0;i<typeRadios.length;i++) if(typeRadios[i].checked){typeOK=true;break;}
+        if(!typeOK) pushError(typeRadios[0], 'Type of Organization');
+
+        // Country
+        var country=document.getElementById('country');
+        var countryVal=getValue(country);
+        if(!countryVal) pushError(country,'Country');
+
+        // Conditional
+        if(countryVal==='unitedStates'){
+          var city=document.getElementById('orgCity');
+          var state=document.getElementById('orgState');
+          var zip=document.getElementById('orgZip');
+          if(!getValue(city))  pushError(city,'City');
+          if(!getValue(state)) pushError(state,'State');
+          if(!getValue(zip))   pushError(zip,'Zip Code');
+          // ensure US fields are enabled so Craft receives them
+          [city,state,zip].forEach(function(el){ if(el) el.disabled=false; });
+        } else if(countryVal==='international'){
+          var loc=document.getElementById('orgLocation');
+          if(!getValue(loc)) pushError(loc,'Location (City / Country)');
+          // disable US fields so they don't submit empties
+          ['orgCity','orgState','orgZip'].forEach(function(id){
+            var el=document.getElementById(id); if(el) el.disabled=true;
+          });
+        }
+
+        if(errors.length){
+          e.preventDefault();
+          if(summary){
+            summary.innerHTML =
+              '<strong>Please correct the following:</strong><ul class="mb-0">' +
+              errors.map(function(er){ return '<li>'+er.name+'</li>'; }).join('') +
+              '</ul>';
+            summary.classList.remove('d-none');
+          }
+          if(first && typeof first.focus==='function'){
+            first.focus({preventScroll:true});
+            first.scrollIntoView({behavior:'smooth', block:'center'});
+          }
+        }
+      });
+    });
+  })();
+  </script>
+{% endblock %}

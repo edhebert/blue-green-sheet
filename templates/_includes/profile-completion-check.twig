@@ -1,0 +1,211 @@
+{# templates/_includes/profile-completion-check.twig #}
+{# 
+   Include this partial in your main layout or specific templates 
+   to check if logged-in jobPosters need to complete their profile 
+#}
+
+{% if currentUser and 
+      currentUser.isInGroup('jobPosters') and 
+      not currentUser.organization.one() and 
+      craft.app.request.segments|join('/') != 'profile/select-organization' and
+      craft.app.request.segments|join('/') != 'profile/complete' %}
+
+    {# Option 1: Prominent Banner Notice (Recommended) #}
+    <div class="profile-incomplete-banner">
+        <div class="banner-content">
+            <div class="banner-message">
+                <strong>Complete Your Profile</strong>
+                <p>Please select your organization to start posting jobs.</p>
+            </div>
+            <div class="banner-actions">
+                <a href="/profile/select-organization" class="btn btn-primary">Complete Profile</a>
+                <button type="button" class="btn btn-link dismiss-banner" onclick="dismissBanner()">Later</button>
+            </div>
+        </div>
+    </div>
+
+    {# Option 2: Auto-redirect (Uncomment to use instead of banner) #}
+    {# 
+    <script>
+        // Redirect after 2 seconds
+        setTimeout(function() {
+            window.location.href = '/profile/select-organization';
+        }, 2000);
+    </script>
+    <div class="redirect-notice">
+        <p>Redirecting you to complete your profile...</p>
+    </div>
+    #}
+
+    {# Option 3: Modal Popup (Uncomment to use instead of banner) #}
+    {# 
+    <div id="profileModal" class="profile-modal">
+        <div class="modal-content">
+            <h3>Complete Your Profile</h3>
+            <p>To start posting jobs, please select your organization.</p>
+            <div class="modal-actions">
+                <a href="/profile/select-organization" class="btn btn-primary">Complete Now</a>
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Later</button>
+            </div>
+        </div>
+    </div>
+    #}
+
+{% endif %}
+
+<style>
+/* Banner Styles */
+.profile-incomplete-banner {
+    background: linear-gradient(135deg, #1976d2, #1565c0);
+    color: white;
+    padding: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.banner-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.banner-message p {
+    margin: 0.25rem 0 0 0;
+    opacity: 0.9;
+}
+
+.banner-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+.btn-primary:hover {
+    background: rgba(255,255,255,0.3);
+}
+
+.btn-link {
+    background: transparent;
+    color: rgba(255,255,255,0.8);
+    text-decoration: underline;
+}
+
+.btn-link:hover {
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .banner-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .banner-actions {
+        justify-content: center;
+    }
+}
+
+/* Auto-redirect Notice Styles */
+.redirect-notice {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    color: #856404;
+    padding: 1rem;
+    text-align: center;
+    margin: 1rem;
+    border-radius: 4px;
+}
+
+/* Modal Styles */
+.profile-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+}
+
+.modal-actions {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.modal-actions .btn {
+    padding: 0.75rem 1.5rem;
+}
+
+.modal-actions .btn-primary {
+    background: #1976d2;
+    color: white;
+}
+
+.modal-actions .btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+</style>
+
+<script>
+function dismissBanner() {
+    const banner = document.querySelector('.profile-incomplete-banner');
+    if (banner) {
+        banner.style.display = 'none';
+        // Optional: Set a cookie/localStorage to remember dismissal
+        localStorage.setItem('profileBannerDismissed', 'true');
+    }
+}
+
+function closeModal() {
+    const modal = document.querySelector('.profile-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+// Check if banner was previously dismissed
+document.addEventListener('DOMContentLoaded', function() {
+    if (localStorage.getItem('profileBannerDismissed') === 'true') {
+        const banner = document.querySelector('.profile-incomplete-banner');
+        if (banner) {
+            banner.style.display = 'none';
+        }
+    }
+});
+</script>

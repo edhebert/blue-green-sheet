@@ -1,0 +1,105 @@
+{# templates/_layout.twig - Example of how to include the profile check #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if title is defined %}{{ title }} - {% endif %}Job Board</title>
+    
+    {# Your CSS and other head content #}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        header {
+            background: #333;
+            color: white;
+            padding: 1rem 0;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+        }
+        
+        main {
+            min-height: 70vh;
+            padding: 2rem 0;
+        }
+        
+        footer {
+            background: #f8f9fa;
+            padding: 2rem 0;
+            text-align: center;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">Job Board</div>
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/jobs">Browse Jobs</a></li>
+                    {% if currentUser %}
+                        {% if currentUser.isInGroup('jobPosters') %}
+                            <li><a href="/jobs/post">Post Job</a></li>
+                        {% endif %}
+                        <li><a href="/profile">Profile</a></li>
+                        <li><a href="/logout">Logout</a></li>
+                    {% else %}
+                        <li><a href="/login">Login</a></li>
+                        <li><a href="/register">Register</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    {# Include the profile completion check #}
+    {% include '_includes/profile-completion-check' %}
+
+    <main>
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; {{ "now"|date("Y") }} Job Board. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

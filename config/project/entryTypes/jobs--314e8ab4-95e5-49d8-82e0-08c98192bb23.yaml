@@ -1,7 +1,7 @@
-color: sky
-description: 'List of organizations (schools or recruiters)'
+color: null
+description: 'Available Jobs'
 fieldLayouts:
-  2b2dbce9-04ea-4557-a730-a3cd98cb17e8:
+  b81cd04f-1f9f-49ae-9a9b-dd0c3e712818:
     cardThumbAlignment: end
     tabs:
       -
@@ -12,14 +12,14 @@ fieldLayouts:
             autocomplete: false
             autocorrect: true
             class: null
-            dateAdded: '2025-09-02T14:34:53+00:00'
+            dateAdded: '2025-09-05T17:36:40+00:00'
             disabled: false
             elementCondition: null
             id: null
             includeInCards: false
             inputType: null
-            instructions: 'Enter the name of school or recruitment firm here.'
-            label: 'Organization Name'
+            instructions: null
+            label: 'Job Title'
             max: null
             min: null
             name: null
@@ -33,15 +33,15 @@ fieldLayouts:
             tip: null
             title: null
             type: craft\fieldlayoutelements\entries\EntryTitleField
-            uid: 77259d36-9c83-4258-8d3e-e2ed481f5641
+            uid: f689c2f1-55f0-4916-9c49-e97e7e3b75f6
             userCondition: null
             warning: null
             width: 100
           -
-            dateAdded: '2025-09-02T13:55:13+00:00'
+            dateAdded: '2025-09-09T22:17:13+00:00'
             editCondition: null
             elementCondition: null
-            fieldUid: 12d880c0-a281-4f27-a40b-135b2f5b4654 # Type of Organization
+            fieldUid: a026cacb-2f40-4011-b87d-a1beb7552037 # Organization
             handle: null
             includeInCards: false
             instructions: null
@@ -50,15 +50,32 @@ fieldLayouts:
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
-            uid: dd6bc44c-74a4-4179-ac11-1f4a1a9aa4bc
+            uid: a88f10db-34c2-4551-bc98-ecec0053834d
             userCondition: null
             warning: null
             width: 100
           -
-            dateAdded: '2025-09-02T13:55:13+00:00'
+            dateAdded: '2025-09-05T17:57:10+00:00'
             editCondition: null
             elementCondition: null
-            fieldUid: 21bd4595-df6f-4876-9708-5bfadad51b42 # Website
+            fieldUid: db17bc24-8930-4e0e-ab38-c2565b80dae6 # Rich Text
+            handle: jobDescription
+            includeInCards: false
+            instructions: null
+            label: 'Job Description'
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 500cabcc-1d4b-48d7-8634-188304b44557
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-09-05T17:57:10+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: bb81f5b9-0813-4e6d-b693-229f093ce3e4 # Job Category
             handle: null
             includeInCards: false
             instructions: null
@@ -67,50 +84,50 @@ fieldLayouts:
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
-            uid: 0c77dc3b-1b9c-4a83-9c82-d59ab907585d
+            uid: a1325d10-a40f-48fa-8d5e-eccd516c7197
             userCondition: null
             warning: null
             width: 100
           -
-            dateAdded: '2025-09-04T11:52:34+00:00'
+            dateAdded: '2025-09-05T17:57:10+00:00'
             editCondition: null
             elementCondition: null
             fieldUid: 7a6fec95-2ed4-4d18-b669-9108357adc40 # Single Line Text
-            handle: orgPhone
+            handle: jobLocation
             includeInCards: false
             instructions: null
-            label: Phone
+            label: 'Job Location'
             providesThumbs: false
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
-            uid: 1f12e80a-d943-430c-81f9-203ccda73939
+            uid: d29406ff-5c3e-42aa-b96d-f8e9a53ef0d6
             userCondition: null
             warning: null
             width: 100
           -
-            dateAdded: '2025-09-04T11:52:34+00:00'
+            dateAdded: '2025-09-05T18:25:58+00:00'
             editCondition: null
             elementCondition: null
-            fieldUid: 7a6fec95-2ed4-4d18-b669-9108357adc40 # Single Line Text
-            handle: orgLocation
+            fieldUid: afc27a98-498b-4fda-8c1e-c5eda8fcc52e # Job Region
+            handle: null
             includeInCards: false
             instructions: null
-            label: Location
+            label: null
             providesThumbs: false
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
-            uid: 3477aafb-3a58-46f2-a851-40a957d8ea1d
+            uid: daabeaee-9ea3-45bb-a883-1f95daaa51cf
             userCondition: null
             warning: null
             width: 100
           -
-            dateAdded: '2025-09-04T11:52:34+00:00'
+            dateAdded: '2025-09-05T17:57:10+00:00'
             editCondition: null
             elementCondition: null
             fieldUid: 7a6fec95-2ed4-4d18-b669-9108357adc40 # Single Line Text
-            handle: orgCity
+            handle: jobCity
             includeInCards: false
             instructions: null
             label: City
@@ -118,46 +135,29 @@ fieldLayouts:
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
-            uid: e04bb6ad-8bc7-4c2b-8d79-d78d813e397e
+            uid: 8f30731f-93cb-4cb0-a493-3ab010e44712
             userCondition: null
             warning: null
             width: 100
           -
-            dateAdded: '2025-09-10T18:28:04+00:00'
-            editCondition: null
-            elementCondition: null
-            fieldUid: f4e9368b-2d36-4ac5-b087-d0b8a3e8079f # State
-            handle: orgState
-            includeInCards: false
-            instructions: null
-            label: null
-            providesThumbs: false
-            required: false
-            tip: null
-            type: craft\fieldlayoutelements\CustomField
-            uid: 7707e167-0afa-43a2-98b2-d395a959c38a
-            userCondition: null
-            warning: null
-            width: 100
-          -
-            dateAdded: '2025-09-04T11:52:34+00:00'
+            dateAdded: '2025-09-05T17:57:10+00:00'
             editCondition: null
             elementCondition: null
             fieldUid: 7a6fec95-2ed4-4d18-b669-9108357adc40 # Single Line Text
-            handle: orgZip
+            handle: jobState
             includeInCards: false
             instructions: null
-            label: 'Zip Code'
+            label: State
             providesThumbs: false
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
-            uid: e3e4eab2-4619-4743-a298-ac9673b62a8b
+            uid: 11adbcc0-e9e5-4f22-98be-634990fb3c61
             userCondition: null
             warning: null
             width: 100
           -
-            dateAdded: '2025-09-04T18:01:08+00:00'
+            dateAdded: '2025-09-05T17:57:10+00:00'
             editCondition: null
             elementCondition: null
             fieldUid: 6407ff57-cf24-424a-8a4f-34c0137e2feb # Country
@@ -169,32 +169,100 @@ fieldLayouts:
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
-            uid: c097ba9c-d4ba-47b6-8357-435ebd2a5778
+            uid: 28555537-042a-47b4-8dc0-eab0b7316e47
             userCondition: null
             warning: null
             width: 100
           -
-            dateAdded: '2025-09-04T11:52:34+00:00'
+            dateAdded: '2025-09-05T17:57:10+00:00'
             editCondition: null
             elementCondition: null
-            fieldUid: db17bc24-8930-4e0e-ab38-c2565b80dae6 # Rich Text
-            handle: orgDescription
+            fieldUid: 7a6fec95-2ed4-4d18-b669-9108357adc40 # Single Line Text
+            handle: jobSalaryLow
             includeInCards: false
             instructions: null
-            label: Description
+            label: 'Salary Low'
             providesThumbs: false
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
-            uid: 49737ab6-27a2-49ee-a1f0-e25510663d61
+            uid: ee6bd539-2826-4113-88b2-f52b8448cb3f
             userCondition: null
             warning: null
             width: 100
           -
-            dateAdded: '2025-09-02T13:55:13+00:00'
+            dateAdded: '2025-09-05T17:57:10+00:00'
             editCondition: null
             elementCondition: null
-            fieldUid: 9d8645b3-7788-49d7-92ef-e3c2e0aca352 # Logo
+            fieldUid: 7a6fec95-2ed4-4d18-b669-9108357adc40 # Single Line Text
+            handle: jobSalaryHigh
+            includeInCards: false
+            instructions: null
+            label: 'Salary High'
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: cf40d6af-d768-4efa-814e-a1a448f55484
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-09-05T17:57:10+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: db17bc24-8930-4e0e-ab38-c2565b80dae6 # Rich Text
+            handle: jobOpportunityStatement
+            includeInCards: false
+            instructions: null
+            label: 'Opportunity Statement'
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: ab3e7095-da0f-4496-b2c4-fa194bd34026
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-09-05T17:57:10+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: 21bd4595-df6f-4876-9708-5bfadad51b42 # Website
+            handle: jobSchoolUrl
+            includeInCards: false
+            instructions: null
+            label: 'School URL'
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 96b82b49-4028-47df-b133-cac8f51d40b9
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-09-05T17:57:10+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: 0d0aac89-9a3b-4d6e-add7-8a1c3a679b77 # Multi Line Text
+            handle: jobApplicationInstructions
+            includeInCards: false
+            instructions: null
+            label: 'Application Instructions'
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 565af54b-500f-4fb5-8e14-6b9629348a96
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-09-05T18:11:37+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: a7ace354-3f52-4d0a-87b1-96da5efcc457 # Job Attachments
             handle: null
             includeInCards: false
             instructions: null
@@ -203,17 +271,17 @@ fieldLayouts:
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
-            uid: 65f41962-ca3f-4635-99b8-173ff8449dcd
+            uid: 2f3469e2-06f8-44d1-94a0-0e8d4545ca97
             userCondition: null
             warning: null
             width: 100
         name: Content
-        uid: 7b38dc28-cda6-4ff2-897c-c916436c4a1c
+        uid: f738c44c-369c-424e-b286-ec843238c27c
         userCondition: null
-handle: organizations
+handle: jobs
 hasTitleField: true
-icon: school-flag
-name: Organizations
+icon: null
+name: Jobs
 showSlugField: true
 showStatusField: true
 slugTranslationKeyFormat: null

@@ -1,0 +1,37 @@
+{% extends "_layout" %}
+
+{% block content %}
+
+{# Add this ABOVE your form for debugging #}
+{% set jobPostersGroup = craft.app.userGroups.getGroupByHandle('jobPosters') %}
+<p><strong>Debug:</strong> 
+{% if jobPostersGroup %}
+    Group found! ID: {{ jobPostersGroup.id }}, Handle: {{ jobPostersGroup.handle }}
+{% else %}
+    Group NOT found with handle 'jobPosters'
+{% endif %}
+</p>
+
+{# List all available groups #}
+<p><strong>Available groups:</strong>
+{% for group in craft.app.userGroups.getAllGroups() %}
+    {{ group.name }} (handle: {{ group.handle }}, id: {{ group.id }})<br>
+{% endfor %}
+</p>
+
+
+
+<form method="post" accept-charset="UTF-8">
+    {{ csrfInput() }}
+    {{ actionInput('users/save-user') }}
+    <input type="hidden" name="groups[]" value="1">
+    
+    <input type="text" name="firstName" placeholder="First Name" required>
+    <input type="text" name="lastName" placeholder="Last Name" required>
+    <input type="email" name="email" placeholder="Email" required>
+    <input type="password" name="newPassword" placeholder="Password" required>
+    
+    <button type="submit">Register</button>
+</form>
+
+{% endblock %}

@@ -1,0 +1,353 @@
+{# templates/profile.twig #}
+{% requireLogin %}
+{% extends "_layout" %}
+
+{% block content %}
+<div class="profile-container">
+    <h2>My Profile</h2>
+
+    {% if craft.app.session.hasFlash('success') %}
+        <div class="success-message">
+            {{ craft.app.session.getFlash('success') }}
+        </div>
+    {% endif %}
+
+    {% if errors is defined %}
+        <div class="error-messages">
+            {% for error in errors %}
+                <p class="error">{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="profile-content">
+        <!-- Profile Information Display -->
+        <div id="profileDisplay" class="profile-display">
+            <div class="profile-section">
+                <h3>Personal Information</h3>
+                <div class="profile-field">
+                    <label>Name:</label>
+                    <span>{{ currentUser.firstName }} {{ currentUser.lastName }}</span>
+                </div>
+                <div class="profile-field">
+                    <label>Email:</label>
+                    <span>{{ currentUser.email }}</span>
+                </div>
+                <div class="profile-field">
+                    <label>User Group:</label>
+                    <span>
+                        {% for group in currentUser.groups %}
+                            {{ group.name }}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </span>
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <h3>Organization</h3>
+                {% set userOrg = currentUser.organization.one() %}
+                {% if userOrg %}
+                    <div class="profile-field">
+                        <label>Organization:</label>
+                        <span>{{ userOrg.title }}</span>
+                    </div>
+                    {% if userOrg.organizationType %}
+                        <div class="profile-field">
+                            <label>Type:</label>
+                            <span>{{ userOrg.organizationType|title }}</span>
+                        </div>
+                    {% endif %}
+                    {% if userOrg.website %}
+                        <div class="profile-field">
+                            <label>Website:</label>
+                            <span><a href="{{ userOrg.website }}" target="_blank">{{ userOrg.website }}</a></span>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="profile-field">
+                        <label>Organization:</label>
+                        <span class="not-set">Not selected</span>
+                        <a href="/profile/select-organization" class="btn btn-small">Select Organization</a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="profile-actions">
+                <button type="button" id="editProfile" class="btn btn-primary">Edit Profile</button>
+                <a href="/logout" class="btn btn-secondary">Logout</a>
+            </div>
+        </div>
+
+        <!-- Profile Edit Form (Hidden by default) -->
+        <div id="profileEdit" class="profile-edit" style="display: none;">
+            <form method="post" accept-charset="UTF-8" class="edit-form">
+                {{ csrfInput() }}
+                {{ actionInput('users/save-user') }}
+                {{ hiddenInput('userId', currentUser.id) }}
+
+                <div class="profile-section">
+                    <h3>Personal Information</h3>
+                    <div class="form-group">
+                        <label for="firstName">First Name *</label>
+                        <input type="text" 
+                               id="firstName" 
+                               name="firstName" 
+                               value="{{ currentUser.firstName }}" 
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lastName">Last Name *</label>
+                        <input type="text" 
+                               id="lastName" 
+                               name="lastName" 
+                               value="{{ currentUser.lastName }}" 
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" 
+                               id="email" 
+                               name="email" 
+                               value="{{ currentUser.email }}" 
+                               required>
+                    </div>
+                </div>
+
+                <div class="profile-section">
+                    <h3>Organization</h3>
+                    {% set organizations = craft.entries.section('organizations').orderBy('title').all() %}
+                    <div class="form-group">
+                        <label for="organization">Organization</label>
+                        <select id="organization" name="fields[organization][]">
+                            <option value="">-- Select Organization --</option>
+                            {% for org in organizations %}
+                                <option value="{{ org.id }}" 
+                                        {% if currentUser.organization.one() and currentUser.organization.one().id == org.id %}selected{% endif %}>
+                                    {{ org.title }}
+                                    {% if org.organizationType %}({{ org.organizationType|title }}){% endif %}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <small><a href="/profile/select-organization">Need to add a new organization?</a></small>
+                    </div>
+                </div>
+
+                <div class="profile-section">
+                    <h3>Change Password</h3>
+                    <p><small>Leave blank to keep current password</small></p>
+                    
+                    <div class="form-group">
+                        <label for="currentPassword">Current Password</label>
+                        <input type="password" 
+                               id="currentPassword" 
+                               name="currentPassword">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <input type="password" 
+                               id="newPassword" 
+                               name="newPassword" 
+                               minlength="8">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm New Password</label>
+                        <input type="password" 
+                               id="confirmPassword" 
+                               name="confirmPassword">
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="button" id="cancelEdit" class="btn btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.profile-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+}
+
+.profile-content {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 2rem;
+}
+
+.profile-section {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.profile-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.profile-section h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.profile-field {
+    display: flex;
+    margin-bottom: 0.75rem;
+    align-items: center;
+}
+
+.profile-field label {
+    font-weight: bold;
+    min-width: 120px;
+    margin-right: 1rem;
+}
+
+.profile-field span {
+    flex: 1;
+}
+
+.not-set {
+    color: #666;
+    font-style: italic;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.form-group small {
+    display: block;
+    margin-top: 0.25rem;
+    color: #666;
+}
+
+.form-actions,
+.profile-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 1rem;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-primary {
+    background: #1976d2;
+    color: white;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-small {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    margin-left: 0.5rem;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+.success-message {
+    background: #d4edda;
+    color: #155724;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.error {
+    color: #d32f2f;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+    .profile-field {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .profile-field label {
+        min-width: auto;
+        margin-right: 0;
+        margin-bottom: 0.25rem;
+    }
+    
+    .form-actions,
+    .profile-actions {
+        flex-direction: column;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const editButton = document.getElementById('editProfile');
+    const cancelButton = document.getElementById('cancelEdit');
+    const profileDisplay = document.getElementById('profileDisplay');
+    const profileEdit = document.getElementById('profileEdit');
+    const newPassword = document.getElementById('newPassword');
+    const confirmPassword = document.getElementById('confirmPassword');
+
+    // Toggle edit mode
+    editButton.addEventListener('click', function() {
+        profileDisplay.style.display = 'none';
+        profileEdit.style.display = 'block';
+    });
+
+    cancelButton.addEventListener('click', function() {
+        profileEdit.style.display = 'none';
+        profileDisplay.style.display = 'block';
+    });
+
+    // Password confirmation validation
+    function validatePasswords() {
+        if (newPassword.value && newPassword.value !== confirmPassword.value) {
+            confirmPassword.setCustomValidity("Passwords don't match");
+        } else {
+            confirmPassword.setCustomValidity('');
+        }
+    }
+
+    if (newPassword && confirmPassword) {
+        newPassword.addEventListener('change', validatePasswords);
+        confirmPassword.addEventListener('keyup', validatePasswords);
+    }
+});
+</script>
+{% endblock %}

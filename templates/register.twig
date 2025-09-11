@@ -1,0 +1,116 @@
+{% extends "_layout.twig" %}
+
+{% block title %}Create Account · {{ siteName }}{% endblock %}
+
+{% block content %}
+  {% set user = user ?? null %}
+
+  <div class="container" style="max-width: 680px;">
+    <h1 class="h3 mb-4">Create your account</h1>
+
+    {% if user and user.getErrors() %}
+      <div class="alert alert-danger">
+        <strong>We couldn’t create your account.</strong>
+        <ul class="mb-0">
+          {% for attr, errs in user.getErrors() %}
+            {% for err in errs %}
+              <li>{{ err }}</li>
+            {% endfor %}
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    <form method="post" class="needs-validation" novalidate>
+      {{ csrfInput() }}
+      {{ actionInput('users/save-user') }}
+      {{ redirectInput('registration/success') }}
+
+      <div class="mb-3">
+        <label for="regEmail" class="form-label">Email address</label>
+        <input
+          type="email"
+          id="regEmail"
+          name="email"
+          class="form-control{% if user and user.getErrors('email') %} is-invalid{% endif %}"
+          value="{{ (user ? user.email : '')|e }}"
+          autocomplete="email"
+          required
+        >
+        {% if user and user.getErrors('email') %}
+          <div class="invalid-feedback">
+            {{ user.getErrors('email')|join(', ') }}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="firstName" class="form-label">First name</label>
+          <input
+            type="text"
+            id="firstName"
+            name="firstName"
+            class="form-control{% if user and user.getErrors('firstName') %} is-invalid{% endif %}"
+            value="{{ (user ? user.firstName : '')|e }}"
+            autocomplete="given-name"
+            required
+          >
+          {% if user and user.getErrors('firstName') %}
+            <div class="invalid-feedback">
+              {{ user.getErrors('firstName')|join(', ') }}
+            </div>
+          {% endif %}
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="lastName" class="form-label">Last name</label>
+          <input
+            type="text"
+            id="lastName"
+            name="lastName"
+            class="form-control{% if user and user.getErrors('lastName') %} is-invalid{% endif %}"
+            value="{{ (user ? user.lastName : '')|e }}"
+            autocomplete="family-name"
+            required
+          >
+          {% if user and user.getErrors('lastName') %}
+            <div class="invalid-feedback">
+              {{ user.getErrors('lastName')|join(', ') }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          class="form-control{% if user and user.getErrors('password') %} is-invalid{% endif %}"
+          autocomplete="new-password"
+          required
+        >
+        {% if user and user.getErrors('password') %}
+          <div class="invalid-feedback">
+            {{ user.getErrors('password')|join(', ') }}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="mb-4">
+        <label for="passwordConfirm" class="form-label">Confirm password</label>
+        <input
+          type="password"
+          id="passwordConfirm"
+          name="passwordConfirm"
+          class="form-control"
+          autocomplete="new-password"
+          required
+        >
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100">Create account</button>
+    </form>
+  </div>
+{% endblock %}

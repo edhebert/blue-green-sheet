@@ -1,0 +1,38 @@
+columnSuffix: null
+handle: jobAttachments
+instructions: 'Upload a PDF or Word document as an attachment'
+name: 'Job Attachments'
+searchable: false
+settings:
+  allowSelfRelations: false
+  allowSubfolders: false
+  allowUploads: true
+  allowedKinds:
+    - pdf
+    - word
+  branchLimit: null
+  defaultPlacement: end
+  defaultUploadLocationSource: 'volume:5de740b2-aa13-48eb-b460-549297b24e7d' # Logos
+  defaultUploadLocationSubpath: null
+  maintainHierarchy: false
+  maxRelations: null
+  minRelations: null
+  previewMode: full
+  restrictFiles: true
+  restrictLocation: true
+  restrictedDefaultUploadSubpath: null
+  restrictedLocationSource: 'volume:bc2582f3-84c9-4698-8f75-10e1b877d0a8' # Attachments
+  restrictedLocationSubpath: '{slug}'
+  selectionLabel: null
+  showCardsInGrid: false
+  showSearchInput: true
+  showSiteMenu: true
+  showUnpermittedFiles: false
+  showUnpermittedVolumes: false
+  sources: '*'
+  targetSiteId: null
+  validateRelatedElements: false
+  viewMode: list
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\Assets

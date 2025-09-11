@@ -1,0 +1,51 @@
+defaultPlacement: end
+fieldLayouts:
+  35077e6c-58e0-4ca3-b4c5-46261bb8f178:
+    cardThumbAlignment: end
+    tabs:
+      -
+        elementCondition: null
+        elements:
+          -
+            autocapitalize: true
+            autocomplete: false
+            autocorrect: true
+            class: null
+            dateAdded: '2025-09-05T17:35:34+00:00'
+            disabled: false
+            elementCondition: null
+            id: null
+            includeInCards: false
+            inputType: null
+            instructions: null
+            label: null
+            max: null
+            min: null
+            name: null
+            orientation: null
+            placeholder: null
+            providesThumbs: false
+            readonly: false
+            requirable: false
+            size: null
+            step: null
+            tip: null
+            title: null
+            type: craft\fieldlayoutelements\TitleField
+            uid: db4c28d6-de7d-4158-9e34-f2fd994d6e32
+            userCondition: null
+            warning: null
+            width: 100
+        name: Content
+        uid: 68ea9f8b-d399-47fc-a1a5-5899407fd039
+        userCondition: null
+handle: jobCategories
+name: 'Job Categories'
+siteSettings:
+  62b64a73-e162-4b39-97d4-ac8246ccc3e5: # Blue Green Sheet
+    hasUrls: true
+    template: job-categories/_category.twig
+    uriFormat: 'job-categories/{slug}'
+structure:
+  maxLevels: 1
+  uid: ebbeafd0-fd01-4fc9-9f70-0f9a50355734

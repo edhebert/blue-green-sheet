@@ -1,0 +1,31 @@
+defaultPlacement: end
+enableVersioning: true
+entryTypes:
+  -
+    uid: 314e8ab4-95e5-49d8-82e0-08c98192bb23 # Jobs
+handle: jobs
+maxAuthors: 1
+name: Jobs
+previewTargets:
+  -
+    __assoc__:
+      -
+        - label
+        - 'Primary entry page'
+      -
+        - urlFormat
+        - '{url}'
+      -
+        - refresh
+        - '1'
+propagationMethod: all
+siteSettings:
+  62b64a73-e162-4b39-97d4-ac8246ccc3e5: # Blue Green Sheet
+    enabledByDefault: true
+    hasUrls: true
+    template: jobs/_entry.twig
+    uriFormat: 'jobs/{slug}'
+structure:
+  maxLevels: 1
+  uid: 7eb83c17-b585-4d94-92e8-c8a630c208d7
+type: structure

@@ -1,6 +1,6 @@
 allowPublicRegistration: true
 deactivateByDefault: false
-defaultGroup: ''
+defaultGroup: 1ccad001-55ba-4d90-83b5-00addcccf854 # Job Posters
 photoSubpath: null
 photoVolumeUid: null
 require2fa: false

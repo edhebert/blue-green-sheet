@@ -1,0 +1,23 @@
+columnSuffix: null
+handle: jobRegion
+instructions: null
+name: 'Job Region'
+searchable: false
+settings:
+  allowSelfRelations: false
+  branchLimit: null
+  defaultPlacement: end
+  maintainHierarchy: false
+  maxRelations: 1
+  minRelations: null
+  selectionLabel: null
+  showCardsInGrid: false
+  showSearchInput: true
+  showSiteMenu: false
+  source: 'group:cdf1f46c-3d43-42f5-9d50-85377f321e61' # Job Region
+  targetSiteId: null
+  validateRelatedElements: false
+  viewMode: list
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\Categories
