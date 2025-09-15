@@ -9,4 +9,7 @@
  * @link https://craftcms.com/docs/5.x/system/routing.html
  */
 
-return [];
+return [
+    // Override Craft's default email verification route to use our custom template
+    'verifyemail' => ['template' => 'verify-email'],
+];

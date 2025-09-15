@@ -108,9 +108,50 @@
           autocomplete="new-password"
           required
         >
+        <div class="invalid-feedback">
+          Passwords do not match.
+        </div>
       </div>
 
       <button type="submit" class="btn btn-primary w-100">Create account</button>
     </form>
   </div>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const password = document.getElementById('password');
+    const passwordConfirm = document.getElementById('passwordConfirm');
+
+    function validatePasswords() {
+      const isValid = password.value === passwordConfirm.value && passwordConfirm.value.length > 0;
+      
+      if (passwordConfirm.value.length > 0) {
+        passwordConfirm.classList.toggle('is-invalid', !isValid);
+        passwordConfirm.classList.toggle('is-valid', isValid);
+      } else {
+        passwordConfirm.classList.remove('is-invalid', 'is-valid');
+      }
+      
+      return isValid;
+    }
+
+    // Validate on input
+    passwordConfirm.addEventListener('input', validatePasswords);
+    password.addEventListener('input', function() {
+      if (passwordConfirm.value.length > 0) {
+        validatePasswords();
+      }
+    });
+
+    // Validate on form submit
+    form.addEventListener('submit', function(e) {
+      if (!validatePasswords() || passwordConfirm.value.length === 0) {
+        e.preventDefault();
+        passwordConfirm.classList.add('is-invalid');
+        passwordConfirm.focus();
+      }
+    });
+  });
+  </script>
 {% endblock %}

@@ -1,0 +1,51 @@
+{% extends "_layout.twig" %}
+
+{% block title %}Verifying your email...{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px;">
+  <div class="card shadow-sm">
+    <div class="card-body text-center">
+      <div class="spinner-border text-primary mb-3" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <h2 class="h4 mb-3">Verifying your email address...</h2>
+      <p class="text-muted">Please wait while we activate your account.</p>
+    </div>
+  </div>
+</div>
+
+{# Auto-submit form to verify email and redirect #}
+<form id="verifyForm" method="post" action="{{ actionUrl('users/verify-email') }}" class="d-none">
+  {{ hiddenInput('uid', id) }}
+  {{ hiddenInput('code', code) }}
+  {{ csrfInput() }}
+  {{ redirectInput('profile/select-organization') }}
+</form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Auto-submit the verification form
+  document.getElementById('verifyForm').submit();
+});
+</script>
+
+<noscript>
+  {# Fallback for users without JavaScript #}
+  <div class="container mt-4" style="max-width: 600px;">
+    <div class="card">
+      <div class="card-body">
+        <h3 class="h5">Complete Email Verification</h3>
+        <p>Click the button below to verify your email and continue:</p>
+        <form method="post" action="{{ actionUrl('users/verify-email') }}">
+          {{ hiddenInput('uid', id) }}
+          {{ hiddenInput('code', code) }}
+          {{ csrfInput() }}
+          {{ redirectInput('profile/select-organization') }}
+          <button type="submit" class="btn btn-primary">Verify Email & Continue</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</noscript>
+{% endblock %}

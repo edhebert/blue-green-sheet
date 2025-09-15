@@ -99,24 +99,18 @@ return [
                             return [];
                         }
 
-                        // Supported Craft core field types that have `options` arrays
-                        $supportsOptions = [
-                            \craft\fields\Dropdown::class,
-                            \craft\fields\RadioButtons::class,
-                        ];
-                        foreach ($supportsOptions as $cls) {
-                            if ($field instanceof $cls) {
-                                $out = [];
-                                foreach ($field->options as $opt) {
-                                    // $opt may be an array or OptionModel
-                                    $label   = is_array($opt) ? ($opt['label'] ?? $opt['value'] ?? '') : ($opt->label ?? '');
-                                    $value   = is_array($opt) ? ($opt['value'] ?? $opt['label'] ?? '') : ($opt->value ?? '');
-                                    $default = is_array($opt) ? (bool)($opt['default'] ?? false) : (bool)($opt->default ?? false);
-                                    if ($label === '' && $value === '') { continue; }
-                                    $out[] = ['label' => $label, 'value' => $value, 'default' => $default];
-                                }
-                                return $out;
+                        // Check if field supports options (Dropdown or RadioButtons)
+                        if ($field instanceof \craft\fields\Dropdown || $field instanceof \craft\fields\RadioButtons) {
+                            $out = [];
+                            foreach ($field->options as $opt) {
+                                // $opt may be an array or OptionModel
+                                $label   = is_array($opt) ? ($opt['label'] ?? $opt['value'] ?? '') : ($opt->label ?? '');
+                                $value   = is_array($opt) ? ($opt['value'] ?? $opt['label'] ?? '') : ($opt->value ?? '');
+                                $default = is_array($opt) ? (bool)($opt['default'] ?? false) : (bool)($opt->default ?? false);
+                                if ($label === '' && $value === '') { continue; }
+                                $out[] = ['label' => $label, 'value' => $value, 'default' => $default];
                             }
+                            return $out;
                         }
 
                         // Not a Dropdown/Radio: nothing to return
