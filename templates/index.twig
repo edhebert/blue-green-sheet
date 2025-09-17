@@ -1,33 +1,125 @@
-{% extends "_layout" %}
+{% extends "_layout.twig" %}
+
+{% block title %}{{ siteName }} - Private School Leadership Opportunities{% endblock %}
 
 {% block content %}
-<h1>Welcome to the Job Board</h1>
+{# Get some stats for display #}
+{% set jobCount = craft.entries.section('jobs').count() %}
+{% set orgCount = craft.entries.section('organizations').count() %}
 
-{% if currentUser %}
-<div style="background: yellow; padding: 1rem; margin: 1rem 0;">
-    <strong>DEBUG INFO:</strong><br>
-    User: {{ currentUser.email }}<br>
-    Groups: 
-    {% for group in currentUser.groups %}
-        {{ group.name }} ({{ group.handle }}){% if not loop.last %}, {% endif %}
-    {% endfor %}<br>
-    In jobPosters group: {{ currentUser.isInGroup('jobPosters') ? 'YES' : 'NO' }}<br>
-    Organization field: {{ currentUser.organization.one() ? currentUser.organization.one().title : 'NONE' }}<br>
-    Current URL segments: {{ craft.app.request.segments|join('/') }}
-</div>
-{% endif %}
+<div class="container" style="max-width: 960px;">
+  {# Hero Section #}
+  <div class="text-center py-5">
+    <h1 class="display-5 fw-bold mb-3">Welcome to {{ siteName }}</h1>
+    <p class="lead mb-4">
+      Connecting exceptional leaders with outstanding private schools. Find your next career opportunity in independent education.
+    </p>
 
-{% if currentUser %}
-    <p>Hello {{ currentUser.firstName }}! You are logged in.</p>
-    {% if currentUser.isInGroup('jobPosters') %}
-        <p>You are a Job Poster.</p>
-        {% if currentUser.organization.one() %}
-            <p>Your organization: {{ currentUser.organization.one().title }}</p>
-        {% else %}
-            <p>You haven't selected an organization yet.</p>
-        {% endif %}
+    <div class="d-flex flex-wrap justify-content-center gap-3 mb-4">
+      <a href="/jobs" class="btn btn-primary btn-lg">Browse {{ jobCount }} Opportunities</a>
+      {% if not currentUser %}
+        <a href="/register" class="btn btn-outline-primary btn-lg">Create Account</a>
+      {% endif %}
+    </div>
+
+    {% if jobCount > 0 or orgCount > 0 %}
+      <div class="row justify-content-center">
+        <div class="col-auto">
+          <div class="bg-light rounded-3 p-3">
+            <div class="row text-center">
+              <div class="col">
+                <div class="h4 fw-bold mb-1">{{ jobCount }}</div>
+                <div class="small text-muted">Active Positions</div>
+              </div>
+              <div class="col">
+                <div class="h4 fw-bold mb-1">{{ orgCount }}</div>
+                <div class="small text-muted">Organizations</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     {% endif %}
-{% else %}
-    <p><a href="/register">Register</a> | <a href="/login">Login</a></p>
-{% endif %}
+  </div>
+
+  {# Recent Jobs Section #}
+  {% set recentJobs = craft.entries.section('jobs').limit(3).all() %}
+  {% if recentJobs|length %}
+    <div class="mb-5">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="h4 mb-0">Recent Opportunities</h2>
+        <a href="/jobs" class="btn btn-outline-primary">View All</a>
+      </div>
+
+      <div class="row g-4">
+        {% for job in recentJobs %}
+          <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+              <div class="card-body">
+                <h3 class="h6 mb-2">
+                  <a href="{{ job.url }}" class="text-decoration-none">{{ job.title }}</a>
+                </h3>
+
+                <div class="d-flex flex-wrap gap-1 mb-3">
+                  {% if job.jobCategory|length %}
+                    <span class="badge bg-primary bg-opacity-10 text-primary">{{ job.jobCategory.one().title }}</span>
+                  {% endif %}
+                  {% if job.jobRegion|length %}
+                    <span class="badge bg-secondary bg-opacity-10 text-secondary">{{ job.jobRegion.one().title }}</span>
+                  {% endif %}
+                </div>
+
+                {% if job.jobOpportunityStatement %}
+                  <p class="text-muted small mb-3">{{ job.jobOpportunityStatement|length > 100 ? job.jobOpportunityStatement|slice(0, 100) ~ '...' : job.jobOpportunityStatement }}</p>
+                {% endif %}
+
+                <div class="d-flex justify-content-between align-items-center">
+                  <small class="text-muted">Posted {{ job.postDate|date('M j') }}</small>
+                  <a href="{{ job.url }}" class="btn btn-sm btn-outline-primary">View Details</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  {# User-specific content #}
+  {% if currentUser %}
+    <div class="card border-0 bg-light mb-4">
+      <div class="card-body text-center p-4">
+        <h2 class="h5 mb-3">Welcome back, {{ currentUser.firstName }}!</h2>
+        <p class="text-muted mb-3">Ready to explore new opportunities in private education?</p>
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+          <a href="/jobs" class="btn btn-primary">Browse Latest Positions</a>
+          <a href="/profile" class="btn btn-outline-primary">Manage Profile</a>
+        </div>
+      </div>
+    </div>
+
+    {# Debug info for development #}
+    <div class="alert alert-warning">
+      <strong>DEBUG INFO:</strong><br>
+      User: {{ currentUser.email }}<br>
+      Groups:
+      {% for group in currentUser.groups %}
+          {{ group.name }} ({{ group.handle }}){% if not loop.last %}, {% endif %}
+      {% endfor %}<br>
+      In jobPosters group: {{ currentUser.isInGroup('jobPosters') ? 'YES' : 'NO' }}<br>
+      Organization: {{ currentUser.organization.one() ? currentUser.organization.one().title : 'NONE' }}
+    </div>
+  {% else %}
+    <div class="card border-0 bg-primary bg-opacity-10 mb-4">
+      <div class="card-body text-center p-4">
+        <h2 class="h5 mb-3">Join the Leading Network for Private School Professionals</h2>
+        <p class="text-muted mb-3">Connect with top independent schools and advance your career in education leadership.</p>
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+          <a href="/register" class="btn btn-primary">Create Free Account</a>
+          <a href="/login" class="btn btn-outline-primary">Sign In</a>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>
 {% endblock %}

@@ -17,6 +17,7 @@
   {{ head() }}
 </head>
 <body class="{% block bodyClass %}{% endblock %}">
+  {# Craft CMS required to know where to inject hooks and other code #}
   {{ beginBody() }}
 
   {% block content %}{% endblock %}
@@ -26,6 +27,7 @@
     crossorigin="anonymous"></script>
 
   {% block scripts %}{% endblock %}
+  {# Craft CMS required to know where to inject hooks and other code #}
   {{ endBody() }}
 </body>
 </html>

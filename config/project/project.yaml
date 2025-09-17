@@ -1,4 +1,4 @@
-dateModified: 1757606797
+dateModified: 1758118247
 elementSources:
   craft\elements\Entry:
     -
@@ -33,6 +33,7 @@ elementSources:
         - 'field:21bd4595-df6f-4876-9708-5bfadad51b42' # Website
         - 'field:12d880c0-a281-4f27-a40b-135b2f5b4654' # Type of Organization
         - 'field:9d8645b3-7788-49d7-92ef-e3c2e0aca352' # Logo
+        - authors
       type: native
     -
       defaultSort:

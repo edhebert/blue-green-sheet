@@ -42,10 +42,10 @@ fieldLayouts:
             editCondition: null
             elementCondition: null
             fieldUid: a026cacb-2f40-4011-b87d-a1beb7552037 # Organization
-            handle: null
+            handle: listingOrganization
             includeInCards: false
             instructions: null
-            label: null
+            label: 'Listing Organization'
             providesThumbs: false
             required: false
             tip: null
@@ -140,19 +140,19 @@ fieldLayouts:
             warning: null
             width: 100
           -
-            dateAdded: '2025-09-05T17:57:10+00:00'
+            dateAdded: '2025-09-17T13:14:12+00:00'
             editCondition: null
             elementCondition: null
-            fieldUid: 7a6fec95-2ed4-4d18-b669-9108357adc40 # Single Line Text
+            fieldUid: f4e9368b-2d36-4ac5-b087-d0b8a3e8079f # State
             handle: jobState
             includeInCards: false
             instructions: null
-            label: State
+            label: null
             providesThumbs: false
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
-            uid: 11adbcc0-e9e5-4f22-98be-634990fb3c61
+            uid: 335a4b12-0cd2-45b7-b8af-b8390a5fd7a7
             userCondition: null
             warning: null
             width: 100
