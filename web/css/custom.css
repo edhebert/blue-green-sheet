@@ -1,7 +1,9 @@
-/* ----------------------------------------------------------------
-	Custom CSS
-
-	Add all your Custom Styled CSS here for New Styles or
-	Overwriting Default Theme Styles for Better Handling Updates
------------------------------------------------------------------*/
-
+
+
+:root {
+	/* --cnvs-themecolor: #83b341;
+	--cnvs-themecolor-rgb: 131, 179, 65; */ 
+    --bs-btn-bg: #ff0000 !important;
+}
+
+
