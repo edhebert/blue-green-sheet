@@ -215,6 +215,285 @@ return [
             );
 
             // --- END: admin notification emails ---
+
+            // --- BEGIN: Job posting payment and activation handlers ---
+
+            /**
+             * Custom controller to handle job posting payment and activation
+             */
+            if (!class_exists('JobPostingController')) {
+                class JobPostingController extends \craft\web\Controller
+                {
+                    protected array|int|bool $allowAnonymous = false;
+
+                    /**
+                     * Handle invoice payment - immediately activate job posting
+                     */
+                    public function actionActivateJobPosting()
+                    {
+                        $this->requirePostRequest();
+                        $this->requireLogin();
+
+                        $request = Craft::$app->getRequest();
+                        $session = Craft::$app->getSession();
+
+                        // Get form data
+                        $amount = $request->getRequiredBodyParam('amount');
+                        $duration = $request->getRequiredBodyParam('duration');
+                        $paymentMethod = $request->getRequiredBodyParam('paymentMethod');
+
+                        // Get the job entry ID from session (set during job creation)
+                        $jobId = $session->get('pendingJobId');
+                        if (!$jobId) {
+                            $session->setError('No pending job found. Please create your job posting again.');
+                            return $this->redirectToPostedUrl();
+                        }
+
+                        // Load the job entry
+                        $job = \craft\elements\Entry::find()->id($jobId)->one();
+                        if (!$job) {
+                            $session->setError('Job posting not found.');
+                            return $this->redirectToPostedUrl();
+                        }
+
+                        // Activate the job (set enabled = true)
+                        $job->enabled = true;
+
+                        // Set expiration date based on duration
+                        $expiryDate = new DateTime();
+                        $expiryDate->add(new DateInterval('P' . $duration . 'M')); // Add months
+                        $job->expiryDate = $expiryDate;
+
+                        // Save the job
+                        if (Craft::$app->getElements()->saveElement($job)) {
+                            // Clear the pending job from session
+                            $session->remove('pendingJobId');
+
+                            // Send notifications
+                            $this->sendJobPostingNotifications($job, $amount, $duration, $paymentMethod);
+
+                            $session->setNotice('Your job posting has been published successfully!');
+                            return $this->redirect($job->getUrl());
+                        } else {
+                            $session->setError('Failed to publish your job posting. Please try again.');
+                            return $this->redirectToPostedUrl();
+                        }
+                    }
+
+                    /**
+                     * Handle Stripe payment processing
+                     */
+                    public function actionProcessStripePayment()
+                    {
+                        $this->requirePostRequest();
+                        $this->requireLogin();
+
+                        $request = Craft::$app->getRequest();
+                        $session = Craft::$app->getSession();
+
+                        try {
+                            // Get form data
+                            $amount = (int)$request->getRequiredBodyParam('amount');
+                            $duration = $request->getRequiredBodyParam('duration');
+                            $paymentMethodId = $request->getRequiredBodyParam('paymentMethodId');
+
+                            // Get the job entry ID from session
+                            $jobId = $session->get('pendingJobId');
+                            if (!$jobId) {
+                                throw new \Exception('No pending job found. Please create your job posting again.');
+                            }
+
+                            // Load the job entry
+                            $job = \craft\elements\Entry::find()->id($jobId)->one();
+                            if (!$job) {
+                                throw new \Exception('Job posting not found.');
+                            }
+
+                            // Initialize Stripe
+                            \Stripe\Stripe::setApiKey(\craft\helpers\App::env('STRIPE_SECRET_KEY'));
+
+                            // Create payment intent
+                            $paymentIntent = \Stripe\PaymentIntent::create([
+                                'amount' => $amount * 100, // Convert to cents
+                                'currency' => 'usd',
+                                'payment_method' => $paymentMethodId,
+                                'confirmation_method' => 'manual',
+                                'confirm' => true,
+                                'return_url' => \craft\helpers\UrlHelper::siteUrl('jobs/payment-success'),
+                                'metadata' => [
+                                    'job_id' => $job->id,
+                                    'job_title' => $job->title,
+                                    'duration' => $duration,
+                                    'user_id' => Craft::$app->getUser()->getId(),
+                                ],
+                            ]);
+
+                            // Handle payment intent status
+                            if ($paymentIntent->status === 'requires_action' &&
+                                $paymentIntent->next_action->type === 'use_stripe_sdk') {
+
+                                // 3D Secure authentication required
+                                return $this->asJson([
+                                    'requires_action' => true,
+                                    'payment_intent' => [
+                                        'id' => $paymentIntent->id,
+                                        'client_secret' => $paymentIntent->client_secret
+                                    ]
+                                ]);
+
+                            } elseif ($paymentIntent->status === 'succeeded') {
+
+                                // Payment successful - activate job
+                                $this->activateJobAfterPayment($job, $amount, $duration, 'credit', $paymentIntent);
+
+                                $session->setNotice('Payment successful! Your job posting has been published.');
+                                return $this->redirect($job->getUrl());
+
+                            } else {
+                                throw new \Exception('Payment failed. Status: ' . $paymentIntent->status);
+                            }
+
+                        } catch (\Stripe\Exception\CardException $e) {
+                            $session->setError('Payment failed: ' . $e->getError()->message);
+                            return $this->redirectToPostedUrl();
+                        } catch (\Exception $e) {
+                            Craft::error('Stripe payment error: ' . $e->getMessage(), __METHOD__);
+                            $session->setError('Payment processing failed: ' . $e->getMessage());
+                            return $this->redirectToPostedUrl();
+                        }
+                    }
+
+                    /**
+                     * Activate job after successful payment
+                     */
+                    private function activateJobAfterPayment($job, $amount, $duration, $paymentMethod, $paymentIntent = null)
+                    {
+                        // Activate the job (set enabled = true)
+                        $job->enabled = true;
+
+                        // Set expiration date based on duration
+                        $expiryDate = new DateTime();
+                        $expiryDate->add(new DateInterval('P' . $duration . 'M')); // Add months
+                        $job->expiryDate = $expiryDate;
+
+                        // Save payment information in a custom field or note
+                        // You could add a custom field for payment tracking if needed
+
+                        // Save the job
+                        if (Craft::$app->getElements()->saveElement($job)) {
+                            // Clear the pending job from session
+                            Craft::$app->getSession()->remove('pendingJobId');
+
+                            // Send notifications
+                            $this->sendJobPostingNotifications($job, $amount, $duration, $paymentMethod, $paymentIntent);
+
+                            return true;
+                        }
+
+                        return false;
+                    }
+
+                    /**
+                     * Send notification emails for new job postings
+                     */
+                    private function sendJobPostingNotifications($job, $amount, $duration, $paymentMethod, $paymentIntent = null)
+                    {
+                        $resolveAdminRecipients = function(): array {
+                            $env = trim((string)\craft\helpers\App::env('ADMIN_NOTIFY_EMAILS'));
+                            if ($env !== '') {
+                                return array_values(array_filter(array_map('trim', explode(',', $env))));
+                            }
+                            $systemEmail = trim((string)\craft\helpers\App::env('SYSTEM_EMAIL'));
+                            if ($systemEmail !== '') {
+                                return [$systemEmail];
+                            }
+                            return ['ed@theblueocean.com'];
+                        };
+
+                        $adminEmails = $resolveAdminRecipients();
+                        if (!$adminEmails) {
+                            return;
+                        }
+
+                        $user = Craft::$app->getUser()->getIdentity();
+                        $organization = $user->organization ?? null;
+
+                        $subject = 'New Job Posting: ' . $job->title;
+                        $body = "A new job posting has been created and published:\n\n";
+                        $body .= "Job Title: {$job->title}\n";
+                        $body .= "Organization: " . ($organization ? $organization->title : 'Unknown') . "\n";
+                        $body .= "Posted by: {$user->friendlyName} ({$user->email})\n";
+                        $body .= "Duration: {$duration} month(s)\n";
+                        $body .= "Payment: \${$amount} via {$paymentMethod}\n";
+                        $body .= "Job URL: " . ($job->getUrl() ?? 'URL not available') . "\n\n";
+
+                        if ($paymentMethod === 'invoice') {
+                            $body .= "NOTE: This was an invoice posting - please send invoice for \${$amount}.\n";
+                        } elseif ($paymentMethod === 'credit' && $paymentIntent) {
+                            $body .= "Payment processed via Stripe (ID: {$paymentIntent->id})\n";
+                        }
+
+                        $message = new \craft\mail\Message();
+                        $message->setTo($adminEmails)
+                               ->setSubject($subject)
+                               ->setTextBody($body);
+
+                        try {
+                            Craft::$app->getMailer()->send($message);
+                        } catch (\Exception $e) {
+                            Craft::error('Failed to send job posting notification: ' . $e->getMessage(), __METHOD__);
+                        }
+                    }
+                }
+            }
+
+            // Register the custom controller
+            Event::on(
+                \craft\web\Application::class,
+                \craft\web\Application::EVENT_INIT,
+                static function() {
+                    // Register custom controller actions
+                    $urlManager = Craft::$app->getUrlManager();
+                    $urlManager->addRules([
+                        'actions/entries/activate-job-posting' => 'custom/job-posting/activate-job-posting',
+                        'actions/entries/process-stripe-payment' => 'custom/job-posting/process-stripe-payment',
+                    ]);
+
+                    // Register the controller class
+                    Craft::$app->controllerMap['custom/job-posting'] = JobPostingController::class;
+                }
+            );
+
+            // Store job ID in session after job entry is created (for payment flow)
+            Event::on(
+                Elements::class,
+                Elements::EVENT_AFTER_SAVE_ELEMENT,
+                static function(ElementEvent $e) {
+                    if (!$e->isNew) {
+                        return;
+                    }
+
+                    $el = $e->element;
+                    if (!$el instanceof EntryElement) {
+                        return;
+                    }
+
+                    $section = $el->getSection();
+                    if (!$section || $section->handle !== 'jobs') {
+                        return;
+                    }
+
+                    // Only for site requests (not CP)
+                    if (!Craft::$app->getRequest()->getIsSiteRequest()) {
+                        return;
+                    }
+
+                    // Store the job ID in session for payment processing
+                    Craft::$app->getSession()->set('pendingJobId', $el->id);
+                }
+            );
+
+            // --- END: Job posting payment and activation handlers ---
         },
     ],
 ];

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "66f9a7de0472f4e8509cafdbaa5b130d",
+    "content-hash": "7666cdbc6dec0b925947851180813baf",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1035,6 +1035,52 @@
                 "source": "https://github.com/craftcms/server-check"
             },
             "time": "2025-07-23T14:22:43+00:00"
+        },
+        {
+            "name": "craftcms/stripe",
+            "version": "1.6.0",
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/craftcms/stripe/zipball/b5c9b08fda090c1d3d6dfc170b7d792ad78a4a80",
+                "reference": "b5c9b08fda090c1d3d6dfc170b7d792ad78a4a80",
+                "shasum": ""
+            },
+            "require": {
+                "craftcms/cms": "^5.6.0",
+                "php": "^8.2",
+                "stripe/stripe-php": "^13|^14"
+            },
+            "type": "craft-plugin",
+            "extra": {
+                "handle": "stripe",
+                "name": "Stripe",
+                "description": "Sync and extend Stripe products and subscriptions.",
+                "developer": "Pixel & Tonic",
+                "documentationUrl": "https://github.com/craftcms/stripe"
+            },
+            "autoload": {
+                "psr-4": {
+                    "craft\\stripe\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Stripe Integration for Craft CMS",
+            "homepage": "https://github.com/craftcms/stripe",
+            "keywords": [
+                "cms",
+                "craftcms",
+                "stripe"
+            ],
+            "support": {
+                "email": "support@craftcms.com",
+                "issues": "https://github.com/craftcms/stripe/issues?state=open",
+                "source": "https://github.com/craftcms/stripe",
+                "docs": "https://github.com/craftcms/stripe",
+                "rss": "https://github.com/craftcms/stripe/releases.atom"
+            },
+            "time": "2025-06-25T06:31:36+00:00"
         },
         {
             "name": "creocoder/yii2-nested-sets",

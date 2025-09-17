@@ -1,4 +1,4 @@
-dateModified: 1758118247
+dateModified: 1758133127
 elementSources:
   craft\elements\Entry:
     -
@@ -214,6 +214,10 @@ plugins:
     edition: standard
     enabled: false
     schemaVersion: 3.0.0
+  stripe:
+    edition: standard
+    enabled: true
+    schemaVersion: 1.2.0
   timber:
     edition: standard
     enabled: true

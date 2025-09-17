@@ -1,0 +1,572 @@
+{% extends "_layout.twig" %}
+
+{% block title %}Post a New Job · {{ siteName }}{% endblock %}
+
+{% block content %}
+  {% requireLogin %}
+  {% requirePermission "postJobs" %}
+
+  {% set entry = entry ?? null %}
+  {% set currentUser = currentUser %}
+
+  <div class="container" style="max-width: 800px;">
+    <div class="row">
+      <div class="col-12">
+        <h1 class="h3 mb-4">Post a New Job Opening</h1>
+
+        {% if entry and entry.getErrors() %}
+          <div class="alert alert-danger">
+            <strong>We couldn't save your job posting.</strong>
+            <ul class="mb-0">
+              {% for attr, errs in entry.getErrors() %}
+                {% for err in errs %}
+                  <li>{{ err }}</li>
+                {% endfor %}
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+
+        <form method="post" class="needs-validation" novalidate>
+          {{ csrfInput() }}
+          {{ actionInput('entries/save-entry') }}
+          {% set jobsSection = craft.entries.section('jobs').one().section %}
+          {{ hiddenInput('sectionId', jobsSection.id) }}
+          {{ hiddenInput('typeId', jobsSection.entryTypes[0].id) }}
+          {{ hiddenInput('enabled', false) }} {# Keep disabled until payment #}
+          {{ redirectInput('jobs/payment') }}
+
+          <!-- Job Title -->
+          <div class="mb-4">
+            <label for="title" class="form-label fw-bold">Job Title <span class="text-danger">*</span></label>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              class="form-control{% if entry and entry.getErrors('title') %} is-invalid{% endif %}"
+              value="{{ (entry ? entry.title : '')|e }}"
+              placeholder="e.g., Head of School, Business Manager, Development Director"
+              required
+            >
+            {% if entry and entry.getErrors('title') %}
+              <div class="invalid-feedback">
+                {{ entry.getErrors('title')|join(', ') }}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Job Category -->
+          <div class="mb-4">
+            <label for="jobCategory" class="form-label fw-bold">Job Category <span class="text-danger">*</span></label>
+            <select
+              id="jobCategory"
+              name="fields[jobCategory][]"
+              class="form-select{% if entry and entry.getErrors('jobCategory') %} is-invalid{% endif %}"
+              required
+            >
+              <option value="">Select a category...</option>
+              {% for category in craft.categories().group('jobCategories').all() %}
+                <option value="{{ category.id }}"
+                  {% if entry and entry.jobCategory.contains(category) %}selected{% endif %}>
+                  {{ category.title }}
+                </option>
+              {% endfor %}
+            </select>
+            {% if entry and entry.getErrors('jobCategory') %}
+              <div class="invalid-feedback">
+                {{ entry.getErrors('jobCategory')|join(', ') }}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Job Description (Rich Text) -->
+          <div class="mb-4">
+            <label for="jobDescription" class="form-label fw-bold">Job Description <span class="text-danger">*</span></label>
+            <div id="jobDescription-editor" style="min-height: 300px; border: 1px solid #ced4da; border-radius: 0.375rem;"></div>
+            <textarea
+              id="jobDescription"
+              name="fields[jobDescription]"
+              class="d-none{% if entry and entry.getErrors('jobDescription') %} is-invalid{% endif %}"
+              required
+            >{{ entry ? entry.jobDescription : '' }}</textarea>
+            {% if entry and entry.getErrors('jobDescription') %}
+              <div class="invalid-feedback">
+                {{ entry.getErrors('jobDescription')|join(', ') }}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Opportunity Statement (Rich Text) -->
+          <div class="mb-4">
+            <label for="jobOpportunityStatement" class="form-label fw-bold">Opportunity Statement</label>
+            <div class="form-text mb-2">Optional: Highlight what makes this opportunity special</div>
+            <div id="jobOpportunityStatement-editor" style="min-height: 200px; border: 1px solid #ced4da; border-radius: 0.375rem;"></div>
+            <textarea
+              id="jobOpportunityStatement"
+              name="fields[jobOpportunityStatement]"
+              class="d-none"
+            >{{ entry ? entry.jobOpportunityStatement : '' }}</textarea>
+          </div>
+
+          <!-- Salary Range -->
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <label for="jobSalaryLow" class="form-label fw-bold">Salary Range - Low</label>
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input
+                  type="number"
+                  id="jobSalaryLow"
+                  name="fields[jobSalaryLow]"
+                  class="form-control"
+                  value="{{ entry ? entry.jobSalaryLow : '' }}"
+                  placeholder="75000"
+                  min="0"
+                  step="1000"
+                >
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label for="jobSalaryHigh" class="form-label fw-bold">Salary Range - High</label>
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input
+                  type="number"
+                  id="jobSalaryHigh"
+                  name="fields[jobSalaryHigh]"
+                  class="form-control"
+                  value="{{ entry ? entry.jobSalaryHigh : '' }}"
+                  placeholder="125000"
+                  min="0"
+                  step="1000"
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- School Website -->
+          <div class="mb-4">
+            <label for="jobSchoolUrl" class="form-label fw-bold">School Website</label>
+            <input
+              type="url"
+              id="jobSchoolUrl"
+              name="fields[jobSchoolUrl]"
+              class="form-control"
+              value="{{ entry ? entry.jobSchoolUrl : '' }}"
+              placeholder="https://www.yourschool.edu"
+            >
+          </div>
+
+          <!-- Location Information -->
+          <div class="mb-4">
+            <h5 class="fw-bold mb-3">Location Information</h5>
+
+            <!-- Job Region (Hidden - Auto-populated) -->
+            <select
+              id="jobRegion"
+              name="fields[jobRegion][]"
+              class="d-none"
+              required
+            >
+              <option value="">Select a region...</option>
+              {% for region in craft.categories().group('jobRegion').all() %}
+                <option value="{{ region.id }}" data-region-title="{{ region.title }}"
+                  {% if entry and entry.jobRegion.contains(region) %}selected{% endif %}>
+                  {{ region.title }}
+                </option>
+              {% endfor %}
+            </select>
+
+            <!-- Country Selection -->
+            <div class="mb-3">
+              <label class="form-label fw-bold">Country <span class="text-danger">*</span></label>
+              <div>
+                <div class="form-check form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="fields[jobCountry]"
+                    id="countryUS"
+                    value="US"
+                    {% if not entry or entry.jobCountry == 'US' %}checked{% endif %}
+                    required
+                  >
+                  <label class="form-check-label" for="countryUS">
+                    United States
+                  </label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="fields[jobCountry]"
+                    id="countryIntl"
+                    value="International"
+                    {% if entry and entry.jobCountry == 'International' %}checked{% endif %}
+                    required
+                  >
+                  <label class="form-check-label" for="countryIntl">
+                    International
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Region Display (Read-only) -->
+            <div class="mb-3">
+              <label class="form-label fw-bold">Region</label>
+              <div id="regionDisplay" class="form-control bg-light">
+                <em class="text-muted">Will be automatically set based on your country and state selection</em>
+              </div>
+            </div>
+
+            <!-- US Location Fields -->
+            <div id="usLocationFields" class="{% if entry and entry.jobCountry == 'International' %}d-none{% endif %}">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="jobCity" class="form-label fw-bold">City</label>
+                  <input
+                    type="text"
+                    id="jobCity"
+                    name="fields[jobCity]"
+                    class="form-control"
+                    value="{{ entry ? entry.jobCity : '' }}"
+                    placeholder="Boston"
+                  >
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="jobState" class="form-label fw-bold">State</label>
+                  <select
+                    id="jobState"
+                    name="fields[jobState]"
+                    class="form-select"
+                  >
+                    <option value="">Select state...</option>
+                    {% set states = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY', 'DC'] %}
+                    {% for state in states %}
+                      <option value="{{ state }}"
+                        {% if entry and entry.jobState == state %}selected{% endif %}>
+                        {{ state }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- International Location Field -->
+            <div id="intlLocationFields" class="{% if not entry or entry.jobCountry != 'International' %}d-none{% endif %}">
+              <div class="mb-3">
+                <label for="jobLocation" class="form-label fw-bold">Location</label>
+                <input
+                  type="text"
+                  id="jobLocation"
+                  name="fields[jobLocation]"
+                  class="form-control"
+                  value="{{ entry ? entry.jobLocation : '' }}"
+                  placeholder="London, United Kingdom"
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Application Instructions -->
+          <div class="mb-4">
+            <label for="jobApplicationInstructions" class="form-label fw-bold">Application Instructions <span class="text-danger">*</span></label>
+            <textarea
+              id="jobApplicationInstructions"
+              name="fields[jobApplicationInstructions]"
+              class="form-control{% if entry and entry.getErrors('jobApplicationInstructions') %} is-invalid{% endif %}"
+              rows="4"
+              placeholder="How should candidates apply? Include contact information, required documents, application deadlines, etc."
+              required
+            >{{ entry ? entry.jobApplicationInstructions : '' }}</textarea>
+            {% if entry and entry.getErrors('jobApplicationInstructions') %}
+              <div class="invalid-feedback">
+                {{ entry.getErrors('jobApplicationInstructions')|join(', ') }}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Organization (automatically set) -->
+          {% if currentUser.organization %}
+            {{ hiddenInput('fields[listingOrganization][]', currentUser.organization.id) }}
+          {% endif %}
+
+          <!-- Posting Duration & Payment -->
+          <div class="mb-4">
+            <h5 class="fw-bold mb-3">Posting Duration & Payment</h5>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="postingDuration"
+                        id="duration6mo"
+                        value="6"
+                        checked
+                        required
+                      >
+                      <label class="form-check-label" for="duration6mo">
+                        <div class="fw-bold">6 Months</div>
+                        <div class="text-muted small">$300</div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="postingDuration"
+                        id="duration12mo"
+                        value="12"
+                        required
+                      >
+                      <label class="form-check-label" for="duration12mo">
+                        <div class="fw-bold">12 Months</div>
+                        <div class="text-muted small">$400</div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Payment Method -->
+          <div class="mb-4">
+            <label class="form-label fw-bold">Payment Method <span class="text-danger">*</span></label>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="paymentMethod"
+                        id="paymentCredit"
+                        value="credit"
+                        checked
+                        required
+                      >
+                      <label class="form-check-label" for="paymentCredit">
+                        <div class="fw-bold">Credit Card</div>
+                        <div class="text-muted small">Secure online payment</div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="paymentMethod"
+                        id="paymentInvoice"
+                        value="invoice"
+                        required
+                      >
+                      <label class="form-check-label" for="paymentInvoice">
+                        <div class="fw-bold">Invoice</div>
+                        <div class="text-muted small">Pay after posting (good faith)</div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary btn-lg">
+              Continue to Payment
+            </button>
+            <a href="{{ url('jobs') }}" class="btn btn-outline-secondary">
+              Cancel
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- CKEditor CDN -->
+  <script src="https://cdn.ckeditor.com/ckeditor5/40.1.0/classic/ckeditor.js"></script>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize CKEditor for rich text fields FIRST
+    let jobDescriptionEditor, opportunityStatementEditor;
+
+    ClassicEditor
+      .create(document.querySelector('#jobDescription-editor'), {
+        toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'outdent', 'indent', '|', 'undo', 'redo']
+      })
+      .then(editor => {
+        jobDescriptionEditor = editor;
+        // Sync with hidden textarea
+        editor.model.document.on('change:data', () => {
+          document.querySelector('#jobDescription').value = editor.getData();
+        });
+        // Load existing content
+        const existingContent = document.querySelector('#jobDescription').value;
+        if (existingContent) {
+          editor.setData(existingContent);
+        }
+      })
+      .catch(error => {
+        console.error('CKEditor initialization failed:', error);
+      });
+
+    ClassicEditor
+      .create(document.querySelector('#jobOpportunityStatement-editor'), {
+        toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'outdent', 'indent', '|', 'undo', 'redo']
+      })
+      .then(editor => {
+        opportunityStatementEditor = editor;
+        // Sync with hidden textarea
+        editor.model.document.on('change:data', () => {
+          document.querySelector('#jobOpportunityStatement').value = editor.getData();
+        });
+        // Load existing content
+        const existingContent = document.querySelector('#jobOpportunityStatement').value;
+        if (existingContent) {
+          editor.setData(existingContent);
+        }
+      })
+      .catch(error => {
+        console.error('CKEditor initialization failed:', error);
+      });
+
+    // Handle country/region logic - AFTER CKEditor initialization
+    const countryRadios = document.querySelectorAll('input[name="fields[jobCountry]"]');
+    const usFields = document.getElementById('usLocationFields');
+    const intlFields = document.getElementById('intlLocationFields');
+    const jobState = document.getElementById('jobState');
+    const jobRegion = document.getElementById('jobRegion');
+    const regionDisplay = document.getElementById('regionDisplay');
+
+    // Create state to region mapping dynamically from the actual region options
+    const stateToRegion = {};
+
+    // Extract state mappings from region option text
+    Array.from(jobRegion.options).forEach(option => {
+      if (option.value && option.dataset.regionTitle) {
+        const title = option.dataset.regionTitle;
+
+        // Extract states from parentheses in title
+        const match = title.match(/\(([^)]+)\)/);
+        if (match) {
+          const statesStr = match[1];
+          const states = statesStr.split(',').map(s => s.trim());
+
+          states.forEach(state => {
+            stateToRegion[state] = title;
+          });
+        }
+      }
+    });
+
+    console.log('Available region options:');
+    Array.from(jobRegion.options).forEach(option => {
+      if (option.value) {
+        console.log('Region:', option.dataset.regionTitle, 'Value:', option.value);
+      }
+    });
+    console.log('State to Region mapping:', stateToRegion);
+
+    function updateRegion() {
+      const selectedCountry = document.querySelector('input[name="fields[jobCountry]"]:checked').value;
+      console.log('Update region called, country:', selectedCountry);
+
+      if (selectedCountry === 'International') {
+        // Set region to International
+        const intlOption = Array.from(jobRegion.options).find(option =>
+          option.dataset.regionTitle && option.dataset.regionTitle.includes('International')
+        );
+        console.log('International option found:', intlOption);
+        if (intlOption) {
+          intlOption.selected = true;
+          regionDisplay.innerHTML = '<strong>International</strong>';
+        }
+      } else {
+        // US - check state selection
+        const selectedState = jobState.value;
+        console.log('Selected state:', selectedState);
+        console.log('Available mappings:', stateToRegion);
+
+        if (selectedState && stateToRegion[selectedState]) {
+          const regionTitle = stateToRegion[selectedState];
+          console.log('Found region for state:', regionTitle);
+
+          const regionOption = Array.from(jobRegion.options).find(option =>
+            option.dataset.regionTitle === regionTitle
+          );
+          console.log('Region option found:', regionOption);
+
+          if (regionOption) {
+            regionOption.selected = true;
+            regionDisplay.innerHTML = '<strong>' + regionTitle + '</strong>';
+          }
+        } else {
+          jobRegion.selectedIndex = 0;
+          regionDisplay.innerHTML = '<em class="text-muted">Select a state to automatically set the region</em>';
+        }
+      }
+    }
+
+    function toggleLocationFields() {
+      const selectedCountry = document.querySelector('input[name="fields[jobCountry]"]:checked').value;
+
+      if (selectedCountry === 'US') {
+        usFields.classList.remove('d-none');
+        intlFields.classList.add('d-none');
+      } else {
+        usFields.classList.add('d-none');
+        intlFields.classList.remove('d-none');
+      }
+
+      updateRegion();
+    }
+
+    countryRadios.forEach(radio => {
+      radio.addEventListener('change', toggleLocationFields);
+    });
+
+    jobState.addEventListener('change', updateRegion);
+
+    // Initialize on page load
+    toggleLocationFields();
+
+    // Form validation
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+      // Ensure CKEditor content is synced before submission
+      if (jobDescriptionEditor) {
+        document.querySelector('#jobDescription').value = jobDescriptionEditor.getData();
+      }
+      if (opportunityStatementEditor) {
+        document.querySelector('#jobOpportunityStatement').value = opportunityStatementEditor.getData();
+      }
+
+      if (!form.checkValidity()) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      form.classList.add('was-validated');
+    });
+  });
+  </script>
+{% endblock %}

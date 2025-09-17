@@ -1,0 +1,1 @@
+{% for region in craft.categories().group('jobRegion').all() %}{{ region.title }}|{% endfor %}
