@@ -1,3 +1,4 @@
+css: ".ck-editor__editable {\r\n    min-height: 250px;\r\n}"
 headingLevels:
   - 1
   - 2

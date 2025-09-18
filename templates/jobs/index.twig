@@ -74,7 +74,7 @@
 {# Use Craft's paginate tag #}
 {% paginate jobQuery.limit(currentLimit) as pageInfo, jobs %}
 
-<div class="container-fluid">
+<div class="container">
     <div class="row">
         {# Sidebar Filters #}
         <aside class="col-lg-3 col-xl-2 mb-4">
@@ -313,6 +313,10 @@
                         <div class="col-lg-6 col-xl-4 job-card-wrapper">
                             <article class="card h-100 border-0 shadow-sm job-card">
                                 <div class="card-body">
+                                    {% if job.author.organization|length %}
+                                        <img src="{{ job.author.organization.one().logo[0].url('height100') }}" alt="{{ job.author.organization.title }}" class="mb-2">
+                                    {% endif %}
+                                    
                                     <h2 class="h6 mb-2">
                                         <a href="{{ job.url }}" class="text-decoration-none stretched-link">{{ job.title }}</a>
                                     </h2>

@@ -2,6 +2,7 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
+    "bluegreensheet/job-region-populator": "@dev",
     "craftcms/ckeditor": "4.10.1",
     "craftcms/cms": "5.8.17",
     "craftcms/feed-me": "6.10.1",
@@ -34,6 +35,10 @@
     ]
   },
   "repositories": [
+    {
+      "type": "path",
+      "url": "./plugins/jobregionpopulator"
+    },
     {
       "type": "composer",
       "url": "https://composer.craftcms.com",

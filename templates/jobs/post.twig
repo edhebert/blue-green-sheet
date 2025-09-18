@@ -27,7 +27,7 @@
           </div>
         {% endif %}
 
-        <form method="post" class="needs-validation" novalidate>
+        <form method="post" class="needs-validation" enctype="multipart/form-data" novalidate>
           {{ csrfInput() }}
           {{ actionInput('entries/save-entry') }}
           {% set jobsSection = craft.entries.section('jobs').one().section %}
@@ -66,8 +66,15 @@
             >
               <option value="">Select a category...</option>
               {% for category in craft.categories().group('jobCategories').all() %}
-                <option value="{{ category.id }}"
-                  {% if entry and entry.jobCategory.contains(category) %}selected{% endif %}>
+                {% set isSelected = false %}
+                {% if entry and entry.jobCategory %}
+                  {% for selectedCategory in entry.jobCategory.all() %}
+                    {% if selectedCategory.id == category.id %}
+                      {% set isSelected = true %}
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+                <option value="{{ category.id }}" {% if isSelected %}selected{% endif %}>
                   {{ category.title }}
                 </option>
               {% endfor %}
@@ -148,34 +155,20 @@
           <div class="mb-4">
             <label for="jobSchoolUrl" class="form-label fw-bold">School Website</label>
             <input
-              type="url"
+              type="text"
               id="jobSchoolUrl"
-              name="fields[jobSchoolUrl]"
+              name="fields[jobSchoolUrl][value]"
               class="form-control"
-              value="{{ entry ? entry.jobSchoolUrl : '' }}"
-              placeholder="https://www.yourschool.edu"
+              value="{{ entry and entry.jobSchoolUrl ? entry.jobSchoolUrl.url : '' }}"
+              placeholder="www.yourschool.edu"
             >
+            {{ hiddenInput('fields[jobSchoolUrl][type]', 'url') }}
           </div>
 
           <!-- Location Information -->
           <div class="mb-4">
             <h5 class="fw-bold mb-3">Location Information</h5>
 
-            <!-- Job Region (Hidden - Auto-populated) -->
-            <select
-              id="jobRegion"
-              name="fields[jobRegion][]"
-              class="d-none"
-              required
-            >
-              <option value="">Select a region...</option>
-              {% for region in craft.categories().group('jobRegion').all() %}
-                <option value="{{ region.id }}" data-region-title="{{ region.title }}"
-                  {% if entry and entry.jobRegion.contains(region) %}selected{% endif %}>
-                  {{ region.title }}
-                </option>
-              {% endfor %}
-            </select>
 
             <!-- Country Selection -->
             <div class="mb-3">
@@ -185,10 +178,10 @@
                   <input
                     class="form-check-input"
                     type="radio"
-                    name="fields[jobCountry]"
+                    name="fields[country]"
                     id="countryUS"
-                    value="US"
-                    {% if not entry or entry.jobCountry == 'US' %}checked{% endif %}
+                    value="unitedStates"
+                    {% if not entry or (entry.country is defined and entry.country == 'unitedStates') or not entry.country %}checked{% endif %}
                     required
                   >
                   <label class="form-check-label" for="countryUS">
@@ -199,10 +192,10 @@
                   <input
                     class="form-check-input"
                     type="radio"
-                    name="fields[jobCountry]"
+                    name="fields[country]"
                     id="countryIntl"
-                    value="International"
-                    {% if entry and entry.jobCountry == 'International' %}checked{% endif %}
+                    value="international"
+                    {% if entry and entry.country is defined and entry.country == 'international' %}checked{% endif %}
                     required
                   >
                   <label class="form-check-label" for="countryIntl">
@@ -212,30 +205,23 @@
               </div>
             </div>
 
-            <!-- Region Display (Read-only) -->
-            <div class="mb-3">
-              <label class="form-label fw-bold">Region</label>
-              <div id="regionDisplay" class="form-control bg-light">
-                <em class="text-muted">Will be automatically set based on your country and state selection</em>
-              </div>
-            </div>
 
             <!-- US Location Fields -->
-            <div id="usLocationFields" class="{% if entry and entry.jobCountry == 'International' %}d-none{% endif %}">
+            <div id="usLocationFields" class="{% if entry and entry.country is defined and entry.country == 'international' %}d-none{% endif %}">
               <div class="row">
                 <div class="col-md-6 mb-3">
-                  <label for="jobCity" class="form-label fw-bold">City</label>
+                  <label for="jobCity" class="form-label fw-bold">City <span id="cityrequired" class="text-danger d-none">*</span></label>
                   <input
                     type="text"
                     id="jobCity"
                     name="fields[jobCity]"
                     class="form-control"
                     value="{{ entry ? entry.jobCity : '' }}"
-                    placeholder="Boston"
+                    placeholder="your city"
                   >
                 </div>
                 <div class="col-md-6 mb-3">
-                  <label for="jobState" class="form-label fw-bold">State</label>
+                  <label for="jobState" class="form-label fw-bold">State <span id="staterequired" class="text-danger d-none">*</span></label>
                   <select
                     id="jobState"
                     name="fields[jobState]"
@@ -255,9 +241,9 @@
             </div>
 
             <!-- International Location Field -->
-            <div id="intlLocationFields" class="{% if not entry or entry.jobCountry != 'International' %}d-none{% endif %}">
+            <div id="intlLocationFields" class="{% if not entry or not entry.country is defined or entry.country != 'international' %}d-none{% endif %}">
               <div class="mb-3">
-                <label for="jobLocation" class="form-label fw-bold">Location</label>
+                <label for="jobLocation" class="form-label fw-bold">Location <span id="locationrequired" class="text-danger d-none">*</span></label>
                 <input
                   type="text"
                   id="jobLocation"
@@ -288,9 +274,64 @@
             {% endif %}
           </div>
 
+          <!-- Job Attachments -->
+          <div class="mb-4">
+            <label class="form-label fw-bold">Job Attachments <span class="text-muted">(Optional)</span></label>
+            <p class="form-text text-muted mb-2">Upload up to 3 documents (PDF or Word format, max 10MB each)</p>
+
+            <div id="attachmentsList" class="mb-3">
+              <!-- Existing attachments will be displayed here -->
+              {% if entry and entry.jobAttachments %}
+                {% for attachment in entry.jobAttachments.all() %}
+                  <div class="attachment-item d-flex align-items-center mb-2 p-2 border rounded" data-asset-id="{{ attachment.id }}">
+                    <i class="fas fa-file-pdf text-danger me-2"></i>
+                    <span class="me-auto">{{ attachment.filename }}</span>
+                    <button type="button" class="btn btn-sm btn-outline-danger remove-attachment" onclick="removeAttachment(this)">
+                      <i class="fas fa-times"></i>
+                    </button>
+                    <input type="hidden" name="fields[jobAttachments][]" value="{{ attachment.id }}">
+                  </div>
+                {% endfor %}
+              {% endif %}
+            </div>
+
+            <div class="upload-area border-2 border-dashed rounded p-4 text-center" id="uploadArea" style="border-color: #dee2e6;">
+              <i class="fas fa-cloud-upload-alt fa-2x text-muted mb-2"></i>
+              <p class="mb-2">Drop files here or <button type="button" class="btn btn-link p-0" id="browseFiles">browse</button></p>
+              <small class="text-muted">Accepted formats: PDF, DOC, DOCX | Maximum: 3 files, 10MB each</small>
+              <input
+                type="file"
+                id="jobAttachments"
+                name="attachmentFiles[]"
+                class="d-none"
+                multiple
+                accept=".pdf,.doc,.docx"
+              >
+            </div>
+
+            {% if entry and entry.getErrors('jobAttachments') %}
+              <div class="invalid-feedback d-block">
+                {{ entry.getErrors('jobAttachments')|join(', ') }}
+              </div>
+            {% endif %}
+          </div>
+
           <!-- Organization (automatically set) -->
-          {% if currentUser.organization %}
-            {{ hiddenInput('fields[listingOrganization][]', currentUser.organization.id) }}
+          {% set userOrganization = currentUser.organization.one() %}
+          {% if userOrganization %}
+            {{ hiddenInput('fields[listingOrganization][]', userOrganization.id) }}
+          {% else %}
+            <!-- Debug: User has no organization, trying different access methods -->
+            {{ hiddenInput('debug_user_id', currentUser.id) }}
+            {% set orgQuery = currentUser.organization %}
+            {% if orgQuery %}
+              {{ hiddenInput('debug_org_query', 'exists') }}
+              {% set orgResult = orgQuery.all() %}
+              {% if orgResult|length %}
+                {{ hiddenInput('fields[listingOrganization][]', orgResult[0].id) }}
+                {{ hiddenInput('debug_org_found', orgResult[0].title) }}
+              {% endif %}
+            {% endif %}
           {% endif %}
 
           <!-- Posting Duration & Payment -->
@@ -380,7 +421,7 @@
                       >
                       <label class="form-check-label" for="paymentInvoice">
                         <div class="fw-bold">Invoice</div>
-                        <div class="text-muted small">Pay after posting (good faith)</div>
+                        <div class="text-muted small">We will contact you for payment arrangements</div>
                       </label>
                     </div>
                   </div>
@@ -404,6 +445,16 @@
 
   <!-- CKEditor CDN -->
   <script src="https://cdn.ckeditor.com/ckeditor5/40.1.0/classic/ckeditor.js"></script>
+
+  <!-- CKEditor Height Styling -->
+  <style>
+    .ck-editor__editable {
+      min-height: 300px !important;
+    }
+    #jobOpportunityStatement-editor .ck-editor__editable {
+      min-height: 200px !important;
+    }
+  </style>
 
   <script>
   document.addEventListener('DOMContentLoaded', function() {
@@ -450,102 +501,194 @@
         console.error('CKEditor initialization failed:', error);
       });
 
-    // Handle country/region logic - AFTER CKEditor initialization
-    const countryRadios = document.querySelectorAll('input[name="fields[jobCountry]"]');
+    // Handle country/location field visibility
+    const countryRadios = document.querySelectorAll('input[name="fields[country]"]');
     const usFields = document.getElementById('usLocationFields');
     const intlFields = document.getElementById('intlLocationFields');
     const jobState = document.getElementById('jobState');
-    const jobRegion = document.getElementById('jobRegion');
-    const regionDisplay = document.getElementById('regionDisplay');
-
-    // Create state to region mapping dynamically from the actual region options
-    const stateToRegion = {};
-
-    // Extract state mappings from region option text
-    Array.from(jobRegion.options).forEach(option => {
-      if (option.value && option.dataset.regionTitle) {
-        const title = option.dataset.regionTitle;
-
-        // Extract states from parentheses in title
-        const match = title.match(/\(([^)]+)\)/);
-        if (match) {
-          const statesStr = match[1];
-          const states = statesStr.split(',').map(s => s.trim());
-
-          states.forEach(state => {
-            stateToRegion[state] = title;
-          });
-        }
-      }
-    });
-
-    console.log('Available region options:');
-    Array.from(jobRegion.options).forEach(option => {
-      if (option.value) {
-        console.log('Region:', option.dataset.regionTitle, 'Value:', option.value);
-      }
-    });
-    console.log('State to Region mapping:', stateToRegion);
-
-    function updateRegion() {
-      const selectedCountry = document.querySelector('input[name="fields[jobCountry]"]:checked').value;
-      console.log('Update region called, country:', selectedCountry);
-
-      if (selectedCountry === 'International') {
-        // Set region to International
-        const intlOption = Array.from(jobRegion.options).find(option =>
-          option.dataset.regionTitle && option.dataset.regionTitle.includes('International')
-        );
-        console.log('International option found:', intlOption);
-        if (intlOption) {
-          intlOption.selected = true;
-          regionDisplay.innerHTML = '<strong>International</strong>';
-        }
-      } else {
-        // US - check state selection
-        const selectedState = jobState.value;
-        console.log('Selected state:', selectedState);
-        console.log('Available mappings:', stateToRegion);
-
-        if (selectedState && stateToRegion[selectedState]) {
-          const regionTitle = stateToRegion[selectedState];
-          console.log('Found region for state:', regionTitle);
-
-          const regionOption = Array.from(jobRegion.options).find(option =>
-            option.dataset.regionTitle === regionTitle
-          );
-          console.log('Region option found:', regionOption);
-
-          if (regionOption) {
-            regionOption.selected = true;
-            regionDisplay.innerHTML = '<strong>' + regionTitle + '</strong>';
-          }
-        } else {
-          jobRegion.selectedIndex = 0;
-          regionDisplay.innerHTML = '<em class="text-muted">Select a state to automatically set the region</em>';
-        }
-      }
-    }
 
     function toggleLocationFields() {
-      const selectedCountry = document.querySelector('input[name="fields[jobCountry]"]:checked').value;
+      const selectedCountry = document.querySelector('input[name="fields[country]"]:checked').value;
+      const jobCity = document.getElementById('jobCity');
+      const jobState = document.getElementById('jobState');
+      const jobLocation = document.getElementById('jobLocation');
+      const cityRequired = document.getElementById('cityrequired');
+      const stateRequired = document.getElementById('staterequired');
+      const locationRequired = document.getElementById('locationrequired');
 
-      if (selectedCountry === 'US') {
+      if (selectedCountry === 'unitedStates') {
         usFields.classList.remove('d-none');
         intlFields.classList.add('d-none');
+
+        // Make US fields required
+        jobCity.setAttribute('required', 'required');
+        jobState.setAttribute('required', 'required');
+        jobLocation.removeAttribute('required');
+
+        // Show US required asterisks
+        cityRequired.classList.remove('d-none');
+        stateRequired.classList.remove('d-none');
+        locationRequired.classList.add('d-none');
       } else {
         usFields.classList.add('d-none');
         intlFields.classList.remove('d-none');
-      }
 
-      updateRegion();
+        // Make international field required
+        jobLocation.setAttribute('required', 'required');
+        jobCity.removeAttribute('required');
+        jobState.removeAttribute('required');
+
+        // Show international required asterisk
+        locationRequired.classList.remove('d-none');
+        cityRequired.classList.add('d-none');
+        stateRequired.classList.add('d-none');
+      }
     }
 
     countryRadios.forEach(radio => {
       radio.addEventListener('change', toggleLocationFields);
     });
 
-    jobState.addEventListener('change', updateRegion);
+    // File upload functionality
+    const jobAttachmentsInput = document.getElementById('jobAttachments');
+    const browseFilesBtn = document.getElementById('browseFiles');
+    const uploadArea = document.getElementById('uploadArea');
+    const attachmentsList = document.getElementById('attachmentsList');
+    const maxFiles = 3;
+    const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+    let currentAttachments = [];
+
+    // Initialize current attachments count
+    const existingAttachments = attachmentsList.querySelectorAll('.attachment-item');
+    currentAttachments = Array.from(existingAttachments);
+
+    if (jobAttachmentsInput && browseFilesBtn && uploadArea) {
+      // Browse files button click
+      browseFilesBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        jobAttachmentsInput.click();
+      });
+
+      // File input change
+      jobAttachmentsInput.addEventListener('change', function(e) {
+        handleFileSelection(e.target.files);
+      });
+
+      // Drag and drop functionality
+      uploadArea.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        uploadArea.style.borderColor = '#0d6efd';
+        uploadArea.style.backgroundColor = '#f8f9fa';
+      });
+
+      uploadArea.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        uploadArea.style.borderColor = '#dee2e6';
+        uploadArea.style.backgroundColor = '';
+      });
+
+      uploadArea.addEventListener('drop', function(e) {
+        e.preventDefault();
+        uploadArea.style.borderColor = '#dee2e6';
+        uploadArea.style.backgroundColor = '';
+        handleFileSelection(e.dataTransfer.files);
+      });
+    }
+
+    function handleFileSelection(files) {
+      // Check total file count
+      if (currentAttachments.length + files.length > maxFiles) {
+        alert(`You can only upload up to ${maxFiles} files total. You currently have ${currentAttachments.length} file(s).`);
+        return;
+      }
+
+      // Process each file
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+
+        // Check file size
+        if (file.size > maxSize) {
+          alert(`File "${file.name}" is too large. Maximum file size is 10MB.`);
+          continue;
+        }
+
+        // Check file type
+        if (!file.name.match(/\.(pdf|doc|docx)$/i)) {
+          alert(`File "${file.name}" is not a supported format. Please upload PDF, DOC, or DOCX files.`);
+          continue;
+        }
+
+        // Add file to the list
+        addAttachmentToList(file);
+      }
+
+      // Clear the input
+      jobAttachmentsInput.value = '';
+    }
+
+    function addAttachmentToList(file) {
+      const attachmentDiv = document.createElement('div');
+      attachmentDiv.className = 'attachment-item d-flex align-items-center mb-2 p-2 border rounded';
+
+      const fileIcon = getFileIcon(file.name);
+      const fileSize = formatFileSize(file.size);
+
+      attachmentDiv.innerHTML = `
+        <i class="${fileIcon} me-2"></i>
+        <div class="me-auto">
+          <span>${file.name}</span>
+          <small class="text-muted d-block">${fileSize}</small>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-danger remove-attachment" onclick="removeAttachment(this)">
+          <i class="fas fa-times"></i>
+        </button>
+      `;
+
+      // Create a hidden input for the file
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.name = 'fields[jobAttachments][]';
+      fileInput.className = 'd-none';
+      fileInput.files = createFileList([file]);
+      attachmentDiv.appendChild(fileInput);
+
+      attachmentsList.appendChild(attachmentDiv);
+      currentAttachments.push(attachmentDiv);
+    }
+
+    function getFileIcon(filename) {
+      const ext = filename.split('.').pop().toLowerCase();
+      switch(ext) {
+        case 'pdf': return 'fas fa-file-pdf text-danger';
+        case 'doc':
+        case 'docx': return 'fas fa-file-word text-primary';
+        default: return 'fas fa-file text-secondary';
+      }
+    }
+
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    function createFileList(files) {
+      const dt = new DataTransfer();
+      files.forEach(file => dt.items.add(file));
+      return dt.files;
+    }
+
+    // Global function for removing attachments
+    window.removeAttachment = function(button) {
+      const attachmentItem = button.closest('.attachment-item');
+      const index = currentAttachments.indexOf(attachmentItem);
+      if (index > -1) {
+        currentAttachments.splice(index, 1);
+      }
+      attachmentItem.remove();
+    };
 
     // Initialize on page load
     toggleLocationFields();

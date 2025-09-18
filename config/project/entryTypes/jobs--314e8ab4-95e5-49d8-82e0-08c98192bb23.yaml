@@ -92,6 +92,35 @@ fieldLayouts:
             dateAdded: '2025-09-05T17:57:10+00:00'
             editCondition: null
             elementCondition: null
+            fieldUid: 6407ff57-cf24-424a-8a4f-34c0137e2feb # Country
+            handle: null
+            includeInCards: false
+            instructions: null
+            label: null
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 28555537-042a-47b4-8dc0-eab0b7316e47
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-09-05T17:57:10+00:00'
+            editCondition: null
+            elementCondition:
+              class: craft\elements\conditions\entries\EntryCondition
+              conditionRules:
+                -
+                  class: craft\fields\conditions\OptionsFieldConditionRule
+                  fieldUid: 6407ff57-cf24-424a-8a4f-34c0137e2feb # Country
+                  layoutElementUid: 28555537-042a-47b4-8dc0-eab0b7316e47
+                  operator: in
+                  uid: 4c62e50d-f5a5-4b76-ae90-8081754b8451
+                  values:
+                    - international
+              elementType: craft\elements\Entry
+              fieldContext: global
             fieldUid: 7a6fec95-2ed4-4d18-b669-9108357adc40 # Single Line Text
             handle: jobLocation
             includeInCards: false
@@ -125,7 +154,19 @@ fieldLayouts:
           -
             dateAdded: '2025-09-05T17:57:10+00:00'
             editCondition: null
-            elementCondition: null
+            elementCondition:
+              class: craft\elements\conditions\entries\EntryCondition
+              conditionRules:
+                -
+                  class: craft\fields\conditions\OptionsFieldConditionRule
+                  fieldUid: 6407ff57-cf24-424a-8a4f-34c0137e2feb # Country
+                  layoutElementUid: 28555537-042a-47b4-8dc0-eab0b7316e47
+                  operator: in
+                  uid: 10949ec0-d632-435c-9b34-45eb46323792
+                  values:
+                    - unitedStates
+              elementType: craft\elements\Entry
+              fieldContext: global
             fieldUid: 7a6fec95-2ed4-4d18-b669-9108357adc40 # Single Line Text
             handle: jobCity
             includeInCards: false
@@ -142,7 +183,19 @@ fieldLayouts:
           -
             dateAdded: '2025-09-17T13:14:12+00:00'
             editCondition: null
-            elementCondition: null
+            elementCondition:
+              class: craft\elements\conditions\entries\EntryCondition
+              conditionRules:
+                -
+                  class: craft\fields\conditions\OptionsFieldConditionRule
+                  fieldUid: 6407ff57-cf24-424a-8a4f-34c0137e2feb # Country
+                  layoutElementUid: 28555537-042a-47b4-8dc0-eab0b7316e47
+                  operator: in
+                  uid: 9a1803b0-fed2-44a4-ba5c-801f290c3810
+                  values:
+                    - unitedStates
+              elementType: craft\elements\Entry
+              fieldContext: global
             fieldUid: f4e9368b-2d36-4ac5-b087-d0b8a3e8079f # State
             handle: jobState
             includeInCards: false
@@ -153,23 +206,6 @@ fieldLayouts:
             tip: null
             type: craft\fieldlayoutelements\CustomField
             uid: 335a4b12-0cd2-45b7-b8af-b8390a5fd7a7
-            userCondition: null
-            warning: null
-            width: 100
-          -
-            dateAdded: '2025-09-05T17:57:10+00:00'
-            editCondition: null
-            elementCondition: null
-            fieldUid: 6407ff57-cf24-424a-8a4f-34c0137e2feb # Country
-            handle: null
-            includeInCards: false
-            instructions: null
-            label: null
-            providesThumbs: false
-            required: false
-            tip: null
-            type: craft\fieldlayoutelements\CustomField
-            uid: 28555537-042a-47b4-8dc0-eab0b7316e47
             userCondition: null
             warning: null
             width: 100

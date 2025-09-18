@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7666cdbc6dec0b925947851180813baf",
+    "content-hash": "384770c757d70487718711f384a7ad7d",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -180,6 +180,44 @@
             "description": "BaconQrCode is a QR code generator for PHP.",
             "homepage": "https://github.com/Bacon/BaconQrCode",
             "time": "2022-12-07T17:46:57+00:00"
+        },
+        {
+            "name": "bluegreensheet/job-region-populator",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "./plugins/jobregionpopulator",
+                "reference": "e10690c5bf37d8c5576e9db47a37b520a10eebb3"
+            },
+            "require": {
+                "craftcms/cms": "^5.0.0"
+            },
+            "type": "craft-plugin",
+            "extra": {
+                "name": "Job Region Populator",
+                "handle": "job-region-populator",
+                "developer": "Blue Green Sheet",
+                "developerUrl": "https://bluegreensheet.com",
+                "class": "plugins\\jobregionpopulator\\Plugin"
+            },
+            "autoload": {
+                "psr-4": {
+                    "plugins\\jobregionpopulator\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Blue Green Sheet",
+                    "homepage": "https://bluegreensheet.com"
+                }
+            ],
+            "description": "Automatically populates job region field based on country and state selections",
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "brick/math",
@@ -11311,7 +11349,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "bluegreensheet/job-region-populator": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": [],
@@ -11319,5 +11359,5 @@
     "platform-overrides": {
         "php": "8.2"
     },
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.0.0"
 }
