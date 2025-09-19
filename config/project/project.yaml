@@ -1,4 +1,4 @@
-dateModified: 1758294780
+dateModified: 1758305886
 elementSources:
   craft\elements\Entry:
     -
@@ -134,19 +134,33 @@ email:
   transportType: craft\mail\transportadapters\Sendmail
 fs:
   assets:
-    hasUrls: true
+    hasUrls: false
     name: Assets
     settings:
-      path: images
-    type: craft\fs\Local
-    url: $DDEV_PRIMARY_URL/images
+      cdnUrlPattern: ''
+      customSubfolder: ''
+      makeUploadsPublic: true
+      optimisePrefix: ''
+      optimiseUrlPattern: ''
+      projectSlug: ''
+      securityKey: ''
+      subfolder: local/
+    type: servd\AssetStorage\AssetsPlatform\Fs
+    url: 'https://bluegreen-sheet.files.svdcdn.com'
   attachments:
-    hasUrls: true
+    hasUrls: false
     name: Attachments
     settings:
-      path: attachments
-    type: craft\fs\Local
-    url: $DDEV_PRIMARY_URL/attachments
+      cdnUrlPattern: ''
+      customSubfolder: ''
+      makeUploadsPublic: true
+      optimisePrefix: ''
+      optimiseUrlPattern: ''
+      projectSlug: ''
+      securityKey: ''
+      subfolder: local/
+    type: servd\AssetStorage\AssetsPlatform\Fs
+    url: 'https://bluegreen-sheet.files.svdcdn.com'
 meta:
   __names__:
     0d0aac89-9a3b-4d6e-add7-8a1c3a679b77: 'Multi Line Text' # Multi Line Text
@@ -214,8 +228,25 @@ plugins:
     schemaVersion: 1.0.0
   servd-asset-storage:
     edition: standard
-    enabled: false
+    enabled: true
     schemaVersion: 3.0.0
+    settings:
+      adjustFeedmeLogs: ''
+      assetsEnvironment: ''
+      assetsEnvironmentOverwrite: ''
+      cacheClearMode: full
+      clearCachesOnSave: always
+      clearCdnCacheWhenAssetChanges: '1'
+      disableDynamic: ''
+      disableTransforms: ''
+      fsMapsEnabled: ''
+      imageAutoConversion: webp
+      injectCors: ''
+      projectSlug: bluegreen-sheet
+      securityKey: 33ZUmtPqdw2XmcEaxHGVXpczLPw0ykN1
+      suppressWarnings: ''
+      transformSvgs: 'no'
+      useLocalVolumes: false
   stripe:
     edition: standard
     enabled: true
