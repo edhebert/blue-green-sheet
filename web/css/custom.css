@@ -1,9 +1,21 @@
 
 
 :root {
-	 /* --cnvs-themecolor: #004bad;
-	--cnvs-themecolor-rgb: 131, 179, 65;  */
-    --bs-btn-bg: #ff0000 !important;
+	 --cnvs-themecolor: #338a61;
+	 --cnvs-themecolor-rgb: 51, 138, 97;
+
+     --cnvs-heading-color: #338a61;
+
+     --bs-primary: #004bad;
+     --bs-primary-rgb: 0, 75, 173;
 }
 
 
+.button:hover {
+    background-color: #5da483ff;
+}
+
+/* .bg-primary {
+    --bs-bg-opacity: 0.5;
+    background-color: rgba(var(--cnvs-themecolor-rgb), var(--bs-bg-opacity)) !important;
+} */

@@ -1,0 +1,166 @@
+{% extends "_layout.twig" %}
+
+{% block title %}About Us · {{ siteName }}{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <!-- Header Section -->
+      <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold mb-3">About Blue Green Sheet</h1>
+        <p class="lead text-muted">
+          Connecting independent school professionals with exceptional opportunities since 1990
+        </p>
+      </div>
+
+      <!-- Main Content -->
+      <div class="row g-5">
+        <div class="col-12">
+          <!-- Mission Section -->
+          <div class="mb-5">
+            <h2 class="h3 fw-bold mb-4">Our Mission</h2>
+            <p class="lead mb-4">
+              BlueGreen Sheet LLC (BGS) is an independent company dedicated to connecting independent school job seekers with independent schools and their representatives.
+            </p>
+            <p class="mb-4">
+              We do not conduct searches nor do we evaluate candidates. We do not compete with search consultants in any way. We simply strive to be an efficient means for individuals looking to work at an independent school to connect with Schools and Consultants who are looking to fill positions.
+            </p>
+          </div>
+
+          <!-- Heritage Section -->
+          <div class="mb-5">
+            <h2 class="h3 fw-bold mb-4">Our Heritage</h2>
+            <p class="mb-4">
+              BGS is the successor platform to The Blue Sheet and The Green Sheet, previously owned by and founded by Educational Directions in 1990. The Blue Sheet and The Green Sheet grew to become the leading service for individuals to learn about independent school jobs and for schools and consultants to connect with exceptional candidates.
+            </p>
+          </div>
+
+          <!-- Leadership Section -->
+          <div class="mb-5">
+            <h2 class="h3 fw-bold mb-4">Our Leadership</h2>
+            <p class="mb-4">
+              BGS is managed by Lisa Higgins Dow and owned by Chase and Nicole Arnold, who are committed to continuing the tradition of excellence established over three decades ago.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Values Section -->
+      <div class="row g-4 mb-5">
+        <div class="col-md-4 text-center">
+          <div class="mb-3">
+            <i class="bi bi-people-fill text-primary" style="font-size: 3rem;"></i>
+          </div>
+          <h3 class="h5 fw-bold mb-3">Connection</h3>
+          <p class="text-muted">
+            We facilitate meaningful connections between talented educators and outstanding independent schools.
+          </p>
+        </div>
+        <div class="col-md-4 text-center">
+          <div class="mb-3">
+            <i class="bi bi-award text-primary" style="font-size: 3rem;"></i>
+          </div>
+          <h3 class="h5 fw-bold mb-3">Excellence</h3>
+          <p class="text-muted">
+            Building on 30+ years of experience serving the independent school community with distinction.
+          </p>
+        </div>
+        <div class="col-md-4 text-center">
+          <div class="mb-3">
+            <i class="bi bi-compass text-primary" style="font-size: 3rem;"></i>
+          </div>
+          <h3 class="h5 fw-bold mb-3">Focus</h3>
+          <p class="text-muted">
+            We specialize exclusively in independent school positions, ensuring targeted and relevant matches.
+          </p>
+        </div>
+      </div>
+
+      <!-- Stats Section -->
+      <div class="bg-light rounded-3 p-4 mb-5">
+        <div class="row text-center">
+          <div class="col-md-3 mb-3 mb-md-0">
+            <div class="h2 fw-bold text-primary mb-1">30+</div>
+            <div class="text-muted small">Years of Service</div>
+          </div>
+          <div class="col-md-3 mb-3 mb-md-0">
+            <div class="h2 fw-bold text-primary mb-1">1000+</div>
+            <div class="text-muted small">Schools Served</div>
+          </div>
+          <div class="col-md-3 mb-3 mb-md-0">
+            <div class="h2 fw-bold text-primary mb-1">5000+</div>
+            <div class="text-muted small">Professionals Connected</div>
+          </div>
+          <div class="col-md-3">
+            <div class="h2 fw-bold text-primary mb-1">24/7</div>
+            <div class="text-muted small">Platform Access</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Call to Action -->
+      <div class="text-center">
+        {% if currentUser %}
+          <!-- User is logged in -->
+          <div class="mb-4">
+            <h3 class="h4 mb-3">Ready to explore opportunities?</h3>
+            <p class="text-muted mb-4">
+              Browse our current job openings and find your next career opportunity.
+            </p>
+            <a href="{{ url('jobs') }}" class="button button-xlarge button-rounded px-4 me-3">
+              <i class="bi bi-search me-2"></i>Browse Jobs
+            </a>
+            {% if currentUser.can('postJobs') %}
+              <a href="{{ url('jobs/post') }}" class="button button-xlarge button-rounded button-border px-4">
+                <i class="bi bi-plus-circle me-2"></i>Post a Job
+              </a>
+            {% endif %}
+          </div>
+        {% else %}
+          <!-- User is not logged in -->
+          <div class="mb-4">
+            <h3 class="h4 mb-3">Join our community today</h3>
+            <p class="text-muted mb-4">
+              Whether you're seeking your next opportunity or looking to hire exceptional talent, we're here to help.
+            </p>
+            <div class="d-flex gap-3 justify-content-center flex-wrap">
+              <a href="{{ url('login') }}" class="button button-xlarge button-rounded px-4">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+              </a>
+              <a href="{{ url('register') }}" class="button button-xlarge button-rounded button-border px-4">
+                <i class="bi bi-person-plus me-2"></i>Create Account
+              </a>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Contact Information -->
+      <div class="border-top pt-5 mt-5">
+        <div class="row">
+          <div class="col-md-6 mb-4">
+            <h3 class="h5 fw-bold mb-3">Get in Touch</h3>
+            <p class="text-muted mb-3">
+              Have questions about our platform or need assistance? We're here to help.
+            </p>
+            <div class="d-flex align-items-center mb-2">
+              <i class="bi bi-envelope text-primary me-3"></i>
+              <span>info@bluegreensheet.com</span>
+            </div>
+          </div>
+          <div class="col-md-6 mb-4">
+            <h3 class="h5 fw-bold mb-3">For Schools & Consultants</h3>
+            <p class="text-muted mb-3">
+              Learn more about our job posting services and how we can help you find exceptional candidates.
+            </p>
+            <a href="{{ url('pricing') }}" class="text-primary text-decoration-none">
+              <i class="bi bi-arrow-right me-2"></i>View Pricing
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

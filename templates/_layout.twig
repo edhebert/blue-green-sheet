@@ -17,7 +17,7 @@
 	{# Font Imports #}
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=PT+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital@0;1&display=swap" rel="stylesheet">
 
 	{# Core Style  #}
 	<link rel="stylesheet" href="{{siteUrl}}style.css">
@@ -48,30 +48,47 @@
 
 	<div id="wrapper"> {#  Canvas - Site Wrapper #}
 
-
 		{# Canvas - Header  #}
-		<header id="header" class="dark">
+
+        {# if homepage make the menu transparent behind the image  #}
+            {% set url = craft.app.request.url %}
+
+		<header id="header" class="{% if url == "/" %}transparent-header transparent-header-responsive {% endif %}dark">
 			<div id="header-wrap">
 				<div class="container">
-					<div class="header-row">
+					<div class="header-row top-search-parent">
 
 						<!-- Logo
 						============================================= -->
 						<div id="logo">
 							<a href="{{ siteUrl }}">
 								<img class="logo-default" src="{{siteUrl}}images/BGS-logo.png" alt="BlueGreen Sheet">
-								<img class="logo-dark" src="{{siteUrl}}images/BGS-logo.png" alt="BlueGreen Sheet">
+								<img class="logo-dark" src="{{siteUrl}}images/BGS-logo.png" alt="BlueGreen Sheet" style="padding: 10%">
 							</a>
 						</div><!-- #logo end -->
 
+                        {# these buttons don't collapse on mobile  #}
+                        <div class="header-misc justify-content-xl-end">
+                                {% if currentUser %}
+
+									    <a class="ms-6 button rounded-pill button-border border-width-1 button-light button-mini" style="text-transform: uppercase;" href="{{ siteUrl }}logout"><div>Logout</div></a>
+
+                                {% else %}
+
+									    <a class="ms-6 button rounded-pill button-mini" style="text-transform: uppercase;" href="{{ siteUrl }}login"><i class="bi bi-box-arrow-in-right me-2"></i>Sign In</a>
+ 
+                                        <a class="button button-border border-width-1 button-light rounded-pill button-mini" style="text-transform: uppercase;" href="{{ siteUrl }}register"><i class="bi bi-person-plus me-2"></i>Sign Up</a>                            
+                                {% endif %}                        
+                        
+                        </div>
+                        {# this is the hamburger menu  #}
 						<div class="primary-menu-trigger">
 							<button class="cnvs-hamburger" type="button" title="Open Mobile Menu">
 								<span class="cnvs-hamburger-box"><span class="cnvs-hamburger-inner"></span></span>
 							</button>
 						</div>
 
-						<!-- Primary Navigation
-						============================================= -->
+						{# this is the standard menu  #}
 						<nav class="primary-menu">
 
 							<ul class="menu-container">
@@ -87,19 +104,6 @@
 								<li class="menu-item">
 									<a class="menu-link" href="{{ siteUrl }}subscribe"><div>Subscribe</div></a>
 								</li>                            
-                                <li class="menu-item">
-									<a class="menu-link" href="{{ siteUrl }}contact"><div>Contact</div></a>
-								</li>
-                                {% if currentUser %}
-                                    <li class="menu-item">
-									    <a class="menu-link" href="{{ siteUrl }}logout"><div>Logout</div></a>
-								    </li>
-                                {% else %}
-                                    <li class="menu-item">
-									    <a class="menu-link" href="{{ siteUrl }}login"><div>Login</div></a>
-								    </li>                                    
-                                {% endif %}
-                                
 							</ul>
 
 						</nav><!-- #primary-menu end -->
@@ -110,13 +114,15 @@
 		</header>
 
 		{# Canvas - site Content  #}
+
+        {% block slider %}{% endblock %}
 		<section id="content">
 			<div class="content-wrap">
                 {% block content %}{% endblock %}
             </div>
         </section>
 
- 		{# Canvas - Footer  #}
+ 		{# Canvas - Footer  
 		<footer id="footer" class="dark">
 			<div class="container">
 
@@ -124,7 +130,6 @@
 
 			</div>
 
-			{# Canvas - Copyrights  #}
 			<div id="copyrights">
 				<div class="container">
 
@@ -133,7 +138,9 @@
 				</div>
 			</div>
 
-		</footer>      
+		</footer>   #}
+
+    {% include '_includes/footer.twig' %}   
 
     </div> {#  End Canvas Site Wrapper #}
 
@@ -144,8 +151,13 @@
 	{# Canvas - go To Top  #}
 	<div id="gotoTop" class="uil uil-angle-up"></div>
 
-    {# Canvas Javascript  
-	<script src="{{siteUrl}}js/plugins.min.js"></script> #}
+    {# Canvas Javascript  #}
+
+    {# only load plugins page, as it breaks the accordion menus on subpages  #}
+    {% if url == "/" %}
+        <script src="{{siteUrl}}js/plugins.min.js"></script>
+    {% endif %}
+	
 	<script src="{{siteUrl}}js/functions.bundle.js"></script> 
 
   {% block scripts %}{% endblock %}

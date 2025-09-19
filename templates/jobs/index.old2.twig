@@ -8,7 +8,6 @@
 {% set categoryParam = craft.app.request.getParam('category') %}
 {% set stateParam = craft.app.request.getParam('state') %}
 {% set limitParam = craft.app.request.getParam('limit', 25) %}
-{% set sortParam = craft.app.request.getParam('sort', 'newest') %}
 
 {# Convert comma-separated strings to arrays #}
 {% if regionParam %}
@@ -72,23 +71,13 @@
     {% set jobQuery = jobQuery.jobState(currentFilters.state) %}
 {% endif %}
 
-{# Apply sorting #}
-{% if sortParam == 'title' %}
-    {% set jobQuery = jobQuery.orderBy('title ASC') %}
-{% elseif sortParam == 'location' %}
-    {% set jobQuery = jobQuery.orderBy('jobCity ASC, jobState ASC') %}
-{% else %}
-    {# Default: newest first #}
-    {% set jobQuery = jobQuery.orderBy('postDate DESC') %}
-{% endif %}
-
 {# Use Craft's paginate tag #}
 {% paginate jobQuery.limit(currentLimit) as pageInfo, jobs %}
 
 <div class="container">
     <div class="row">
         {# Sidebar Filters #}
-        <aside class="col-lg-4 col-xl-3 mb-4">
+        <aside class="col-lg-3 col-xl-2 mb-4">
             <div class="card border-0 shadow-sm position-sticky" style="top: 1rem; max-height: calc(100vh - 2rem); overflow-y: auto;">
                 <div class="card-header bg-light border-0 sticky-top bg-white">
                     <h3 class="h6 mb-0">Filter Jobs</h3>
@@ -112,7 +101,7 @@
                                         type="button"
                                         data-bs-toggle="collapse"
                                         data-bs-target="#regionsCollapse"
-                                        aria-expanded="false"
+                                        aria-expanded="{{ currentFilters.region|length ? 'true' : 'false' }}"
                                         aria-controls="regionsCollapse">
                                     <span class="me-auto">Regions</span>
                                     {% if currentFilters.region|length %}
@@ -120,7 +109,7 @@
                                     {% endif %}
                                 </button>
                             </h4>
-                            <div id="regionsCollapse" class="accordion-collapse collapse" data-bs-parent="#filterAccordion">
+                            <div id="regionsCollapse" class="accordion-collapse collapse {{ currentFilters.region|length ? 'show' : '' }}" data-bs-parent="#filterAccordion">
                                 <div class="accordion-body p-0 pt-2">
                                     {% for region in craft.categories().group('jobRegion').all() %}
                                         {% set isActive = region.id in currentFilters.region %}
@@ -147,7 +136,7 @@
                                         type="button"
                                         data-bs-toggle="collapse"
                                         data-bs-target="#categoriesCollapse"
-                                        aria-expanded="false"
+                                        aria-expanded="{{ currentFilters.category|length ? 'true' : 'false' }}"
                                         aria-controls="categoriesCollapse">
                                     <span class="me-auto">Job Categories</span>
                                     {% if currentFilters.category|length %}
@@ -155,7 +144,7 @@
                                     {% endif %}
                                 </button>
                             </h4>
-                            <div id="categoriesCollapse" class="accordion-collapse collapse" data-bs-parent="#filterAccordion">
+                            <div id="categoriesCollapse" class="accordion-collapse collapse {{ currentFilters.category|length ? 'show' : '' }}" data-bs-parent="#filterAccordion">
                                 <div class="accordion-body p-0 pt-2">
                                     {% for category in craft.categories().group('jobCategories').all() %}
                                         {% set isActive = category.id in currentFilters.category %}
@@ -184,7 +173,7 @@
                                         type="button"
                                         data-bs-toggle="collapse"
                                         data-bs-target="#statesCollapse"
-                                        aria-expanded="false"
+                                        aria-expanded="{{ currentFilters.state ? 'true' : 'false' }}"
                                         aria-controls="statesCollapse">
                                     <span class="me-auto">States</span>
                                     {% if currentFilters.state|length %}
@@ -192,7 +181,7 @@
                                     {% endif %}
                                 </button>
                             </h4>
-                            <div id="statesCollapse" class="accordion-collapse collapse" data-bs-parent="#filterAccordion">
+                            <div id="statesCollapse" class="accordion-collapse collapse {{ currentFilters.state|length ? 'show' : '' }}" data-bs-parent="#filterAccordion">
                                 <div class="accordion-body p-0 pt-2">
                                     {# Show actual states from job entries #}
                                     {% for state, stateJobs in availableStates %}
@@ -273,10 +262,10 @@
         </aside>
 
         {# Main Content Area #}
-        <main class="col-lg-8 col-xl-9">
+        <main class="col-lg-9 col-xl-10">
             <div class="d-flex justify-content-between align-items-start mb-4">
                 <div>
-                    <h1 class="h3 mb-1">Browse {{ pageInfo.total }} current job opportunities</h1>
+                    <h1 class="h3 mb-1">Job Opportunities</h1>
                     <p class="text-muted mb-0">
                         Showing {{ jobs|length }} of {{ pageInfo.total }} position{{ pageInfo.total != 1 ? 's' : '' }}
                         {% if pageInfo.totalPages > 1 %}
@@ -293,9 +282,8 @@
                         <ul class="dropdown-menu">
                             {% for limit in allowedLimits %}
                                 <li>
-                                    <a class="dropdown-item {{ currentLimit == limit ? 'active' : '' }} limit-selector"
-                                       href="#"
-                                       data-limit="{{ limit }}">
+                                    <a class="dropdown-item {{ currentLimit == limit ? 'active' : '' }}"
+                                       href="{{ craft.app.request.url|split('?')[0] }}?{{ craft.app.request.queryStringWithoutPath|replace({('limit=' ~ currentLimit): ('limit=' ~ limit), ('page=' ~ pageInfo.currentPage): 'page=1'}) }}{% if not craft.app.request.queryStringWithoutPath %}limit={{ limit }}{% else %}&limit={{ limit }}{% endif %}">
                                         {{ limit }} per page
                                     </a>
                                 </li>
@@ -309,9 +297,9 @@
                                 Sort by
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item sort-selector {{ sortParam == 'newest' ? 'active' : '' }}" href="#" data-sort="newest">Newest First</a></li>
-                                <li><a class="dropdown-item sort-selector {{ sortParam == 'title' ? 'active' : '' }}" href="#" data-sort="title">Title A-Z</a></li>
-                                <li><a class="dropdown-item sort-selector {{ sortParam == 'location' ? 'active' : '' }}" href="#" data-sort="location">Location</a></li>
+                                <li><a class="dropdown-item" href="#" data-sort="newest">Newest First</a></li>
+                                <li><a class="dropdown-item" href="#" data-sort="title">Title A-Z</a></li>
+                                <li><a class="dropdown-item" href="#" data-sort="location">Location</a></li>
                             </ul>
                         </div>
                     {% endif %}
@@ -325,7 +313,7 @@
                         <div class="col-lg-6 col-xl-4 job-card-wrapper">
                             <article class="card h-100 border-0 shadow-sm job-card">
                                 <div class="card-body">
-                                    {% if job.author.organization.one().logo[0]|length %}
+                                    {% if job.author.organization|length %}
                                         <img src="{{ job.author.organization.one().logo[0].url('height100') }}" alt="{{ job.author.organization.title }}" class="mb-2">
                                     {% endif %}
                                     
@@ -486,47 +474,6 @@
 {% block scripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Accordion State Management with SessionStorage
-    const accordionIds = ['regionsCollapse', 'categoriesCollapse', 'statesCollapse'];
-    const accordionButtons = ['[data-bs-target="#regionsCollapse"]', '[data-bs-target="#categoriesCollapse"]', '[data-bs-target="#statesCollapse"]'];
-
-    // Restore accordion states from sessionStorage
-    function restoreAccordionStates() {
-        accordionIds.forEach((accordionId, index) => {
-            const isOpen = sessionStorage.getItem(`accordion_state_${accordionId}`) === 'true';
-            const accordionElement = document.getElementById(accordionId);
-            const buttonElement = document.querySelector(accordionButtons[index]);
-
-            if (isOpen && accordionElement && buttonElement) {
-                accordionElement.classList.add('show');
-                buttonElement.classList.remove('collapsed');
-                buttonElement.setAttribute('aria-expanded', 'true');
-            }
-        });
-    }
-
-    // Save accordion state to sessionStorage
-    function saveAccordionState(accordionId, isOpen) {
-        sessionStorage.setItem(`accordion_state_${accordionId}`, isOpen.toString());
-    }
-
-    // Listen for accordion events
-    accordionIds.forEach(accordionId => {
-        const accordionElement = document.getElementById(accordionId);
-        if (accordionElement) {
-            accordionElement.addEventListener('show.bs.collapse', function() {
-                saveAccordionState(accordionId, true);
-            });
-
-            accordionElement.addEventListener('hide.bs.collapse', function() {
-                saveAccordionState(accordionId, false);
-            });
-        }
-    });
-
-    // Restore states after a short delay to ensure Bootstrap is ready
-    setTimeout(restoreAccordionStates, 100);
-
     // Get current URL without query string
     const baseUrl = window.location.pathname;
 
@@ -538,8 +485,7 @@ document.addEventListener('DOMContentLoaded', function() {
             category: urlParams.get('category') ? urlParams.get('category').split(',') : [],
             state: urlParams.get('state') ? urlParams.get('state').split(',') : [],
             limit: urlParams.get('limit') || '25',
-            page: urlParams.get('page') || '1',
-            sort: urlParams.get('sort') || 'newest'
+            page: urlParams.get('page') || '1'
         };
     }
 
@@ -590,87 +536,12 @@ document.addEventListener('DOMContentLoaded', function() {
             urlParams.append('limit', params.limit);
         }
 
-        // Add sort parameter
-        if (params.sort && params.sort !== 'newest') {
-            urlParams.append('sort', params.sort);
-        }
-
         // Reset to page 1 when filters change
         if (filterType !== 'page') {
             urlParams.append('page', '1');
         } else if (params.page && params.page !== '1') {
             urlParams.append('page', params.page);
         }
-
-        const queryString = urlParams.toString();
-        return baseUrl + (queryString ? '?' + queryString : '');
-    }
-
-    // Function to build URL with updated limit
-    function buildLimitUrl(newLimit) {
-        const params = getCurrentParams();
-        params.limit = newLimit.toString();
-        params.page = '1'; // Reset to page 1 when changing limit
-
-        const urlParams = new URLSearchParams();
-
-        // Add filter parameters
-        if (params.region.length > 0) {
-            urlParams.append('region', params.region.filter(v => v).join(','));
-        }
-        if (params.category.length > 0) {
-            urlParams.append('category', params.category.filter(v => v).join(','));
-        }
-        if (params.state.length > 0) {
-            urlParams.append('state', params.state.filter(v => v).join(','));
-        }
-
-        // Add limit parameter
-        if (params.limit && params.limit !== '25') {
-            urlParams.append('limit', params.limit);
-        }
-
-        // Add sort parameter
-        if (params.sort && params.sort !== 'newest') {
-            urlParams.append('sort', params.sort);
-        }
-
-        // Add page parameter
-        urlParams.append('page', '1');
-
-        const queryString = urlParams.toString();
-        return baseUrl + (queryString ? '?' + queryString : '');
-    }
-
-    // Function to build URL with sorting
-    function buildSortUrl(sortType) {
-        const params = getCurrentParams();
-        params.sort = sortType;
-        params.page = '1'; // Reset to page 1 when changing sort
-
-        const urlParams = new URLSearchParams();
-
-        // Add filter parameters
-        if (params.region.length > 0) {
-            urlParams.append('region', params.region.filter(v => v).join(','));
-        }
-        if (params.category.length > 0) {
-            urlParams.append('category', params.category.filter(v => v).join(','));
-        }
-        if (params.state.length > 0) {
-            urlParams.append('state', params.state.filter(v => v).join(','));
-        }
-
-        // Add limit parameter
-        if (params.limit && params.limit !== '25') {
-            urlParams.append('limit', params.limit);
-        }
-
-        // Add sort parameter
-        urlParams.append('sort', sortType);
-
-        // Add page parameter
-        urlParams.append('page', '1');
 
         const queryString = urlParams.toString();
         return baseUrl + (queryString ? '?' + queryString : '');
@@ -697,26 +568,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const newUrl = buildFilterUrl(filterType, filterValue, 'remove');
 
-            window.location.href = newUrl;
-        });
-    });
-
-    // Handle limit selector clicks
-    document.querySelectorAll('.limit-selector').forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const newLimit = this.dataset.limit;
-            const newUrl = buildLimitUrl(newLimit);
-            window.location.href = newUrl;
-        });
-    });
-
-    // Handle sort selector clicks
-    document.querySelectorAll('.sort-selector').forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const sortType = this.dataset.sort;
-            const newUrl = buildSortUrl(sortType);
             window.location.href = newUrl;
         });
     });

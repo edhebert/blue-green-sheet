@@ -1,54 +1,60 @@
 {% extends "_layout.twig" %}
 
-{% block title %}{{ siteName }} - Private School Leadership Opportunities{% endblock %}
-
-{% block content %}
 {# Get some stats for display #}
 {% set jobCount = craft.entries.section('jobs').count() %}
 {% set orgCount = craft.entries.section('organizations').count() %}
 
-<div class="container" style="max-width: 960px;">
-  {# Hero Section #}
-  <div class="text-center py-5">
-    <h1 class="display-5 fw-bold mb-3">Welcome to {{ siteName }}</h1>
-    <p class="lead mb-4">
-      Connecting exceptional leaders with outstanding private schools. Find your next career opportunity in independent education.
-    </p>
+{% block title %}{{ siteName }} - Private School Leadership Opportunities{% endblock %}
 
-    <div class="d-flex flex-wrap justify-content-center gap-3 mb-4">
-      <a href="/jobs" class="button btn btn-primary btn-lg">Browse {{ jobCount }} Opportunities</a>
-      {% if not currentUser %}
-        <a href="/register" class="button btn button-border btn-lg">Create Account</a>
-      {% endif %}
-    </div>
+{% block styles %}
+<style>
+.dark .slider-caption, .dark .slider-caption h2, .dark .slider-caption p {
+    text-shadow: 2px 2px 2px rgba(0,0,0,0.5);
+}
+.dark .slider-caption a, .dark .slider-caption a:hover {
+    text-shadow: none;
+}
 
-    {% if jobCount > 0 or orgCount > 0 %}
-      <div class="row justify-content-center">
-        <div class="col-auto">
-          <div class="bg-light rounded-3 p-3">
-            <div class="row text-center">
-              <div class="col">
-                <div class="h4 fw-bold mb-1">{{ jobCount }}</div>
-                <div class="small text-muted">Active Positions</div>
-              </div>
-              <div class="col">
-                <div class="h4 fw-bold mb-1">{{ orgCount }}</div>
-                <div class="small text-muted">Organizations</div>
-              </div>
+</style>
+{% endblock %}
+
+
+{% block slider %}
+    <section id="slider" class="slider-element slider-parallax swiper_wrapper min-vh-60 min-vh-md-75 include-header" style="background-color: #000;">
+        <div class="slider-inner">
+            <div class="swiper swiper-parent">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide dark">
+                        <div class="container">
+                            <div class="slider-caption slider-caption-center">
+                                <h2 data-animate="fadeInUp">{{ siteName }}</h2>
+                                <p class="d-none d-sm-block" data-animate="fadeInUp" data-delay="200">Connecting exceptional leaders with outstanding private schools. Find your next career opportunity in independent education.</p>
+                                <p data-animate="fadeInUp" data-delay="300">
+                                    <a href="{{ siteUrl }}jobs" class="button button-large rounded-pill px-5 px-lg-6 py-lg-4 py-3"><span>Find Your Next Job<i class="bi-arrow-right ms-2 me-0"></i></span></a>
+                                </p>
+                                
+                            </div>
+                        </div>
+                        <div class="swiper-slide-bg" style="background-image: url('{{ siteUrl }}images/sanborn-desat.jpg'); opacity:0.4"></div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-    {% endif %}
-  </div>
+    </section>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
 
   {# Recent Jobs Section #}
   {% set recentJobs = craft.entries.section('jobs').limit(3).all() %}
   {% if recentJobs|length %}
     <div class="mb-5">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="h4 mb-0">Recent Opportunities</h2>
-        <a href="/jobs" class="btn btn-outline-primary">View All</a>
+      <div class="d-flex justify-content-between align-items-center mb-5">
+        <h2 class="mb-0">{{ jobCount }} Current Opportunities</h2>
+        <a href="/jobs" class="button button-outline button-large rounded-pill">View All</a>
       </div>
 
       <div class="row g-4">
@@ -56,6 +62,11 @@
           <div class="col-md-4">
             <div class="card h-100 border-0 shadow-sm">
               <div class="card-body">
+                {% if job.author.organization.one().logo[0]|length %}
+                    <img src="{{ job.author.organization.one().logo[0].url('height100') }}" alt="{{ job.author.organization.title }}" class="mb-4" style="display:block; margin:0 auto">
+                {% endif %}
+
+
                 <h3 class="h6 mb-2">
                   <a href="{{ job.url }}" class="text-decoration-none">{{ job.title }}</a>
                 </h3>
@@ -75,7 +86,7 @@
 
                 <div class="d-flex justify-content-between align-items-center">
                   <small class="text-muted">Posted {{ job.postDate|date('M j') }}</small>
-                  <a href="{{ job.url }}" class="btn btn-sm btn-outline-primary">View Details</a>
+                  <a href="{{ job.url }}" class="button button-outline button-mini rounded-pill">View Details</a>
                 </div>
               </div>
             </div>
@@ -87,36 +98,24 @@
 
   {# User-specific content #}
   {% if currentUser %}
-    <div class="card border-0 bg-light mb-4">
+    <div class="card border-0 bg-primary bg-opacity-10 mb-4">
       <div class="card-body text-center p-4">
         <h2 class="h5 mb-3">Welcome back, {{ currentUser.firstName }}!</h2>
         <p class="text-muted mb-3">Ready to explore new opportunities in private education?</p>
         <div class="d-flex flex-wrap justify-content-center gap-3">
-          <a href="/jobs" class="btn btn-primary">Browse Latest Positions</a>
-          <a href="/profile" class="btn btn-outline-primary">Manage Profile</a>
+          <a href="{{siteUrl}}jobs" class="button rounded-pill">Browse Latest Positions</a>
+          <a href="{{siteUrl}}profile" class="button button-border border-width-2 rounded-pill">Manage Profile</a>
         </div>
       </div>
-    </div>
-
-    {# Debug info for development #}
-    <div class="alert alert-warning">
-      <strong>DEBUG INFO:</strong><br>
-      User: {{ currentUser.email }}<br>
-      Groups:
-      {% for group in currentUser.groups %}
-          {{ group.name }} ({{ group.handle }}){% if not loop.last %}, {% endif %}
-      {% endfor %}<br>
-      In jobPosters group: {{ currentUser.isInGroup('jobPosters') ? 'YES' : 'NO' }}<br>
-      Organization: {{ currentUser.organization.one() ? currentUser.organization.one().title : 'NONE' }}
     </div>
   {% else %}
     <div class="card border-0 bg-primary bg-opacity-10 mb-4">
       <div class="card-body text-center p-4">
-        <h2 class="h5 mb-3">Join the Leading Network for Private School Professionals</h2>
-        <p class="text-muted mb-3">Connect with top independent schools and advance your career in education leadership.</p>
+        <h2 class="h5 mb-3">Find Qualified Professionals for Educational Leadership</h2>
+        <p class="text-muted mb-3">Register or sign in to post your job openings!</p>
         <div class="d-flex flex-wrap justify-content-center gap-3">
-          <a href="/register" class="btn btn-primary">Create Free Account</a>
-          <a href="/login" class="btn btn-outline-primary">Sign In</a>
+          <a href="{{ siteUrl }}/register" class="button rounded-pill">Create Free Account</a>
+          <a href="{{ siteUrl }}/login" class="button button-border border-width-2 rounded-pill">Sign In</a>
         </div>
       </div>
     </div>

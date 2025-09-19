@@ -112,7 +112,7 @@
                                         type="button"
                                         data-bs-toggle="collapse"
                                         data-bs-target="#regionsCollapse"
-                                        aria-expanded="false"
+                                        aria-expanded="{{ currentFilters.region|length ? 'true' : 'false' }}"
                                         aria-controls="regionsCollapse">
                                     <span class="me-auto">Regions</span>
                                     {% if currentFilters.region|length %}
@@ -120,7 +120,7 @@
                                     {% endif %}
                                 </button>
                             </h4>
-                            <div id="regionsCollapse" class="accordion-collapse collapse" data-bs-parent="#filterAccordion">
+                            <div id="regionsCollapse" class="accordion-collapse collapse {{ currentFilters.region|length ? 'show' : '' }}" data-bs-parent="#filterAccordion">
                                 <div class="accordion-body p-0 pt-2">
                                     {% for region in craft.categories().group('jobRegion').all() %}
                                         {% set isActive = region.id in currentFilters.region %}
@@ -147,7 +147,7 @@
                                         type="button"
                                         data-bs-toggle="collapse"
                                         data-bs-target="#categoriesCollapse"
-                                        aria-expanded="false"
+                                        aria-expanded="{{ currentFilters.category|length ? 'true' : 'false' }}"
                                         aria-controls="categoriesCollapse">
                                     <span class="me-auto">Job Categories</span>
                                     {% if currentFilters.category|length %}
@@ -155,7 +155,7 @@
                                     {% endif %}
                                 </button>
                             </h4>
-                            <div id="categoriesCollapse" class="accordion-collapse collapse" data-bs-parent="#filterAccordion">
+                            <div id="categoriesCollapse" class="accordion-collapse collapse {{ currentFilters.category|length ? 'show' : '' }}" data-bs-parent="#filterAccordion">
                                 <div class="accordion-body p-0 pt-2">
                                     {% for category in craft.categories().group('jobCategories').all() %}
                                         {% set isActive = category.id in currentFilters.category %}
@@ -184,7 +184,7 @@
                                         type="button"
                                         data-bs-toggle="collapse"
                                         data-bs-target="#statesCollapse"
-                                        aria-expanded="false"
+                                        aria-expanded="{{ currentFilters.state ? 'true' : 'false' }}"
                                         aria-controls="statesCollapse">
                                     <span class="me-auto">States</span>
                                     {% if currentFilters.state|length %}
@@ -192,7 +192,7 @@
                                     {% endif %}
                                 </button>
                             </h4>
-                            <div id="statesCollapse" class="accordion-collapse collapse" data-bs-parent="#filterAccordion">
+                            <div id="statesCollapse" class="accordion-collapse collapse {{ currentFilters.state|length ? 'show' : '' }}" data-bs-parent="#filterAccordion">
                                 <div class="accordion-body p-0 pt-2">
                                     {# Show actual states from job entries #}
                                     {% for state, stateJobs in availableStates %}
@@ -486,47 +486,6 @@
 {% block scripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Accordion State Management with SessionStorage
-    const accordionIds = ['regionsCollapse', 'categoriesCollapse', 'statesCollapse'];
-    const accordionButtons = ['[data-bs-target="#regionsCollapse"]', '[data-bs-target="#categoriesCollapse"]', '[data-bs-target="#statesCollapse"]'];
-
-    // Restore accordion states from sessionStorage
-    function restoreAccordionStates() {
-        accordionIds.forEach((accordionId, index) => {
-            const isOpen = sessionStorage.getItem(`accordion_state_${accordionId}`) === 'true';
-            const accordionElement = document.getElementById(accordionId);
-            const buttonElement = document.querySelector(accordionButtons[index]);
-
-            if (isOpen && accordionElement && buttonElement) {
-                accordionElement.classList.add('show');
-                buttonElement.classList.remove('collapsed');
-                buttonElement.setAttribute('aria-expanded', 'true');
-            }
-        });
-    }
-
-    // Save accordion state to sessionStorage
-    function saveAccordionState(accordionId, isOpen) {
-        sessionStorage.setItem(`accordion_state_${accordionId}`, isOpen.toString());
-    }
-
-    // Listen for accordion events
-    accordionIds.forEach(accordionId => {
-        const accordionElement = document.getElementById(accordionId);
-        if (accordionElement) {
-            accordionElement.addEventListener('show.bs.collapse', function() {
-                saveAccordionState(accordionId, true);
-            });
-
-            accordionElement.addEventListener('hide.bs.collapse', function() {
-                saveAccordionState(accordionId, false);
-            });
-        }
-    });
-
-    // Restore states after a short delay to ensure Bootstrap is ready
-    setTimeout(restoreAccordionStates, 100);
-
     // Get current URL without query string
     const baseUrl = window.location.pathname;
 
