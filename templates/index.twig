@@ -62,8 +62,12 @@
           <div class="col-md-4">
             <div class="card h-100 border-0 shadow-sm">
               <div class="card-body">
+                
+
                 {% if job.author.organization.one().logo[0]|length %}
-                    <img src="{{ job.author.organization.one().logo[0].url('height100') }}" alt="{{ job.author.organization.title }}" class="mb-4" style="display:block; margin:0 auto">
+                    <div class="img-container mb-4" style="min-height: 100px">
+                        <img src="{{ job.author.organization.one().logo[0].url('height100') }}" alt="{{ job.author.organization.title }}" style="display:block; margin:0 auto;">
+                    </div>                   
                 {% endif %}
 
 

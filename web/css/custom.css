@@ -19,3 +19,14 @@
     --bs-bg-opacity: 0.5;
     background-color: rgba(var(--cnvs-themecolor-rgb), var(--bs-bg-opacity)) !important;
 } */
+
+.card-body .img-container {
+  display: flex;
+  justify-content: center; /* horizontal */
+  align-items: center;     /* vertical */
+  height: 100px;           /* or any fixed height */
+}
+.card-body .img-container img {
+  max-width: 100%; /* optional */
+  height: auto;
+}
