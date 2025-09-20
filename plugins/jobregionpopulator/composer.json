@@ -2,12 +2,12 @@
     "name": "bluegreensheet/job-region-populator",
     "description": "Automatically populates job region field based on country and state selections",
     "type": "craft-plugin",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "license": "MIT",
     "authors": [
         {
-            "name": "Blue Green Sheet",
-            "homepage": "https://bluegreensheet.com"
+            "name": "The Blue Ocean",
+            "homepage": "https://theblueocean.com"
         }
     ],
     "require": {
@@ -21,8 +21,8 @@
     "extra": {
         "name": "Job Region Populator",
         "handle": "job-region-populator",
-        "developer": "Blue Green Sheet",
-        "developerUrl": "https://bluegreensheet.com",
+        "developer": "The Blue Ocean",
+        "developerUrl": "https://theblueocean.com",
         "class": "plugins\\jobregionpopulator\\Plugin"
     }
 }

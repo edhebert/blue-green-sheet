@@ -27,7 +27,7 @@
       {{ redirectInput('registration/success') }}
 
       <div class="mb-3">
-        <label for="regEmail" class="form-label">Email address</label>
+        <label for="regEmail" class="form-label">Email address <span class="text-danger">*</span></label>
         <input
           type="email"
           id="regEmail"
@@ -46,7 +46,7 @@
 
       <div class="row">
         <div class="col-md-6 mb-3">
-          <label for="firstName" class="form-label">First name</label>
+          <label for="firstName" class="form-label">First name <span class="text-danger">*</span></label>
           <input
             type="text"
             id="firstName"
@@ -63,7 +63,7 @@
           {% endif %}
         </div>
         <div class="col-md-6 mb-3">
-          <label for="lastName" class="form-label">Last name</label>
+          <label for="lastName" class="form-label">Last name <span class="text-danger">*</span></label>
           <input
             type="text"
             id="lastName"
@@ -82,7 +82,7 @@
       </div>
 
       <div class="mb-3">
-        <label for="password" class="form-label">Password</label>
+        <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
         <input
           type="password"
           id="password"
@@ -99,7 +99,7 @@
       </div>
 
       <div class="mb-4">
-        <label for="passwordConfirm" class="form-label">Confirm password</label>
+        <label for="passwordConfirm" class="form-label">Confirm password <span class="text-danger">*</span></label>
         <input
           type="password"
           id="passwordConfirm"
@@ -113,7 +113,8 @@
         </div>
       </div>
 
-      <button type="submit" class="btn btn-primary w-100">Create account</button>
+      <button type="submit" class="button rounded-pill mt-4 w-100">Create account</button>
+      
     </form>
   </div>
 

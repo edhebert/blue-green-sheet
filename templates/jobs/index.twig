@@ -75,8 +75,6 @@
 {# Apply sorting #}
 {% if sortParam == 'title' %}
     {% set jobQuery = jobQuery.orderBy('title ASC') %}
-{% elseif sortParam == 'location' %}
-    {% set jobQuery = jobQuery.orderBy('jobCity ASC, jobState ASC') %}
 {% else %}
     {# Default: newest first #}
     {% set jobQuery = jobQuery.orderBy('postDate DESC') %}
@@ -311,7 +309,6 @@
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item sort-selector {{ sortParam == 'newest' ? 'active' : '' }}" href="#" data-sort="newest">Newest First</a></li>
                                 <li><a class="dropdown-item sort-selector {{ sortParam == 'title' ? 'active' : '' }}" href="#" data-sort="title">Title A-Z</a></li>
-                                <li><a class="dropdown-item sort-selector {{ sortParam == 'location' ? 'active' : '' }}" href="#" data-sort="location">Location</a></li>
                             </ul>
                         </div>
                     {% endif %}

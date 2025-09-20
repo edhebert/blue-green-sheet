@@ -1,4 +1,4 @@
-dateModified: 1758305886
+dateModified: 1758310876
 elementSources:
   craft\elements\Entry:
     -
@@ -134,31 +134,31 @@ email:
   transportType: craft\mail\transportadapters\Sendmail
 fs:
   assets:
-    hasUrls: false
+    hasUrls: true
     name: Assets
     settings:
       cdnUrlPattern: ''
-      customSubfolder: ''
+      customSubfolder: images/
       makeUploadsPublic: true
       optimisePrefix: ''
       optimiseUrlPattern: ''
       projectSlug: ''
       securityKey: ''
-      subfolder: local/
+      subfolder: local/images/
     type: servd\AssetStorage\AssetsPlatform\Fs
     url: 'https://bluegreen-sheet.files.svdcdn.com'
   attachments:
-    hasUrls: false
+    hasUrls: true
     name: Attachments
     settings:
       cdnUrlPattern: ''
-      customSubfolder: ''
+      customSubfolder: attachments/
       makeUploadsPublic: true
       optimisePrefix: ''
       optimiseUrlPattern: ''
       projectSlug: ''
       securityKey: ''
-      subfolder: local/
+      subfolder: local/attachments/
     type: servd\AssetStorage\AssetsPlatform\Fs
     url: 'https://bluegreen-sheet.files.svdcdn.com'
 meta:
@@ -225,7 +225,7 @@ plugins:
   job-region-populator:
     edition: standard
     enabled: true
-    schemaVersion: 1.0.0
+    schemaVersion: 1.0.2
   servd-asset-storage:
     edition: standard
     enabled: true
@@ -251,11 +251,6 @@ plugins:
     edition: standard
     enabled: true
     schemaVersion: 1.2.0
-  timber:
-    edition: standard
-    enabled: true
-    licenseKey: M453J2OTHQA8P3KHNICCE5RI
-    schemaVersion: 1.0.0
 system:
   edition: pro
   live: true
