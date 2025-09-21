@@ -3,16 +3,73 @@
 {% block title %}Post a New Job · {{ siteName }}{% endblock %}
 
 {% block content %}
-  {% requireLogin %}
-  {% requirePermission "postJobs" %}
-
   {% set entry = entry ?? null %}
   {% set currentUser = currentUser %}
 
   <div class="container" style="max-width: 800px;">
     <div class="row">
       <div class="col-12">
-        <h1 class="h3 mb-4">Post a New Job Opening</h1>
+        {% if not currentUser %}
+          <!-- Account Required Message -->
+          <div class="text-center pb-5">
+            <div class="mb-4">
+              <i class="bi bi-person-circle text-primary" style="font-size: 4rem;"></i>
+            </div>
+            <h2 class="h4 mb-3">Account Required</h2>
+            <p class="text-muted mb-4 lead">
+              To post a job opening on Blue Green Sheet, you need to create an account or sign in to your existing account.
+            </p>
+
+            <div class="row justify-content-center mb-4">
+              <div class="col-md-8">
+                <div class="card border-0 bg-light">
+                  <div class="card-body p-4">
+                    <h5 class="h6 mb-3">What you'll be able to do:</h5>
+                    <ul class="list-unstyled text-start">
+                      <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Post job openings for 6 or 12 months</li>
+                      <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Reach qualified educational professionals</li>
+                      <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Edit your postings anytime</li>
+                      <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Upload job attachments and documents</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex gap-3 justify-content-center flex-wrap">
+              <a href="{{ url('login') }}" class="button button-xlarge rounded-pill px-4">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Sign In to Existing Account
+              </a>
+              <a href="{{ url('register') }}" class="button button-xlarge rounded-pill button-border px-4">
+                <i class="bi bi-person-plus me-2"></i>Create New Account
+              </a>
+            </div>
+
+            <div class="mt-4">
+              <p class="text-muted small">
+                Already have an account? <a href="{{ url('login') }}" class="text-decoration-none">Sign in here</a><br>
+                Questions about posting jobs? <a href="{{ url('pricing') }}" class="text-decoration-none">View our pricing</a>
+              </p>
+            </div>
+          </div>
+
+        {% elseif not currentUser.can('postJobs') %}
+          <!-- Permission Required Message -->
+          <div class="text-center py-5">
+            <div class="mb-4">
+              <i class="bi bi-shield-exclamation text-warning" style="font-size: 4rem;"></i>
+            </div>
+            <h2 class="h4 mb-3">Access Restricted</h2>
+            <p class="text-muted mb-4 lead">
+              Your account doesn't have permission to post jobs. Please contact us if you need access to post job openings.
+            </p>
+            <a href="{{ url('contact') }}" class="button button-xlarge button-rounded px-4">
+              <i class="bi bi-envelope me-2"></i>Contact Us
+            </a>
+          </div>
+
+        {% else %}
+          <!-- Authorized User - Show Job Posting Form -->
 
         {% if entry and entry.getErrors() %}
           <div class="alert alert-danger">
@@ -26,7 +83,7 @@
             </ul>
           </div>
         {% endif %}
-
+        <h1 class="h3 mb-4">Post a New Job Opening</h1>
         <form method="post" class="needs-validation" enctype="multipart/form-data" novalidate>
           {{ csrfInput() }}
           {{ actionInput('entries/save-entry') }}
@@ -439,10 +496,13 @@
             </a>
           </div>
         </form>
+
+        {% endif %}
       </div>
     </div>
   </div>
 
+  {% if currentUser and currentUser.can('postJobs') %}
   <!-- CKEditor CDN -->
   <script src="https://cdn.ckeditor.com/ckeditor5/40.1.0/classic/ckeditor.js"></script>
 
@@ -712,4 +772,5 @@
     });
   });
   </script>
+  {% endif %}
 {% endblock %}

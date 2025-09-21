@@ -1,0 +1,300 @@
+{% extends "_layout.twig" %}
+
+{% block title %}{{ entry.title }} · {{ siteName }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Job Header -->
+            <div class="row align-items-start mb-5">
+                <div class="col-md-8">
+                    <h1 class="display-5 fw-bold mb-3">{{ entry.title }}</h1>
+
+                    <!-- Organization Info -->
+                    {% if entry.listingOrganization.one() %}
+                        {% set organization = entry.listingOrganization.one() %}
+                        <div class="d-flex align-items-center mb-3">
+                            {% if organization.logo.one() %}
+                                <img src="{{ organization.logo.one().getUrl('height100') }}"
+                                     alt="{{ organization.title }}"
+                                     class="me-3"
+                                     style="max-height: 60px;">
+                            {% endif %}
+                            <div>
+                                <h2 class="h5 mb-1">
+                                    <a href="{{ organization.url }}" class="text-decoration-none">
+                                        {{ organization.title }}
+                                    </a>
+                                </h2>
+                                {% if organization.orgDescription %}
+                                    <p class="text-muted small mb-0">{{ organization.orgDescription|striptags|truncate(200) }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Job Meta Info -->
+                    <div class="mb-3">
+                        {% if entry.jobCategory.one() %}
+                            <span class="badge bg-primary me-2">
+                                <i class="bi bi-tag me-1"></i>{{ entry.jobCategory.one().title }}
+                            </span>
+                        {% endif %}
+
+                        {% if entry.country %}
+                            <span class="badge bg-secondary me-2">
+                                <i class="bi bi-geo-alt me-1"></i>
+                                {% if entry.country.value == 'international' %}
+                                    International
+                                {% else %}
+                                    {% if entry.jobCity %}{{ entry.jobCity }}, {% endif %}{% if entry.jobState %}{{ entry.jobState.value }}{% endif %}
+                                {% endif %}
+                            </span>
+                        {% endif %}
+
+                        <span class="badge bg-light text-dark">
+                            <i class="bi bi-calendar me-1"></i>Posted {{ entry.postDate|date('M j, Y') }}
+                        </span>
+                    </div>
+
+                    <!-- Salary Range -->
+                    {% if entry.jobSalaryLow or entry.jobSalaryHigh %}
+                        <div class="mb-4">
+                            <h3 class="h5 text-success fw-semibold">
+                                {% if entry.jobSalaryLow and entry.jobSalaryHigh %}
+                                    ${{ entry.jobSalaryLow|number_format }} - ${{ entry.jobSalaryHigh|number_format }}K
+                                {% elseif entry.jobSalaryLow %}
+                                    ${{ entry.jobSalaryLow|number_format }}K+
+                                {% elseif entry.jobSalaryHigh %}
+                                    Up to ${{ entry.jobSalaryHigh|number_format }}K
+                                {% endif %}
+                            </h3>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Job Actions -->
+                <div class="col-md-4 text-md-end">
+
+                </div>
+            </div>
+
+            <!-- Job Details -->
+            <div class="row g-5">
+                <div class="col-lg-8">
+                    <!-- Job Description -->
+                    {% if entry.jobDescription %}
+                        <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-header bg-light border-0">
+                                <h3 class="h5 mb-0">
+                                    <i class="bi bi-file-text me-2"></i>Job Description
+                                </h3>
+                            </div>
+                            <div class="card-body">
+                                {{ entry.jobDescription }}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Opportunity Statement -->
+                    {% if entry.jobOpportunityStatement %}
+                        <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-header bg-light border-0">
+                                <h3 class="h5 mb-0">
+                                    <i class="bi bi-lightbulb me-2"></i>Opportunity Statement
+                                </h3>
+                            </div>
+                            <div class="card-body">
+                                {{ entry.jobOpportunityStatement }}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Application Instructions -->
+                    {% if entry.jobApplicationInstructions %}
+                        <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-header bg-light border-0">
+                                <h3 class="h5 mb-0">
+                                    <i class="bi bi-clipboard-check me-2"></i>Application Instructions
+                                </h3>
+                            </div>
+                            <div class="card-body">
+                                {{ entry.jobApplicationInstructions }}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Job Attachments -->
+                    {% if entry.jobAttachments.count() %}
+                        <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-header bg-light border-0">
+                                <h3 class="h5 mb-0">
+                                    <i class="bi bi-paperclip me-2"></i>Job Attachments
+                                </h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    {% for attachment in entry.jobAttachments.all() %}
+                                        <div class="col-md-6">
+                                            <div class="d-flex align-items-center p-3 border rounded">
+                                                <div class="me-3">
+                                                    {% set extension = attachment.filename|split('.')|last|lower %}
+                                                    {% if extension in ['pdf'] %}
+                                                        <i class="bi bi-file-earmark-pdf text-danger" style="font-size: 2rem;"></i>
+                                                    {% elseif extension in ['doc', 'docx'] %}
+                                                        <i class="bi bi-file-earmark-word text-primary" style="font-size: 2rem;"></i>
+                                                    {% elseif extension in ['xls', 'xlsx'] %}
+                                                        <i class="bi bi-file-earmark-excel text-success" style="font-size: 2rem;"></i>
+                                                    {% else %}
+                                                        <i class="bi bi-file-earmark text-secondary" style="font-size: 2rem;"></i>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <h6 class="mb-1">{{ attachment.title ?: attachment.filename }}</h6>
+                                                    <small class="text-muted">{{ attachment.size|filesize }}</small>
+                                                </div>
+                                                <div>
+                                                    <a href="{{ attachment.url }}" class="btn btn-outline-primary btn-sm" target="_blank">
+                                                        <i class="bi bi-download me-1"></i>Download
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="col-lg-4">
+                    <!-- Job Details Sidebar -->
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-primary bg-opacity-10 text-white">
+                            <h3 class="h5 mb-0">
+                                <i class="bi bi-info-circle me-2"></i>Job Details
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <!-- Region -->
+                            {% if entry.jobRegion.one() %}
+                                <div class="mb-3">
+                                    <strong class="d-block text-muted small mb-1">Region</strong>
+                                    <span class="badge bg-light text-dark">{{ entry.jobRegion.one().title }}</span>
+                                </div>
+                            {% endif %}
+
+                            <!-- Location Details -->
+                            {% set hasLocationDetails = entry.jobCity|length or entry.jobState %}
+                            {% if hasLocationDetails %}
+                                <div class="mb-3">
+                                    <strong class="d-block text-muted small mb-1">Location</strong>
+                                    <div>
+                                        <i class="bi bi-geo-alt me-2"></i>
+                                        {% if entry.jobCity %}{{ entry.jobCity }}{% endif %}{% if entry.jobCity and entry.jobState %}, {% endif %}{% if entry.jobState %}{{ entry.jobState.value }}{% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            <!-- Salary Range -->
+                            {% if entry.jobSalaryLow or entry.jobSalaryHigh %}
+                                <div class="mb-3">
+                                    <strong class="d-block text-muted small mb-1">Salary Range</strong>
+                                    <div class="text-success fw-semibold">
+                                        {% if entry.jobSalaryLow and entry.jobSalaryHigh %}
+                                            ${{ entry.jobSalaryLow|number_format }} - ${{ entry.jobSalaryHigh|number_format }}K
+                                        {% elseif entry.jobSalaryLow %}
+                                            ${{ entry.jobSalaryLow|number_format }}K+
+                                        {% elseif entry.jobSalaryHigh %}
+                                            Up to ${{ entry.jobSalaryHigh|number_format }}K
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            <!-- Job Category -->
+                            {% if entry.jobCategory.one() %}
+                                <div class="mb-3">
+                                    <strong class="d-block text-muted small mb-1">Category</strong>
+                                    <span class="badge bg-light text-dark">{{ entry.jobCategory.one().title }}</span>
+                                </div>
+                            {% endif %}
+
+                            <!-- Posted Date -->
+                            <div class="mb-3">
+                                <strong class="d-block text-muted small mb-1">Posted</strong>
+                                <div>
+                                    <i class="bi bi-calendar me-2"></i>{{ entry.postDate|date('M j, Y') }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Organization Contact Card -->
+                    {% if entry.listingOrganization.one() %}
+                        {% set organization = entry.listingOrganization.one() %}
+                        <div class="card border-0 shadow-sm mt-4">
+                            <div class="card-header bg-light border-0">
+                                <h3 class="h5 mb-0">
+                                    <i class="bi bi-building me-2"></i>About {{ organization.title }}
+                                </h3>
+                            </div>
+                            <div class="card-body">
+                                {% if organization.orgDescription %}
+                                    <p class="text-muted">{{ organization.orgDescription|striptags|truncate(200) }}</p>
+                                {% endif %}
+
+                                <!-- Organization Website -->
+                                {% if organization.website %}
+                                    <div class="mb-3">
+                                        <a href="{{ organization.website }}" target="_blank" class="text-decoration-none" rel="noopener noreferrer">
+                                            <i class="bi bi-globe me-2"></i>Visit Website
+                                            <i class="bi bi-box-arrow-up-right ms-1 small"></i>
+                                        </a>
+                                    </div>
+                                {% endif %}
+
+                                <div class="d-grid">
+                                    <a href="{{ organization.url }}" class="btn btn-outline-primary">
+                                        <i class="bi bi-building me-2"></i>View Organization Profile
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Back to Jobs -->
+            <div class="text-center mt-5">
+                <a href="{{ url('jobs') }}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Back to All Jobs
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+
+.card-body a {
+    color: var(--cnvs-themecolor);
+}
+
+.btn-primary {
+    background-color: var(--cnvs-themecolor);
+    border-color: var(--cnvs-themecolor);
+}
+
+.btn-primary:hover {
+    background-color: var(--cnvs-themecolor);
+    border-color: var(--cnvs-themecolor);
+    opacity: 0.9;
+}
+
+.badge.bg-primary {
+    background-color: var(--cnvs-themecolor) !important;
+}
+</style>
+{% endblock %}

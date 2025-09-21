@@ -3,19 +3,19 @@
     <div class="container">
         <div class="row g-4 py-5">
             <!-- About Section -->
-            <div class="col-lg-4 col-md-6 mb-4">
+            <div class="col-lg-3 col-md-6 mb-4">
                 <h5 class="text-white mb-3">Blue Green Sheet</h5>
                 <p class="text-light mb-3">
                     Connecting independent school professionals with exceptional opportunities since 1990.
-                    We facilitate meaningful connections between talented educators and outstanding independent schools.
+                    We facilitate meaningful connections between talented educational leaders and outstanding independent schools.
                 </p>
                 <div class="d-flex gap-2">
-                    <a href="#" class="text-light" aria-label="Follow us on Facebook">
+                    {# <a href="#" class="text-light" aria-label="Follow us on Facebook">
                         <i class="bi bi-facebook" style="font-size: 1.2rem;"></i>
                     </a>
                     <a href="#" class="text-light" aria-label="Follow us on Twitter">
                         <i class="bi bi-twitter" style="font-size: 1.2rem;"></i>
-                    </a>
+                    </a> #}
                     <a href="#" class="text-light" aria-label="Connect on LinkedIn">
                         <i class="bi bi-linkedin" style="font-size: 1.2rem;"></i>
                     </a>
@@ -23,8 +23,8 @@
             </div>
 
             <!-- Quick Links -->
-            <div class="col-lg-2 col-md-6 mb-4">
-                <h6 class="text-white mb-3">Quick Links</h6>
+            <div class="col-lg-2 offset-lg-1 col-md-6 mb-4">
+                <h6 class="text-white mb-3">Job Seekers</h6>
                 <ul class="list-unstyled">
                     <li class="mb-2">
                         <a href="{{ url('jobs') }}" class="text-light text-decoration-none">
@@ -32,28 +32,10 @@
                         </a>
                     </li>
                     <li class="mb-2">
-                        <a href="{{ url('pricing') }}" class="text-light text-decoration-none">
-                            <i class="bi bi-tag me-2"></i>Pricing
+                        <a href="{{ url('subscribe') }}" class="text-light text-decoration-none">
+                            <i class="bi bi-tag me-2"></i>Subscribe for Alerts
                         </a>
                     </li>
-                    <li class="mb-2">
-                        <a href="{{ url('about') }}" class="text-light text-decoration-none">
-                            <i class="bi bi-info-circle me-2"></i>About Us
-                        </a>
-                    </li>
-                    {% if currentUser %}
-                        <li class="mb-2">
-                            <a href="{{ url('logout') }}" class="text-light text-decoration-none">
-                                <i class="bi bi-box-arrow-right me-2"></i>Logout
-                            </a>
-                        </li>
-                    {% else %}
-                        <li class="mb-2">
-                            <a href="{{ url('login') }}" class="text-light text-decoration-none">
-                                <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
-                            </a>
-                        </li>
-                    {% endif %}
                 </ul>
             </div>
 
@@ -67,22 +49,21 @@
                                 <i class="bi bi-plus-circle me-2"></i>Post a Job
                             </a>
                         </li>
-                    {% endif %}
-                    <li class="mb-2">
-                        <a href="{{ url('pricing') }}" class="text-light text-decoration-none">
-                            <i class="bi bi-currency-dollar me-2"></i>View Pricing
-                        </a>
-                    </li>
-                    {% if not currentUser %}
+                    {% else %}
+                        <li class="mb-2">
+                            <a href="{{ url('login') }}" class="text-light text-decoration-none">
+                                <i class="bi bi-person-plus me-2"></i>Login
+                            </a>
+                        </li>                    
                         <li class="mb-2">
                             <a href="{{ url('register') }}" class="text-light text-decoration-none">
                                 <i class="bi bi-person-plus me-2"></i>Create Account
                             </a>
-                        </li>
+                        </li>                        
                     {% endif %}
                     <li class="mb-2">
-                        <a href="mailto:info@bluegreensheet.com" class="text-light text-decoration-none">
-                            <i class="bi bi-envelope me-2"></i>Contact Us
+                        <a href="{{ url('pricing') }}" class="text-light text-decoration-none">
+                            <i class="bi bi-currency-dollar me-2"></i>View Pricing
                         </a>
                     </li>
                 </ul>
@@ -94,17 +75,9 @@
                 <div class="text-light">
                     <div class="mb-3">
                         <i class="bi bi-envelope me-2"></i>
-                        <a href="mailto:info@bluegreensheet.com" class="text-light text-decoration-none">
-                            info@bluegreensheet.com
+                        <a href="{{ siteUrl }}contact" class="text-light text-decoration-none">
+                            Contact Us
                         </a>
-                    </div>
-                    <div class="mb-3">
-                        <i class="bi bi-clock me-2"></i>
-                        <span>Platform available 24/7</span>
-                    </div>
-                    <div class="mb-3">
-                        <i class="bi bi-geo-alt me-2"></i>
-                        <span>Serving Independent Schools Nationwide</span>
                     </div>
                 </div>
 
@@ -114,7 +87,7 @@
                     <p class="text-light small mb-2">Get notified about new opportunities</p>
                     <div class="input-group input-group-sm">
                         <input type="email" class="form-control" placeholder="Your email" aria-label="Email">
-                        <button class="btn btn-primary" type="button">
+                        <button class="btn btn-primary" type="button" style="background-color: var(--cnvs-themecolor); border: 0">
                             <i class="bi bi-envelope"></i>
                         </button>
                     </div>
@@ -134,11 +107,11 @@
                     </div>
                 </div>
                 <div class="col-md-6 text-center text-md-end">
-                    <div class="d-flex justify-content-center justify-content-md-end gap-3 flex-wrap">
+                    {# <div class="d-flex justify-content-center justify-content-md-end gap-3 flex-wrap">
                         <a href="#" class="text-light text-decoration-none small">Privacy Policy</a>
                         <a href="#" class="text-light text-decoration-none small">Terms of Service</a>
                         <a href="#" class="text-light text-decoration-none small">Support</a>
-                    </div>
+                    </div> #}
                 </div>
             </div>
             <div class="row">

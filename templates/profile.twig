@@ -33,14 +33,14 @@
                     <label>Email:</label>
                     <span>{{ currentUser.email }}</span>
                 </div>
-                <div class="profile-field">
+                {# <div class="profile-field">
                     <label>User Group:</label>
                     <span>
                         {% for group in currentUser.groups %}
                             {{ group.name }}{% if not loop.last %}, {% endif %}
                         {% endfor %}
                     </span>
-                </div>
+                </div> #}
             </div>
 
             <div class="profile-section">
@@ -53,7 +53,7 @@
                     </div>
                     {% if userOrg.organizationType %}
                         <div class="profile-field">
-                            <label>Type:</label>
+                            <label>Organization Type:</label>
                             <span>{{ userOrg.organizationType|title }}</span>
                         </div>
                     {% endif %}
@@ -171,6 +171,11 @@
 </div>
 
 <style>
+
+label {
+    margin-bottom: 0;
+}
+
 .profile-container {
     max-width: 800px;
     margin: 0 auto;
@@ -208,7 +213,7 @@
 
 .profile-field label {
     font-weight: bold;
-    min-width: 120px;
+    min-width: 150px;
     margin-right: 1rem;
 }
 

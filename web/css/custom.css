@@ -3,6 +3,10 @@
 :root {
 	 --cnvs-themecolor: #338a61;
 	 --cnvs-themecolor-rgb: 51, 138, 97;
+     
+	--cnvs-header-height: 100px;
+	--cnvs-header-height-sm: 60px;
+	--cnvs-header-height-md: 80px;
 
      --cnvs-heading-color: #555756;
 
@@ -19,6 +23,10 @@
     --bs-bg-opacity: 0.5;
     background-color: rgba(var(--cnvs-themecolor-rgb), var(--bs-bg-opacity)) !important;
 } */
+
+.slider-caption h2, .slider-caption .h2 {
+    font-size: 3rem;
+}
 
 .card-body .img-container {
   display: flex;
