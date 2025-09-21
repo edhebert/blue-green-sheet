@@ -28,7 +28,7 @@
                                     </a>
                                 </h2>
                                 {% if organization.orgDescription %}
-                                    <p class="text-muted small mb-0">{{ organization.orgDescription|striptags|truncate(200) }}</p>
+                                    <p class="text-muted small mb-0">{{ organization.orgDescription|striptags|truncate(200)|raw }}</p>
                                 {% endif %}
                             </div>
                         </div>
@@ -242,7 +242,7 @@
                             </div>
                             <div class="card-body">
                                 {% if organization.orgDescription %}
-                                    <p class="text-muted">{{ organization.orgDescription|striptags|truncate(200) }}</p>
+                                    <p class="text-muted">{{ organization.orgDescription|striptags|truncate(200)|raw }}</p>
                                 {% endif %}
 
                                 <!-- Organization Website -->
@@ -268,7 +268,7 @@
 
             <!-- Back to Jobs -->
             <div class="text-center mt-5">
-                <a href="{{ url('jobs') }}" class="btn btn-secondary">
+                <a href="{{ url('jobs') }}" class="button rounded-pill">
                     <i class="bi bi-arrow-left me-2"></i>Back to All Jobs
                 </a>
             </div>

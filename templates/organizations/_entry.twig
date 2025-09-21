@@ -129,7 +129,7 @@
                                                         <!-- Job Description Preview -->
                                                         {% if job.jobDescription %}
                                                             <p class="text-muted small mb-2">
-                                                                {{ job.jobDescription|striptags|truncate(150) }}
+                                                                {{ job.jobDescription|striptags|raw|truncate(150) }}
                                                             </p>
                                                         {% endif %}
 
@@ -188,7 +188,7 @@
 
             <!-- Back to Browse -->
             <div class="text-center mt-5">
-                <a href="{{ url('jobs') }}" class="btn btn-secondary">
+                <a href="{{ url('jobs') }}" class="button rounded-pill">
                     <i class="bi bi-arrow-left me-2"></i>Back to All Jobs
                 </a>
             </div>
