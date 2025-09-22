@@ -1,0 +1,63 @@
+{% requireLogin %}
+{% extends "_layout.twig" %}
+
+{% block title %}Test Organization Form · {{ siteName }}{% endblock %}
+
+{% block content %}
+  {# Get organization section info from existing entries #}
+  {% set orgSample = craft.entries.section('organizations').one() %}
+  {% set orgSectionId = orgSample ? orgSample.sectionId : null %}
+  {% set orgEntryTypeId = orgSample ? orgSample.typeId : null %}
+
+  <div class="container" style="max-width: 600px;">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h1 class="h4 mb-4">Test Organization Creation</h1>
+
+        {% if not orgSectionId or not orgEntryTypeId %}
+          <div class="alert alert-danger">
+            Error: Could not find organization section/type IDs.<br>
+            Section ID: {{ orgSectionId }}<br>
+            Entry Type ID: {{ orgEntryTypeId }}
+          </div>
+        {% else %}
+          <form method="post">
+            {{ csrfInput() }}
+            {{ actionInput('entries/save-entry') }}
+            {{ hiddenInput('sectionId', orgSectionId) }}
+            {{ hiddenInput('entryTypeId', orgEntryTypeId) }}
+            {{ hiddenInput('enabled', '1') }}
+            {{ redirectInput('/test-org-success?newOrgId={id}') }}
+
+            <div class="mb-3">
+              <label for="title" class="form-label">Organization Name *</label>
+              <input type="text" id="title" name="title" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="website" class="form-label">Website</label>
+              <input type="url" id="website" name="fields[website]" class="form-control" placeholder="https://example.com">
+            </div>
+
+            <div class="mb-3">
+              <label for="description" class="form-label">Description</label>
+              <textarea id="description" name="fields[orgDescription]" class="form-control" rows="3"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Create Organization</button>
+            <a href="/profile" class="btn btn-secondary">Cancel</a>
+          </form>
+        {% endif %}
+
+        <hr class="my-4">
+        <div class="small text-muted">
+          <strong>Debug Info:</strong><br>
+          Current User: {{ currentUser.email }}<br>
+          Section ID: {{ orgSectionId }}<br>
+          Entry Type ID: {{ orgEntryTypeId }}<br>
+          Sample Org: {{ orgSample ? orgSample.title : 'None found' }}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

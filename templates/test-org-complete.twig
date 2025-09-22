@@ -1,0 +1,27 @@
+{% requireLogin %}
+{% extends "_layout.twig" %}
+
+{% block title %}Profile Complete · {{ siteName }}{% endblock %}
+
+{% block content %}
+  <div class="container" style="max-width: 600px;">
+    <div class="card shadow-sm">
+      <div class="card-body text-center">
+        <h1 class="h4 text-success mb-3">🎉 Profile Complete!</h1>
+        <p class="text-muted mb-4">Your organization has been successfully assigned to your profile.</p>
+
+        {% set userOrg = currentUser.organization.one() %}
+        {% if userOrg %}
+          <div class="alert alert-success">
+            <strong>Your Organization:</strong> {{ userOrg.title }}
+          </div>
+        {% endif %}
+
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+          <a href="/profile" class="btn btn-primary">View Profile</a>
+          <a href="/jobs" class="btn btn-outline-primary">Browse Jobs</a>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

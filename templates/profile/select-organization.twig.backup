@@ -92,7 +92,6 @@
                 {{ csrfInput() }} {{ actionInput('entries/save-entry') }}
                 {{ hiddenInput('sectionId', orgSectionId) }}
                 {{ hiddenInput('entryTypeId', orgEntryTypeId) }}
-                {{ hiddenInput('enabled', '1') }}
                 {{ redirectInput('profile/select-organization?newOrgId={id}') }}
 
                 {# Client-side error summary #}
@@ -101,17 +100,6 @@
                 <div class="mb-3">
                   <label for="orgTitle" class="form-label">Organization Name *</label>
                   <input type="text" id="orgTitle" name="title" class="form-control" required>
-                </div>
-
-                <div class="mb-3">
-                  <label for="website" class="form-label">Website</label>
-                  <input type="text" id="website" name="fields[website]" class="form-control" placeholder="example.com or https://example.com">
-                  <div class="form-text">Enter your website URL (with or without https://)</div>
-                </div>
-
-                <div class="mb-3">
-                  <label for="orgDescription" class="form-label">Description</label>
-                  <textarea id="orgDescription" name="fields[orgDescription]" class="form-control" rows="4"></textarea>
                 </div>
 
                 <fieldset class="mb-3">
@@ -128,6 +116,10 @@
                 </fieldset>
 
                 <div class="row g-3">
+                  <div class="col-md-6">
+                    <label for="website" class="form-label">Website</label>
+                    <input type="url" id="website" name="fields[website]" class="form-control" placeholder="https://example.com">
+                  </div>
                   <div class="col-md-6">
                     <label for="orgPhone" class="form-label">Phone</label>
                     <input type="text" id="orgPhone" name="fields[orgPhone]" class="form-control">
@@ -169,6 +161,11 @@
                     <label for="orgZip" class="form-label">Zip Code *</label>
                     <input type="text" id="orgZip" name="fields[orgZip]" class="form-control" data-required-when-shown>
                   </div>
+                </div>
+
+                <div class="mb-3 mt-3">
+                  <label for="orgDescription" class="form-label">Description</label>
+                  <textarea id="orgDescription" name="fields[orgDescription]" class="form-control" rows="4"></textarea>
                 </div>
 
                 <div class="mb-3">
@@ -249,18 +246,6 @@
 
       var form=document.getElementById('addOrgForm');
       if(!form) return;
-
-      // Auto-fix website URLs before submission
-      form.addEventListener('submit', function(e) {
-        var websiteField = document.getElementById('website');
-        if (websiteField && websiteField.value.trim()) {
-          var url = websiteField.value.trim();
-          // If the URL doesn't start with http:// or https://, add https://
-          if (url && !url.match(/^https?:\/\//i)) {
-            websiteField.value = 'https://' + url;
-          }
-        }
-      });
 
       form.addEventListener('submit',function(e){
         applyVisibility();
