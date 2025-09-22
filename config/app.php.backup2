@@ -161,14 +161,10 @@ return [
                     if (!$to) {
                         return;
                     }
-                    $htmlBody = "<p>A new user has activated their account:</p>";
-                    $htmlBody .= "<p><strong>Email:</strong> {$user->email}</p>";
-                    $htmlBody .= "<p><strong>Name:</strong> {$user->friendlyName}</p>";
-
                     $msg = (new Message())
                         ->setTo($to)
                         ->setSubject('New user activated')
-                        ->setHtmlBody($htmlBody);
+                        ->setTextBody("A new user has activated their account:\n\nEmail: {$user->email}\nName: {$user->friendlyName}");
                     Craft::$app->getMailer()->send($msg);
                 }
             );
@@ -210,20 +206,10 @@ return [
                         return;
                     }
 
-                    $cpUrl = \craft\helpers\UrlHelper::cpUrl('entries/organizations/' . $el->id);
-                    $publicUrl = $el->getUrl();
-
-                    $htmlBody = "<p>A new organization entry was created:</p>";
-                    $htmlBody .= "<p><strong>Title:</strong> {$el->title}</p>";
-                    $htmlBody .= "<p><a href=\"{$cpUrl}\">View in Control Panel</a></p>";
-                    if ($publicUrl) {
-                        $htmlBody .= "<p><a href=\"{$publicUrl}\">View Public Page</a></p>";
-                    }
-
                     $msg = (new Message())
                         ->setTo($to)
                         ->setSubject('New organization added')
-                        ->setHtmlBody($htmlBody);
+                        ->setTextBody("A new organization entry was created:\n\nTitle: {$el->title}\nURL: " . ($el->getUrl() ?? '(no URL)'));
                     Craft::$app->getMailer()->send($msg);
                 }
             );
