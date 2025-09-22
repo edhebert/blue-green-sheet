@@ -1,4 +1,4 @@
-dateModified: 1758310876
+dateModified: 1758541665
 elementSources:
   craft\elements\Entry:
     -
@@ -24,7 +24,7 @@ elementSources:
       defaultSort:
         - title
         - asc
-      defaultViewMode: ''
+      defaultViewMode: table
       disabled: false
       key: 'section:7a30d7ad-a979-44b7-89f1-35059c005316' # Organizations
       tableAttributes:
@@ -32,14 +32,13 @@ elementSources:
         - link
         - 'field:21bd4595-df6f-4876-9708-5bfadad51b42' # Website
         - 'field:12d880c0-a281-4f27-a40b-135b2f5b4654' # Type of Organization
-        - 'field:9d8645b3-7788-49d7-92ef-e3c2e0aca352' # Logo
         - authors
       type: native
     -
       defaultSort:
         - structure
         - asc
-      defaultViewMode: ''
+      defaultViewMode: table
       disabled: false
       key: 'section:bfd2eaee-0f5f-44f6-81f2-1f5e563a0e2e' # Jobs
       tableAttributes:
@@ -125,13 +124,17 @@ elementSources:
         - 'field:a026cacb-2f40-4011-b87d-a1beb7552037' # Organization
       type: native
 email:
-  fromEmail: ed@theblueocean.com
+  fromEmail: ed+bgs@theblueocean.com
   fromName: 'Blue Green Sheet'
   replyToEmail: null
   template: ''
   transportSettings:
-    command: '/usr/local/bin/mailpit sendmail -t --smtp-addr 127.0.0.1:1025'
-  transportType: craft\mail\transportadapters\Sendmail
+    host: $SERVD_SMTP_HOSTNAME
+    password: $SERVD_SMTP_PASSWORD
+    port: $SERVD_SMTP_PORT
+    useAuthentication: '1'
+    username: $SERVD_SMTP_USERNAME
+  transportType: craft\mail\transportadapters\Smtp
 fs:
   assets:
     hasUrls: true

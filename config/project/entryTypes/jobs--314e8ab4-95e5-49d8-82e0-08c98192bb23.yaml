@@ -2,7 +2,7 @@ color: null
 description: 'Available Jobs'
 fieldLayouts:
   b81cd04f-1f9f-49ae-9a9b-dd0c3e712818:
-    cardThumbAlignment: end
+    cardThumbAlignment: start
     tabs:
       -
         elementCondition: null
@@ -46,7 +46,7 @@ fieldLayouts:
             includeInCards: false
             instructions: null
             label: 'Listing Organization'
-            providesThumbs: false
+            providesThumbs: true
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
@@ -316,7 +316,7 @@ fieldLayouts:
         userCondition: null
 handle: jobs
 hasTitleField: true
-icon: null
+icon: briefcase-blank
 name: Jobs
 showSlugField: true
 showStatusField: true
