@@ -1,0 +1,691 @@
+{% extends "_layout.twig" %}
+
+{% block title %}Edit Job Posting · {{ siteName }}{% endblock %}
+
+{% block content %}
+  {# Get the job entry from URL parameter #}
+  {% set entryId = craft.app.request.getSegment(3) %}
+  {% set jobEntry = craft.entries().section('jobs').id(entryId).status(null).one() %}
+  {% set currentUser = currentUser %}
+
+  <div class="container" style="max-width: 800px;">
+    <div class="row">
+      <div class="col-12">
+        {% if not currentUser %}
+          <!-- Account Required Message -->
+          <div class="text-center py-5">
+            <div class="mb-4">
+              <i class="bi bi-person-circle text-primary" style="font-size: 4rem;"></i>
+            </div>
+            <h2 class="h4 mb-3">Account Required</h2>
+            <p class="text-muted mb-4 lead">
+              You need to be logged in to edit job postings.
+            </p>
+            <a href="{{ url('login') }}" class="button button-xlarge rounded-pill px-4">
+              <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+            </a>
+          </div>
+
+        {% elseif not currentUser.isInGroup('jobPosters') and not currentUser.admin %}
+          <!-- Permission Required Message -->
+          <div class="text-center py-5">
+            <div class="mb-4">
+              <i class="bi bi-shield-exclamation text-warning" style="font-size: 4rem;"></i>
+            </div>
+            <h2 class="h4 mb-3">Access Restricted</h2>
+            <p class="text-muted mb-4 lead">
+              Your account doesn't have permission to edit jobs.
+            </p>
+            <a href="{{ url('contact') }}" class="button button-xlarge button-rounded px-4">
+              <i class="bi bi-envelope me-2"></i>Contact Us
+            </a>
+          </div>
+
+        {% elseif not jobEntry %}
+          <!-- Job Not Found -->
+          <div class="text-center py-5">
+            <div class="mb-4">
+              <i class="bi bi-exclamation-triangle text-warning" style="font-size: 4rem;"></i>
+            </div>
+            <h2 class="h4 mb-3">Job Not Found</h2>
+            <p class="text-muted mb-4 lead">
+              The job posting you're trying to edit could not be found.
+            </p>
+            <a href="{{ url('profile') }}" class="button button-xlarge rounded-pill px-4">
+              <i class="bi bi-arrow-left me-2"></i>Back to Profile
+            </a>
+          </div>
+
+        {% elseif jobEntry.authorId != currentUser.id and not currentUser.admin %}
+          <!-- Not Owner -->
+          <div class="text-center py-5">
+            <div class="mb-4">
+              <i class="bi bi-shield-exclamation text-danger" style="font-size: 4rem;"></i>
+            </div>
+            <h2 class="h4 mb-3">Access Denied</h2>
+            <p class="text-muted mb-4 lead">
+              You can only edit your own job postings.
+            </p>
+            <a href="{{ url('profile') }}" class="button button-xlarge rounded-pill px-4">
+              <i class="bi bi-arrow-left me-2"></i>Back to Profile
+            </a>
+          </div>
+
+        {% else %}
+          <!-- Authorized User - Show Job Editing Form -->
+
+        {% if jobEntry and jobEntry.getErrors() %}
+          <div class="alert alert-danger">
+            <strong>We couldn't save your job posting.</strong>
+            <ul class="mb-0">
+              {% for attr, errs in jobEntry.getErrors() %}
+                {% for err in errs %}
+                  <li>{{ err }}</li>
+                {% endfor %}
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+
+        <div class="d-flex align-items-center mb-4">
+          <a href="{{ url('profile') }}" class="button button-small button-border rounded-pill me-3">
+            <i class="bi bi-arrow-left"></i> Back to Profile
+          </a>
+          <h1 class="h3 mb-0">Edit Job Posting</h1>
+        </div>
+
+        <form method="post" class="needs-validation" enctype="multipart/form-data" novalidate>
+          {{ csrfInput() }}
+          {{ actionInput('entries/save-entry') }}
+          {{ hiddenInput('entryId', jobEntry.id) }}
+          {{ hiddenInput('sectionId', jobEntry.sectionId) }}
+          {{ hiddenInput('typeId', jobEntry.typeId) }}
+          {# Current entry status - will be updated by form #}
+          {{ redirectInput('profile?updated=job') }}
+
+          <!-- Job Title -->
+          <div class="mb-4">
+            <label for="title" class="form-label fw-bold">Job Title <span class="text-danger">*</span></label>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              class="form-control{% if jobEntry and jobEntry.getErrors('title') %} is-invalid{% endif %}"
+              value="{{ (jobEntry ? jobEntry.title : '')|e }}"
+              placeholder="e.g., Head of School, Business Manager, Development Director"
+              required
+            >
+            {% if jobEntry and jobEntry.getErrors('title') %}
+              <div class="invalid-feedback">
+                {{ jobEntry.getErrors('title')|join(', ') }}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Job Category -->
+          <div class="mb-4">
+            <label for="jobCategory" class="form-label fw-bold">Job Category <span class="text-danger">*</span></label>
+            <select
+              id="jobCategory"
+              name="fields[jobCategory][]"
+              class="form-select{% if jobEntry and jobEntry.getErrors('jobCategory') %} is-invalid{% endif %}"
+              required
+            >
+              <option value="">Select a category...</option>
+              {% for category in craft.categories().group('jobCategories').all() %}
+                {% set isSelected = false %}
+                {% if jobEntry and jobEntry.jobCategory %}
+                  {% for selectedCategory in jobEntry.jobCategory.all() %}
+                    {% if selectedCategory.id == category.id %}
+                      {% set isSelected = true %}
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+                <option value="{{ category.id }}" {% if isSelected %}selected{% endif %}>
+                  {{ category.title }}
+                </option>
+              {% endfor %}
+            </select>
+            {% if jobEntry and jobEntry.getErrors('jobCategory') %}
+              <div class="invalid-feedback">
+                {{ jobEntry.getErrors('jobCategory')|join(', ') }}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Job Description (Rich Text) -->
+          <div class="mb-4">
+            <label for="jobDescription" class="form-label fw-bold">Job Description <span class="text-danger">*</span></label>
+            <div id="jobDescription-editor" style="min-height: 300px; border: 1px solid #ced4da; border-radius: 0.375rem;"></div>
+            <textarea
+              id="jobDescription"
+              name="fields[jobDescription]"
+              class="d-none{% if jobEntry and jobEntry.getErrors('jobDescription') %} is-invalid{% endif %}"
+              required
+            >{{ jobEntry ? jobEntry.jobDescription : '' }}</textarea>
+            {% if jobEntry and jobEntry.getErrors('jobDescription') %}
+              <div class="invalid-feedback">
+                {{ jobEntry.getErrors('jobDescription')|join(', ') }}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Opportunity Statement (Rich Text) -->
+          <div class="mb-4">
+            <label for="jobOpportunityStatement" class="form-label fw-bold">Opportunity Statement</label>
+            <div class="form-text mb-2">Optional: Highlight what makes this opportunity special</div>
+            <div id="jobOpportunityStatement-editor" style="min-height: 200px; border: 1px solid #ced4da; border-radius: 0.375rem;"></div>
+            <textarea
+              id="jobOpportunityStatement"
+              name="fields[jobOpportunityStatement]"
+              class="d-none"
+            >{{ jobEntry ? jobEntry.jobOpportunityStatement : '' }}</textarea>
+          </div>
+
+          <!-- Salary Range -->
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <label for="jobSalaryLow" class="form-label fw-bold">Salary Range - Low</label>
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input
+                  type="number"
+                  id="jobSalaryLow"
+                  name="fields[jobSalaryLow]"
+                  class="form-control"
+                  value="{{ jobEntry ? jobEntry.jobSalaryLow : '' }}"
+                  placeholder="75000"
+                  min="0"
+                  step="1000"
+                >
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label for="jobSalaryHigh" class="form-label fw-bold">Salary Range - High</label>
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input
+                  type="number"
+                  id="jobSalaryHigh"
+                  name="fields[jobSalaryHigh]"
+                  class="form-control"
+                  value="{{ jobEntry ? jobEntry.jobSalaryHigh : '' }}"
+                  placeholder="125000"
+                  min="0"
+                  step="1000"
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- School Website -->
+          <div class="mb-4">
+            <label for="jobSchoolUrl" class="form-label fw-bold">School Website</label>
+            <input
+              type="text"
+              id="jobSchoolUrl"
+              name="fields[jobSchoolUrl][value]"
+              class="form-control"
+              value="{{ jobEntry and jobEntry.jobSchoolUrl ? jobEntry.jobSchoolUrl.url : '' }}"
+              placeholder="www.yourschool.edu"
+            >
+            {{ hiddenInput('fields[jobSchoolUrl][type]', 'url') }}
+          </div>
+
+          <!-- Location Information -->
+          <div class="mb-4">
+            <h5 class="fw-bold mb-3">Location Information</h5>
+
+            <!-- Country Selection -->
+            <div class="mb-3">
+              <label class="form-label fw-bold">Country <span class="text-danger">*</span></label>
+              <div>
+                <div class="form-check form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="fields[country]"
+                    id="countryUS"
+                    value="unitedStates"
+                    {% if not jobEntry or (jobEntry.country is defined and jobEntry.country == 'unitedStates') or not jobEntry.country %}checked{% endif %}
+                    required
+                  >
+                  <label class="form-check-label" for="countryUS">
+                    United States
+                  </label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="fields[country]"
+                    id="countryIntl"
+                    value="international"
+                    {% if jobEntry and jobEntry.country is defined and jobEntry.country == 'international' %}checked{% endif %}
+                    required
+                  >
+                  <label class="form-check-label" for="countryIntl">
+                    International
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- US Location Fields -->
+            <div id="usLocationFields" class="{% if jobEntry and jobEntry.country is defined and jobEntry.country == 'international' %}d-none{% endif %}">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="jobCity" class="form-label fw-bold">City <span id="cityrequired" class="text-danger d-none">*</span></label>
+                  <input
+                    type="text"
+                    id="jobCity"
+                    name="fields[jobCity]"
+                    class="form-control"
+                    value="{{ jobEntry ? jobEntry.jobCity : '' }}"
+                    placeholder="your city"
+                  >
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="jobState" class="form-label fw-bold">State <span id="staterequired" class="text-danger d-none">*</span></label>
+                  <select
+                    id="jobState"
+                    name="fields[jobState]"
+                    class="form-select"
+                  >
+                    <option value="">Select state...</option>
+                    {% set states = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY', 'DC'] %}
+                    {% for state in states %}
+                      <option value="{{ state }}"
+                        {% if jobEntry and jobEntry.jobState == state %}selected{% endif %}>
+                        {{ state }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- International Location Field -->
+            <div id="intlLocationFields" class="{% if not jobEntry or not jobEntry.country is defined or jobEntry.country != 'international' %}d-none{% endif %}">
+              <div class="mb-3">
+                <label for="jobLocation" class="form-label fw-bold">Location <span id="locationrequired" class="text-danger d-none">*</span></label>
+                <input
+                  type="text"
+                  id="jobLocation"
+                  name="fields[jobLocation]"
+                  class="form-control"
+                  value="{{ jobEntry ? jobEntry.jobLocation : '' }}"
+                  placeholder="London, United Kingdom"
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Application Instructions -->
+          <div class="mb-4">
+            <label for="jobApplicationInstructions" class="form-label fw-bold">Application Instructions <span class="text-danger">*</span></label>
+            <textarea
+              id="jobApplicationInstructions"
+              name="fields[jobApplicationInstructions]"
+              class="form-control{% if jobEntry and jobEntry.getErrors('jobApplicationInstructions') %} is-invalid{% endif %}"
+              rows="4"
+              placeholder="How should candidates apply? Include contact information, required documents, application deadlines, etc."
+              required
+            >{{ jobEntry ? jobEntry.jobApplicationInstructions : '' }}</textarea>
+            {% if jobEntry and jobEntry.getErrors('jobApplicationInstructions') %}
+              <div class="invalid-feedback">
+                {{ jobEntry.getErrors('jobApplicationInstructions')|join(', ') }}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Job Attachments -->
+          <div class="mb-4">
+            <label class="form-label fw-bold">Job Attachments <span class="text-muted">(Optional)</span></label>
+            <p class="form-text text-muted mb-2">Upload up to 3 documents (PDF or Word format, max 10MB each)</p>
+
+            <div id="attachmentsList" class="mb-3">
+              <!-- Existing attachments will be displayed here -->
+              {% if jobEntry and jobEntry.jobAttachments %}
+                {% for attachment in jobEntry.jobAttachments.all() %}
+                  <div class="attachment-item d-flex align-items-center mb-2 p-2 border rounded" data-asset-id="{{ attachment.id }}">
+                    <i class="fas fa-file-pdf text-danger me-2"></i>
+                    <span class="me-auto">{{ attachment.filename }}</span>
+                    <button type="button" class="btn btn-sm btn-outline-danger remove-attachment" onclick="removeAttachment(this)">
+                      <i class="fas fa-times"></i>
+                    </button>
+                    <input type="hidden" name="fields[jobAttachments][]" value="{{ attachment.id }}">
+                  </div>
+                {% endfor %}
+              {% endif %}
+            </div>
+
+            <div class="upload-area border-2 border-dashed rounded p-4 text-center" id="uploadArea" style="border-color: #dee2e6;">
+              <i class="fas fa-cloud-upload-alt fa-2x text-muted mb-2"></i>
+              <p class="mb-2">Drop files here or <button type="button" class="btn btn-link p-0" id="browseFiles">browse</button></p>
+              <small class="text-muted">Accepted formats: PDF, DOC, DOCX | Maximum: 3 files, 10MB each</small>
+              <input
+                type="file"
+                id="jobAttachments"
+                name="attachmentFiles[]"
+                class="d-none"
+                multiple
+                accept=".pdf,.doc,.docx"
+              >
+            </div>
+
+            {% if jobEntry and jobEntry.getErrors('jobAttachments') %}
+              <div class="invalid-feedback d-block">
+                {{ jobEntry.getErrors('jobAttachments')|join(', ') }}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Job Status -->
+          <div class="mb-4">
+            <h5 class="fw-bold mb-3">Job Status</h5>
+            {% if jobEntry.status == 'live' and jobEntry.enabled %}
+              <div class="alert alert-success">
+                <strong>Published:</strong> This job posting is currently live and visible to candidates.
+              </div>
+            {% else %}
+              <div class="alert alert-warning">
+                <strong>Draft:</strong> This job posting is currently not visible to candidates.
+              </div>
+            {% endif %}
+
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" role="switch" id="jobEnabled" name="enabled" value="1" {% if jobEntry.status == 'live' and jobEntry.enabled %}checked{% endif %}>
+              <label class="form-check-label" for="jobEnabled">
+                <strong>Publish and make visible to candidates</strong>
+                <div class="form-text">Check to publish this job posting</div>
+              </label>
+            </div>
+          </div>
+
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary btn-lg">
+              Save Changes
+            </button>
+            <a href="{{ url('profile') }}" class="btn btn-outline-secondary">
+              Cancel
+            </a>
+          </div>
+        </form>
+
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  {% if currentUser and (currentUser.isInGroup('jobPosters') or currentUser.admin) %}
+  <!-- CKEditor CDN -->
+  <script src="https://cdn.ckeditor.com/ckeditor5/40.1.0/classic/ckeditor.js"></script>
+
+  <!-- CKEditor Height Styling -->
+  <style>
+    .ck-editor__editable {
+      min-height: 300px !important;
+    }
+    #jobOpportunityStatement-editor .ck-editor__editable {
+      min-height: 200px !important;
+    }
+  </style>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize CKEditor for rich text fields FIRST
+    let jobDescriptionEditor, opportunityStatementEditor;
+
+    ClassicEditor
+      .create(document.querySelector('#jobDescription-editor'), {
+        toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'outdent', 'indent', '|', 'undo', 'redo']
+      })
+      .then(editor => {
+        jobDescriptionEditor = editor;
+        // Sync with hidden textarea
+        editor.model.document.on('change:data', () => {
+          document.querySelector('#jobDescription').value = editor.getData();
+        });
+        // Load existing content
+        const existingContent = document.querySelector('#jobDescription').value;
+        if (existingContent) {
+          editor.setData(existingContent);
+        }
+      })
+      .catch(error => {
+        console.error('CKEditor initialization failed:', error);
+      });
+
+    ClassicEditor
+      .create(document.querySelector('#jobOpportunityStatement-editor'), {
+        toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'outdent', 'indent', '|', 'undo', 'redo']
+      })
+      .then(editor => {
+        opportunityStatementEditor = editor;
+        // Sync with hidden textarea
+        editor.model.document.on('change:data', () => {
+          document.querySelector('#jobOpportunityStatement').value = editor.getData();
+        });
+        // Load existing content
+        const existingContent = document.querySelector('#jobOpportunityStatement').value;
+        if (existingContent) {
+          editor.setData(existingContent);
+        }
+      })
+      .catch(error => {
+        console.error('CKEditor initialization failed:', error);
+      });
+
+    // Handle country/location field visibility
+    const countryRadios = document.querySelectorAll('input[name="fields[country]"]');
+    const usFields = document.getElementById('usLocationFields');
+    const intlFields = document.getElementById('intlLocationFields');
+
+    function toggleLocationFields() {
+      const selectedCountry = document.querySelector('input[name="fields[country]"]:checked').value;
+      const jobCity = document.getElementById('jobCity');
+      const jobState = document.getElementById('jobState');
+      const jobLocation = document.getElementById('jobLocation');
+      const cityRequired = document.getElementById('cityrequired');
+      const stateRequired = document.getElementById('staterequired');
+      const locationRequired = document.getElementById('locationrequired');
+
+      if (selectedCountry === 'unitedStates') {
+        usFields.classList.remove('d-none');
+        intlFields.classList.add('d-none');
+
+        // Make US fields required
+        jobCity.setAttribute('required', 'required');
+        jobState.setAttribute('required', 'required');
+        jobLocation.removeAttribute('required');
+
+        // Show US required asterisks
+        cityRequired.classList.remove('d-none');
+        stateRequired.classList.remove('d-none');
+        locationRequired.classList.add('d-none');
+      } else {
+        usFields.classList.add('d-none');
+        intlFields.classList.remove('d-none');
+
+        // Make international field required
+        jobLocation.setAttribute('required', 'required');
+        jobCity.removeAttribute('required');
+        jobState.removeAttribute('required');
+
+        // Show international required asterisk
+        locationRequired.classList.remove('d-none');
+        cityRequired.classList.add('d-none');
+        stateRequired.classList.add('d-none');
+      }
+    }
+
+    countryRadios.forEach(radio => {
+      radio.addEventListener('change', toggleLocationFields);
+    });
+
+    // File upload functionality
+    const jobAttachmentsInput = document.getElementById('jobAttachments');
+    const browseFilesBtn = document.getElementById('browseFiles');
+    const uploadArea = document.getElementById('uploadArea');
+    const attachmentsList = document.getElementById('attachmentsList');
+    const maxFiles = 3;
+    const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+    let currentAttachments = [];
+
+    // Initialize current attachments count
+    const existingAttachments = attachmentsList.querySelectorAll('.attachment-item');
+    currentAttachments = Array.from(existingAttachments);
+
+    if (jobAttachmentsInput && browseFilesBtn && uploadArea) {
+      // Browse files button click
+      browseFilesBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        jobAttachmentsInput.click();
+      });
+
+      // File input change
+      jobAttachmentsInput.addEventListener('change', function(e) {
+        handleFileSelection(e.target.files);
+      });
+
+      // Drag and drop functionality
+      uploadArea.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        uploadArea.style.borderColor = '#0d6efd';
+        uploadArea.style.backgroundColor = '#f8f9fa';
+      });
+
+      uploadArea.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        uploadArea.style.borderColor = '#dee2e6';
+        uploadArea.style.backgroundColor = '';
+      });
+
+      uploadArea.addEventListener('drop', function(e) {
+        e.preventDefault();
+        uploadArea.style.borderColor = '#dee2e6';
+        uploadArea.style.backgroundColor = '';
+        handleFileSelection(e.dataTransfer.files);
+      });
+    }
+
+    function handleFileSelection(files) {
+      // Check total file count
+      if (currentAttachments.length + files.length > maxFiles) {
+        alert(`You can only upload up to ${maxFiles} files total. You currently have ${currentAttachments.length} file(s).`);
+        return;
+      }
+
+      // Process each file
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+
+        // Check file size
+        if (file.size > maxSize) {
+          alert(`File "${file.name}" is too large. Maximum file size is 10MB.`);
+          continue;
+        }
+
+        // Check file type
+        if (!file.name.match(/\.(pdf|doc|docx)$/i)) {
+          alert(`File "${file.name}" is not a supported format. Please upload PDF, DOC, or DOCX files.`);
+          continue;
+        }
+
+        // Add file to the list
+        addAttachmentToList(file);
+      }
+
+      // Clear the input
+      jobAttachmentsInput.value = '';
+    }
+
+    function addAttachmentToList(file) {
+      const attachmentDiv = document.createElement('div');
+      attachmentDiv.className = 'attachment-item d-flex align-items-center mb-2 p-2 border rounded';
+
+      const fileIcon = getFileIcon(file.name);
+      const fileSize = formatFileSize(file.size);
+
+      attachmentDiv.innerHTML = `
+        <i class="${fileIcon} me-2"></i>
+        <div class="me-auto">
+          <span>${file.name}</span>
+          <small class="text-muted d-block">${fileSize}</small>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-danger remove-attachment" onclick="removeAttachment(this)">
+          <i class="fas fa-times"></i>
+        </button>
+      `;
+
+      // Create a hidden input for the file
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.name = 'fields[jobAttachments][]';
+      fileInput.className = 'd-none';
+      fileInput.files = createFileList([file]);
+      attachmentDiv.appendChild(fileInput);
+
+      attachmentsList.appendChild(attachmentDiv);
+      currentAttachments.push(attachmentDiv);
+    }
+
+    function getFileIcon(filename) {
+      const ext = filename.split('.').pop().toLowerCase();
+      switch(ext) {
+        case 'pdf': return 'fas fa-file-pdf text-danger';
+        case 'doc':
+        case 'docx': return 'fas fa-file-word text-primary';
+        default: return 'fas fa-file text-secondary';
+      }
+    }
+
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    function createFileList(files) {
+      const dt = new DataTransfer();
+      files.forEach(file => dt.items.add(file));
+      return dt.files;
+    }
+
+    // Global function for removing attachments
+    window.removeAttachment = function(button) {
+      const attachmentItem = button.closest('.attachment-item');
+      const index = currentAttachments.indexOf(attachmentItem);
+      if (index > -1) {
+        currentAttachments.splice(index, 1);
+      }
+      attachmentItem.remove();
+    };
+
+    // Initialize on page load
+    toggleLocationFields();
+
+    // Form validation
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+      // Ensure CKEditor content is synced before submission
+      if (jobDescriptionEditor) {
+        document.querySelector('#jobDescription').value = jobDescriptionEditor.getData();
+      }
+      if (opportunityStatementEditor) {
+        document.querySelector('#jobOpportunityStatement').value = opportunityStatementEditor.getData();
+      }
+
+      if (!form.checkValidity()) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      form.classList.add('was-validated');
+    });
+  });
+  </script>
+  {% endif %}
+{% endblock %}

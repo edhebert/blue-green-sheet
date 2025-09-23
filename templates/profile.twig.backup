@@ -72,89 +72,6 @@
                 {% endif %}
             </div>
 
-            <div class="profile-section">
-                <h3>My Job Postings</h3>
-                {% set userJobs = craft.entries().section('jobs').authorId(currentUser.id).status(null).orderBy('postDate DESC').all() %}
-                {% if userJobs|length %}
-                    <div class="job-postings-grid">
-                        {% for job in userJobs %}
-                            <div class="job-posting-card">
-                                <div class="job-card-header">
-                                    <h4 class="job-title">
-                                        <a href="{{ job.url }}" class="job-link">{{ job.title }}</a>
-                                    </h4>
-                                    <div class="job-status">
-                                        {% if job.status == 'live' and job.enabled %}
-                                            <span class="status-badge status-published">Published</span>
-                                        {% else %}
-                                            <span class="status-badge status-draft">Draft</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-
-                                <div class="job-card-content">
-                                    {% if job.jobCategory|length %}
-                                        <div class="job-meta">
-                                            <span class="meta-label">Category:</span>
-                                            <span>{{ job.jobCategory.one().title }}</span>
-                                        </div>
-                                    {% endif %}
-
-                                    {% if job.jobLocation or job.jobCity or job.jobState %}
-                                        <div class="job-meta">
-                                            <span class="meta-label">Location:</span>
-                                            <span>
-                                                {% if job.jobLocation %}
-                                                    {{ job.jobLocation }}
-                                                {% else %}
-                                                    {{ job.jobCity }}{% if job.jobCity and job.jobState %}, {% endif %}{{ job.jobState }}
-                                                {% endif %}
-                                            </span>
-                                        </div>
-                                    {% endif %}
-
-                                    <div class="job-meta">
-                                        <span class="meta-label">Posted:</span>
-                                        <span>{{ job.postDate|date('M j, Y') }}</span>
-                                    </div>
-
-                                    {% if job.expiryDate %}
-                                        <div class="job-meta">
-                                            <span class="meta-label">Expires:</span>
-                                            <span>{{ job.expiryDate|date('M j, Y') }}</span>
-                                        </div>
-                                    {% endif %}
-                                </div>
-
-                                <div class="job-card-actions">
-                                    {% if job.status == 'live' and job.enabled %}
-                                        <a href="{{ job.url }}" class="button button-small rounded-pill">View</a>
-                                    {% endif %}
-                                    {% if job.authorId == currentUser.id or currentUser.admin %}
-                                        <a href="{{ url('jobs/edit/' ~ job.id) }}" class="button button-small button-border rounded-pill">Edit</a>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-
-                    {% if currentUser.isInGroup('jobPosters') or currentUser.admin %}
-                        <div class="post-new-job">
-                            <a href="{{ url('jobs/post') }}" class="button rounded-pill">
-                                <i class="icon-plus"></i> Post New Job
-                            </a>
-                        </div>
-                    {% endif %}
-                {% else %}
-                    <div class="no-jobs-message">
-                        <p>You have no current job postings.</p>
-                        {% if currentUser.isInGroup('jobPosters') or currentUser.admin %}
-                            <a href="{{ url('jobs/post') }}" class="button rounded-pill">Post Your First Job</a>
-                        {% endif %}
-                    </div>
-                {% endif %}
-            </div>
-
             <div class="profile-actions">
                 <button type="button" id="editProfile" class="button rounded-pill">Edit Profile</button>
                 <a href="/logout" class="button rounded-pill button-border border-width-1">Logout</a>
@@ -384,153 +301,21 @@ label {
     margin-bottom: 1rem;
 }
 
-/* Job Postings Dashboard Styles */
-.job-postings-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-.job-posting-card {
-    background: white;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 1.25rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: box-shadow 0.2s ease;
-}
-
-.job-posting-card:hover {
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-}
-
-.job-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 1rem;
-    gap: 1rem;
-}
-
-.job-title {
-    margin: 0;
-    font-size: 1.1rem;
-    font-weight: 600;
-    line-height: 1.3;
-    flex: 1;
-}
-
-.job-link {
-    color: #1976d2;
-    text-decoration: none;
-}
-
-.job-link:hover {
-    text-decoration: underline;
-}
-
-.job-status {
-    flex-shrink: 0;
-}
-
-.status-badge {
-    padding: 0.25rem 0.5rem;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.status-published {
-    background: #e8f5e8;
-    color: #2e7d32;
-}
-
-.status-draft {
-    background: #fff3e0;
-    color: #f57c00;
-}
-
-.job-card-content {
-    margin-bottom: 1rem;
-}
-
-.job-meta {
-    display: flex;
-    margin-bottom: 0.5rem;
-    font-size: 0.875rem;
-}
-
-.meta-label {
-    font-weight: 600;
-    min-width: 60px;
-    margin-right: 0.5rem;
-    color: #666;
-}
-
-.job-card-actions {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-}
-
-.button-small {
-    padding: 0.375rem 0.75rem;
-    font-size: 0.875rem;
-}
-
-.no-jobs-message {
-    text-align: center;
-    padding: 2rem;
-    background: white;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    color: #666;
-}
-
-.no-jobs-message p {
-    margin-bottom: 1rem;
-    font-size: 1.1rem;
-}
-
-.post-new-job {
-    text-align: center;
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid #e0e0e0;
-}
-
 @media (max-width: 768px) {
     .profile-field {
         flex-direction: column;
         align-items: flex-start;
     }
-
+    
     .profile-field label {
         min-width: auto;
         margin-right: 0;
         margin-bottom: 0.25rem;
     }
-
+    
     .form-actions,
     .profile-actions {
         flex-direction: column;
-    }
-
-    .job-postings-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .job-card-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-    }
-
-    .job-card-actions {
-        flex-wrap: wrap;
     }
 }
 </style>
