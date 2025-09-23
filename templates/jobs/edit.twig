@@ -3,9 +3,20 @@
 {% block title %}Edit Job Posting · {{ siteName }}{% endblock %}
 
 {% block content %}
-  {# Get the job entry from URL parameter #}
+  {# Get and validate the job entry from URL parameter #}
   {% set entryId = craft.app.request.getSegment(3) %}
-  {% set jobEntry = craft.entries().section('jobs').id(entryId).status(null).one() %}
+
+  {# Ensure we have a valid entry ID #}
+  {% if not entryId or not entryId|number_format %}
+    {% set jobEntry = null %}
+  {% else %}
+    {# Only load entries that belong to current user (unless admin) #}
+    {% if currentUser.admin %}
+      {% set jobEntry = craft.entries().section('jobs').id(entryId).status(null).one() %}
+    {% else %}
+      {% set jobEntry = craft.entries().section('jobs').id(entryId).status(null).authorId(currentUser.id).one() %}
+    {% endif %}
+  {% endif %}
   {% set currentUser = currentUser %}
 
   <div class="container" style="max-width: 800px;">
@@ -56,15 +67,19 @@
             </a>
           </div>
 
-        {% elseif jobEntry.authorId != currentUser.id and not currentUser.admin %}
-          <!-- Not Owner -->
+        {% elseif not jobEntry or (jobEntry.authorId != currentUser.id and not currentUser.admin) %}
+          <!-- Job Not Found or Not Owner -->
           <div class="text-center py-5">
             <div class="mb-4">
               <i class="bi bi-shield-exclamation text-danger" style="font-size: 4rem;"></i>
             </div>
             <h2 class="h4 mb-3">Access Denied</h2>
             <p class="text-muted mb-4 lead">
-              You can only edit your own job postings.
+              {% if not jobEntry %}
+                The job posting you're trying to edit could not be found or you don't have permission to access it.
+              {% else %}
+                You can only edit your own job postings.
+              {% endif %}
             </p>
             <a href="{{ url('profile') }}" class="button button-xlarge rounded-pill px-4">
               <i class="bi bi-arrow-left me-2"></i>Back to Profile

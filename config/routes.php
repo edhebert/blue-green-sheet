@@ -13,6 +13,7 @@ return [
     // Override Craft's default email verification route to use our custom template
     'verifyemail' => ['template' => 'verify-email'],
 
-    // Job editing route
+    // Job editing routes
     'jobs/edit/<entryId:\d+>' => ['template' => 'jobs/edit'],
+    'jobs/edit' => ['template' => 'jobs/edit-invalid'],
 ];

@@ -163,7 +163,7 @@ return [
                     }
                     $htmlBody = "<p>A new user has activated their account:</p>";
                     $htmlBody .= "<p><strong>Email:</strong> {$user->email}</p>";
-                    $htmlBody .= "<p><strong>Name:</strong> {$user->friendlyName}</p>";
+                    $htmlBody .= "<p><strong>Name:</strong> {$user->fullName}</p>";
 
                     $msg = (new Message())
                         ->setTo($to)
@@ -436,7 +436,7 @@ return [
                         $body = "A new job posting has been created and published:\n\n";
                         $body .= "Job Title: {$job->title}\n";
                         $body .= "Organization: " . ($organization ? $organization->title : 'Unknown') . "\n";
-                        $body .= "Posted by: {$user->friendlyName} ({$user->email})\n";
+                        $body .= "Posted by: {$user->fullName} ({$user->email})\n";
                         $body .= "Duration: {$duration} month(s)\n";
                         $body .= "Payment: \${$amount} via {$paymentMethod}\n";
                         $body .= "Job URL: " . ($job->getUrl() ?? 'URL not available') . "\n\n";
