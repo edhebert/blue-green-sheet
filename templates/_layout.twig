@@ -76,7 +76,8 @@
                         {# these buttons don't collapse on mobile  #}
                         <div class="header-misc justify-content-xl-end">
                                 {% if currentUser %}
- 									    <a class="ms-6 button rounded-pill button-mini" style="text-transform: uppercase;" href="{{ siteUrl }}profile"><div>Profile</div></a>   
+                                        <span class="ms-6 me-3 text-sm" style="font-style:italic">Hi, {{ currentUser.getFriendlyName() }}!</span>
+ 									    <a class="button rounded-pill button-mini" style="text-transform: uppercase;" href="{{ siteUrl }}profile"><div>Profile</div></a>   
 									    <a class="button rounded-pill button-border border-width-1 button-light button-mini" style="text-transform: uppercase;" href="{{ siteUrl }}logout"><div>Logout</div></a>
 
                                 {% else %}

@@ -53,7 +53,7 @@
             </div>
           </div>
 
-        {% elseif not currentUser.can('postJobs') %}
+        {% elseif not currentUser.isInGroup('jobPosters') and not currentUser.admin %}
           <!-- Permission Required Message -->
           <div class="text-center py-5">
             <div class="mb-4">
@@ -502,7 +502,7 @@
     </div>
   </div>
 
-  {% if currentUser and currentUser.can('postJobs') %}
+  {% if currentUser and (currentUser.isInGroup('jobPosters') or currentUser.admin) %}
   <!-- CKEditor CDN -->
   <script src="https://cdn.ckeditor.com/ckeditor5/40.1.0/classic/ckeditor.js"></script>
 
