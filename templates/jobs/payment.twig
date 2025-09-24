@@ -13,6 +13,9 @@
   {# Load the job entry #}
   {% if jobId %}
     {% set jobEntry = craft.entries().section('jobs').id(jobId).status(null).authorId(currentUser.id).one() %}
+  {% else %}
+    {# If no jobId provided, find the user's most recent unpaid job #}
+    {% set jobEntry = craft.entries().section('jobs').status(null).authorId(currentUser.id).paid(false).orderBy('dateCreated DESC').one() %}
   {% endif %}
 
   <div class="container" style="max-width: 700px;">
