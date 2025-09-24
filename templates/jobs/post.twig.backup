@@ -1,22 +1,9 @@
 {% extends "_layout.twig" %}
 
-{% block title %}Edit Job Posting · {{ siteName }}{% endblock %}
+{% block title %}Post a New Job · {{ siteName }}{% endblock %}
 
 {% block content %}
-  {# Get and validate the job entry from URL parameter #}
-  {% set entryId = craft.app.request.getSegment(3) %}
-
-  {# Ensure we have a valid entry ID #}
-  {% if not entryId or not entryId|number_format %}
-    {% set jobEntry = null %}
-  {% else %}
-    {# Only load entries that belong to current user (unless admin) #}
-    {% if currentUser.admin %}
-      {% set jobEntry = craft.entries().section('jobs').id(entryId).status(null).one() %}
-    {% else %}
-      {% set jobEntry = craft.entries().section('jobs').id(entryId).status(null).authorId(currentUser.id).one() %}
-    {% endif %}
-  {% endif %}
+  {% set entry = entry ?? null %}
   {% set currentUser = currentUser %}
 
   <div class="container" style="max-width: 800px;">
@@ -24,17 +11,46 @@
       <div class="col-12">
         {% if not currentUser %}
           <!-- Account Required Message -->
-          <div class="text-center py-5">
+          <div class="text-center pb-5">
             <div class="mb-4">
               <i class="bi bi-person-circle text-primary" style="font-size: 4rem;"></i>
             </div>
             <h2 class="h4 mb-3">Account Required</h2>
             <p class="text-muted mb-4 lead">
-              You need to be logged in to edit job postings.
+              To post a job opening on Blue Green Sheet, you need to create an account or sign in to your existing account.
             </p>
-            <a href="{{ url('login') }}" class="button button-xlarge rounded-pill px-4">
-              <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
-            </a>
+
+            <div class="row justify-content-center mb-4">
+              <div class="col-md-8">
+                <div class="card border-0 bg-light">
+                  <div class="card-body p-4">
+                    <h5 class="h6 mb-3">What you'll be able to do:</h5>
+                    <ul class="list-unstyled text-start">
+                      <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Post job openings for 6 or 12 months</li>
+                      <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Reach qualified educational professionals</li>
+                      <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Edit your postings anytime</li>
+                      <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Upload job attachments and documents</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex gap-3 justify-content-center flex-wrap">
+              <a href="{{ url('login') }}" class="button button-xlarge rounded-pill px-4">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Sign In to Existing Account
+              </a>
+              <a href="{{ url('register') }}" class="button button-xlarge rounded-pill button-border px-4">
+                <i class="bi bi-person-plus me-2"></i>Create New Account
+              </a>
+            </div>
+
+            <div class="mt-4">
+              <p class="text-muted small">
+                Already have an account? <a href="{{ url('login') }}" class="text-decoration-none">Sign in here</a><br>
+                Questions about posting jobs? <a href="{{ url('pricing') }}" class="text-decoration-none">View our pricing</a>
+              </p>
+            </div>
           </div>
 
         {% elseif not currentUser.isInGroup('jobPosters') and not currentUser.admin %}
@@ -45,55 +61,21 @@
             </div>
             <h2 class="h4 mb-3">Access Restricted</h2>
             <p class="text-muted mb-4 lead">
-              Your account doesn't have permission to edit jobs.
+              Your account doesn't have permission to post jobs. Please contact us if you need access to post job openings.
             </p>
             <a href="{{ url('contact') }}" class="button button-xlarge button-rounded px-4">
               <i class="bi bi-envelope me-2"></i>Contact Us
             </a>
           </div>
 
-        {% elseif not jobEntry %}
-          <!-- Job Not Found -->
-          <div class="text-center py-5">
-            <div class="mb-4">
-              <i class="bi bi-exclamation-triangle text-warning" style="font-size: 4rem;"></i>
-            </div>
-            <h2 class="h4 mb-3">Job Not Found</h2>
-            <p class="text-muted mb-4 lead">
-              The job posting you're trying to edit could not be found.
-            </p>
-            <a href="{{ url('profile') }}" class="button button-xlarge rounded-pill px-4">
-              <i class="bi bi-arrow-left me-2"></i>Back to Profile
-            </a>
-          </div>
-
-        {% elseif not jobEntry or (jobEntry.authorId != currentUser.id and not currentUser.admin) %}
-          <!-- Job Not Found or Not Owner -->
-          <div class="text-center py-5">
-            <div class="mb-4">
-              <i class="bi bi-shield-exclamation text-danger" style="font-size: 4rem;"></i>
-            </div>
-            <h2 class="h4 mb-3">Access Denied</h2>
-            <p class="text-muted mb-4 lead">
-              {% if not jobEntry %}
-                The job posting you're trying to edit could not be found or you don't have permission to access it.
-              {% else %}
-                You can only edit your own job postings.
-              {% endif %}
-            </p>
-            <a href="{{ url('profile') }}" class="button button-xlarge rounded-pill px-4">
-              <i class="bi bi-arrow-left me-2"></i>Back to Profile
-            </a>
-          </div>
-
         {% else %}
-          <!-- Authorized User - Show Job Editing Form -->
+          <!-- Authorized User - Show Job Posting Form -->
 
-        {% if jobEntry and jobEntry.getErrors() %}
+        {% if entry and entry.getErrors() %}
           <div class="alert alert-danger">
             <strong>We couldn't save your job posting.</strong>
             <ul class="mb-0">
-              {% for attr, errs in jobEntry.getErrors() %}
+              {% for attr, errs in entry.getErrors() %}
                 {% for err in errs %}
                   <li>{{ err }}</li>
                 {% endfor %}
@@ -101,22 +83,15 @@
             </ul>
           </div>
         {% endif %}
-
-        <div class="d-flex align-items-center mb-4">
-          <a href="{{ url('profile') }}" class="button button-small button-border rounded-pill me-3">
-            <i class="bi bi-arrow-left"></i> Back to Profile
-          </a>
-          <h1 class="h3 mb-0">Edit Job Posting</h1>
-        </div>
-
-        <form method="post" class="" enctype="multipart/form-data" novalidate>
+        <h1 class="h3 mb-4">Post a New Job Opening</h1>
+        <form method="post" class="needs-validation" enctype="multipart/form-data" novalidate>
           {{ csrfInput() }}
           {{ actionInput('entries/save-entry') }}
-          {{ hiddenInput('entryId', jobEntry.id) }}
-          {{ hiddenInput('sectionId', jobEntry.sectionId) }}
-          {{ hiddenInput('typeId', jobEntry.typeId) }}
-          {# Current entry status - will be updated by form #}
-          {{ redirectInput('profile?updated=job') }}
+          {% set jobsSection = craft.entries.section('jobs').one().section %}
+          {{ hiddenInput('sectionId', jobsSection.id) }}
+          {{ hiddenInput('typeId', jobsSection.entryTypes[0].id) }}
+          {{ hiddenInput('enabled', false) }} {# Keep disabled until payment #}
+          {{ redirectInput('jobs/payment') }}
 
           <!-- Job Title -->
           <div class="mb-4">
@@ -125,13 +100,14 @@
               type="text"
               id="title"
               name="title"
-              class="form-control{% if jobEntry and jobEntry.getErrors('title') %} is-invalid{% endif %}"
-              value="{{ (jobEntry ? jobEntry.title : '')|e }}"
+              class="form-control{% if entry and entry.getErrors('title') %} is-invalid{% endif %}"
+              value="{{ (entry ? entry.title : '')|e }}"
               placeholder="e.g., Head of School, Business Manager, Development Director"
+              required
             >
-            {% if jobEntry and jobEntry.getErrors('title') %}
+            {% if entry and entry.getErrors('title') %}
               <div class="invalid-feedback">
-                {{ jobEntry.getErrors('title')|join(', ') }}
+                {{ entry.getErrors('title')|join(', ') }}
               </div>
             {% endif %}
           </div>
@@ -142,13 +118,14 @@
             <select
               id="jobCategory"
               name="fields[jobCategory][]"
-              class="form-select{% if jobEntry and jobEntry.getErrors('jobCategory') %} is-invalid{% endif %}"
+              class="form-select{% if entry and entry.getErrors('jobCategory') %} is-invalid{% endif %}"
+              required
             >
               <option value="">Select a category...</option>
               {% for category in craft.categories().group('jobCategories').all() %}
                 {% set isSelected = false %}
-                {% if jobEntry and jobEntry.jobCategory %}
-                  {% for selectedCategory in jobEntry.jobCategory.all() %}
+                {% if entry and entry.jobCategory %}
+                  {% for selectedCategory in entry.jobCategory.all() %}
                     {% if selectedCategory.id == category.id %}
                       {% set isSelected = true %}
                     {% endif %}
@@ -159,9 +136,9 @@
                 </option>
               {% endfor %}
             </select>
-            {% if jobEntry and jobEntry.getErrors('jobCategory') %}
+            {% if entry and entry.getErrors('jobCategory') %}
               <div class="invalid-feedback">
-                {{ jobEntry.getErrors('jobCategory')|join(', ') }}
+                {{ entry.getErrors('jobCategory')|join(', ') }}
               </div>
             {% endif %}
           </div>
@@ -173,11 +150,12 @@
             <textarea
               id="jobDescription"
               name="fields[jobDescription]"
-              class="d-none{% if jobEntry and jobEntry.getErrors('jobDescription') %} is-invalid{% endif %}"
-            >{{ jobEntry ? jobEntry.jobDescription : '' }}</textarea>
-            {% if jobEntry and jobEntry.getErrors('jobDescription') %}
+              class="d-none{% if entry and entry.getErrors('jobDescription') %} is-invalid{% endif %}"
+              required
+            >{{ entry ? entry.jobDescription : '' }}</textarea>
+            {% if entry and entry.getErrors('jobDescription') %}
               <div class="invalid-feedback">
-                {{ jobEntry.getErrors('jobDescription')|join(', ') }}
+                {{ entry.getErrors('jobDescription')|join(', ') }}
               </div>
             {% endif %}
           </div>
@@ -191,7 +169,7 @@
               id="jobOpportunityStatement"
               name="fields[jobOpportunityStatement]"
               class="d-none"
-            >{{ jobEntry ? jobEntry.jobOpportunityStatement : '' }}</textarea>
+            >{{ entry ? entry.jobOpportunityStatement : '' }}</textarea>
           </div>
 
           <!-- Salary Range -->
@@ -205,7 +183,7 @@
                   id="jobSalaryLow"
                   name="fields[jobSalaryLow]"
                   class="form-control"
-                  value="{{ jobEntry ? jobEntry.jobSalaryLow : '' }}"
+                  value="{{ entry ? entry.jobSalaryLow : '' }}"
                   placeholder="75000"
                   min="0"
                   step="1000"
@@ -221,7 +199,7 @@
                   id="jobSalaryHigh"
                   name="fields[jobSalaryHigh]"
                   class="form-control"
-                  value="{{ jobEntry ? jobEntry.jobSalaryHigh : '' }}"
+                  value="{{ entry ? entry.jobSalaryHigh : '' }}"
                   placeholder="125000"
                   min="0"
                   step="1000"
@@ -238,7 +216,7 @@
               id="jobSchoolUrl"
               name="fields[jobSchoolUrl][value]"
               class="form-control"
-              value="{{ jobEntry and jobEntry.jobSchoolUrl ? jobEntry.jobSchoolUrl.url : '' }}"
+              value="{{ entry and entry.jobSchoolUrl ? entry.jobSchoolUrl.url : '' }}"
               placeholder="www.yourschool.edu"
             >
             {{ hiddenInput('fields[jobSchoolUrl][type]', 'url') }}
@@ -247,6 +225,7 @@
           <!-- Location Information -->
           <div class="mb-4">
             <h5 class="fw-bold mb-3">Location Information</h5>
+
 
             <!-- Country Selection -->
             <div class="mb-3">
@@ -259,7 +238,8 @@
                     name="fields[country]"
                     id="countryUS"
                     value="unitedStates"
-                    {% if not jobEntry or (jobEntry.country is defined and jobEntry.country == 'unitedStates') or not jobEntry.country %}checked{% endif %}
+                    {% if not entry or (entry.country is defined and entry.country == 'unitedStates') or not entry.country %}checked{% endif %}
+                    required
                   >
                   <label class="form-check-label" for="countryUS">
                     United States
@@ -272,7 +252,8 @@
                     name="fields[country]"
                     id="countryIntl"
                     value="international"
-                    {% if jobEntry and jobEntry.country is defined and jobEntry.country == 'international' %}checked{% endif %}
+                    {% if entry and entry.country is defined and entry.country == 'international' %}checked{% endif %}
+                    required
                   >
                   <label class="form-check-label" for="countryIntl">
                     International
@@ -281,8 +262,9 @@
               </div>
             </div>
 
+
             <!-- US Location Fields -->
-            <div id="usLocationFields" class="{% if jobEntry and jobEntry.country is defined and jobEntry.country == 'international' %}d-none{% endif %}">
+            <div id="usLocationFields" class="{% if entry and entry.country is defined and entry.country == 'international' %}d-none{% endif %}">
               <div class="row">
                 <div class="col-md-6 mb-3">
                   <label for="jobCity" class="form-label fw-bold">City <span id="cityrequired" class="text-danger d-none">*</span></label>
@@ -291,7 +273,7 @@
                     id="jobCity"
                     name="fields[jobCity]"
                     class="form-control"
-                    value="{{ jobEntry ? jobEntry.jobCity : '' }}"
+                    value="{{ entry ? entry.jobCity : '' }}"
                     placeholder="your city"
                   >
                 </div>
@@ -306,7 +288,7 @@
                     {% set states = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY', 'DC'] %}
                     {% for state in states %}
                       <option value="{{ state }}"
-                        {% if jobEntry and jobEntry.jobState == state %}selected{% endif %}>
+                        {% if entry and entry.jobState == state %}selected{% endif %}>
                         {{ state }}
                       </option>
                     {% endfor %}
@@ -316,7 +298,7 @@
             </div>
 
             <!-- International Location Field -->
-            <div id="intlLocationFields" class="{% if not jobEntry or not jobEntry.country is defined or jobEntry.country != 'international' %}d-none{% endif %}">
+            <div id="intlLocationFields" class="{% if not entry or not entry.country is defined or entry.country != 'international' %}d-none{% endif %}">
               <div class="mb-3">
                 <label for="jobLocation" class="form-label fw-bold">Location <span id="locationrequired" class="text-danger d-none">*</span></label>
                 <input
@@ -324,7 +306,7 @@
                   id="jobLocation"
                   name="fields[jobLocation]"
                   class="form-control"
-                  value="{{ jobEntry ? jobEntry.jobLocation : '' }}"
+                  value="{{ entry ? entry.jobLocation : '' }}"
                   placeholder="London, United Kingdom"
                 >
               </div>
@@ -337,13 +319,14 @@
             <textarea
               id="jobApplicationInstructions"
               name="fields[jobApplicationInstructions]"
-              class="form-control{% if jobEntry and jobEntry.getErrors('jobApplicationInstructions') %} is-invalid{% endif %}"
+              class="form-control{% if entry and entry.getErrors('jobApplicationInstructions') %} is-invalid{% endif %}"
               rows="4"
               placeholder="How should candidates apply? Include contact information, required documents, application deadlines, etc."
-            >{{ jobEntry ? jobEntry.jobApplicationInstructions : '' }}</textarea>
-            {% if jobEntry and jobEntry.getErrors('jobApplicationInstructions') %}
+              required
+            >{{ entry ? entry.jobApplicationInstructions : '' }}</textarea>
+            {% if entry and entry.getErrors('jobApplicationInstructions') %}
               <div class="invalid-feedback">
-                {{ jobEntry.getErrors('jobApplicationInstructions')|join(', ') }}
+                {{ entry.getErrors('jobApplicationInstructions')|join(', ') }}
               </div>
             {% endif %}
           </div>
@@ -355,8 +338,8 @@
 
             <div id="attachmentsList" class="mb-3">
               <!-- Existing attachments will be displayed here -->
-              {% if jobEntry and jobEntry.jobAttachments %}
-                {% for attachment in jobEntry.jobAttachments.all() %}
+              {% if entry and entry.jobAttachments %}
+                {% for attachment in entry.jobAttachments.all() %}
                   <div class="attachment-item d-flex align-items-center mb-2 p-2 border rounded" data-asset-id="{{ attachment.id }}">
                     <i class="fas fa-file-pdf text-danger me-2"></i>
                     <span class="me-auto">{{ attachment.filename }}</span>
@@ -383,62 +366,132 @@
               >
             </div>
 
-            {% if jobEntry and jobEntry.getErrors('jobAttachments') %}
+            {% if entry and entry.getErrors('jobAttachments') %}
               <div class="invalid-feedback d-block">
-                {{ jobEntry.getErrors('jobAttachments')|join(', ') }}
+                {{ entry.getErrors('jobAttachments')|join(', ') }}
               </div>
             {% endif %}
           </div>
 
-          <!-- Job Status -->
-          <div class="mb-4">
-            <h5 class="fw-bold mb-3">Job Status</h5>
-            {% if jobEntry.status == 'live' and jobEntry.enabled %}
-              <div class="alert alert-success">
-                <strong>Published:</strong> This job posting is currently live and visible to candidates.
-              </div>
-            {% else %}
-              <div class="alert alert-warning">
-                <strong>Draft:</strong> This job posting is currently not visible to candidates.
-              </div>
+          <!-- Organization (automatically set) -->
+          {% set userOrganization = currentUser.organization.one() %}
+          {% if userOrganization %}
+            {{ hiddenInput('fields[listingOrganization][]', userOrganization.id) }}
+          {% else %}
+            <!-- Debug: User has no organization, trying different access methods -->
+            {{ hiddenInput('debug_user_id', currentUser.id) }}
+            {% set orgQuery = currentUser.organization %}
+            {% if orgQuery %}
+              {{ hiddenInput('debug_org_query', 'exists') }}
+              {% set orgResult = orgQuery.all() %}
+              {% if orgResult|length %}
+                {{ hiddenInput('fields[listingOrganization][]', orgResult[0].id) }}
+                {{ hiddenInput('debug_org_found', orgResult[0].title) }}
+              {% endif %}
             {% endif %}
+          {% endif %}
 
-            {% if jobEntry.paid %}
-              <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="jobEnabled" name="enabled" value="1" {% if jobEntry.status == 'live' and jobEntry.enabled %}checked{% endif %}>
-                <label class="form-check-label" for="jobEnabled">
-                  <strong>Publish and make visible to candidates</strong>
-                  <div class="form-text">Check to publish this job posting</div>
-                </label>
+          <!-- Posting Duration & Payment -->
+          <div class="mb-4">
+            <h5 class="fw-bold mb-3">Posting Duration & Payment</h5>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="postingDuration"
+                        id="duration6mo"
+                        value="6"
+                        checked
+                        required
+                      >
+                      <label class="form-check-label" for="duration6mo">
+                        <div class="fw-bold">6 Months</div>
+                        <div class="text-muted small">$300</div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
               </div>
-            {% else %}
-              <div class="alert alert-info">
-                <i class="bi bi-info-circle me-2"></i>
-                <strong>Payment Required</strong><br>
-                This job posting cannot be published until payment is completed.
-                <a href="{{ url('jobs/payment') }}?jobId={{ jobEntry.id }}" class="btn btn-sm btn-primary ms-2">
-                  Complete Payment
-                </a>
+              <div class="col-md-6 mb-3">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="postingDuration"
+                        id="duration12mo"
+                        value="12"
+                        required
+                      >
+                      <label class="form-check-label" for="duration12mo">
+                        <div class="fw-bold">12 Months</div>
+                        <div class="text-muted small">$400</div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
               </div>
-            {% endif %}
+            </div>
+          </div>
+
+          <!-- Payment Method -->
+          <div class="mb-4">
+            <label class="form-label fw-bold">Payment Method <span class="text-danger">*</span></label>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="paymentMethod"
+                        id="paymentCredit"
+                        value="credit"
+                        checked
+                        required
+                      >
+                      <label class="form-check-label" for="paymentCredit">
+                        <div class="fw-bold">Credit Card</div>
+                        <div class="text-muted small">Secure online payment</div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="paymentMethod"
+                        id="paymentInvoice"
+                        value="invoice"
+                        required
+                      >
+                      <label class="form-check-label" for="paymentInvoice">
+                        <div class="fw-bold">Invoice</div>
+                        <div class="text-muted small">We will contact you for payment arrangements</div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="d-grid gap-2">
-            {% if not jobEntry.paid %}
-              {# For unpaid/incomplete jobs, show option to complete and pay #}
-              <button type="button" class="btn btn-primary btn-lg" id="saveChanges">
-                Save Changes
-              </button>
-              <a href="{{ url('jobs/payment') }}?jobId={{ jobEntry.id }}" class="btn btn-success btn-lg">
-                <i class="bi bi-credit-card me-2"></i>Complete & Continue to Payment
-              </a>
-            {% else %}
-              {# For paid jobs, just allow editing #}
-              <button type="button" class="btn btn-primary btn-lg" id="saveChangesPaid">
-                Save Changes
-              </button>
-            {% endif %}
-            <a href="{{ url('profile') }}" class="btn btn-outline-secondary">
+            <button type="submit" class="btn btn-primary btn-lg">
+              Continue to Payment
+            </button>
+            <a href="{{ url('jobs') }}" class="btn btn-outline-secondary">
               Cancel
             </a>
           </div>
@@ -512,6 +565,7 @@
     const countryRadios = document.querySelectorAll('input[name="fields[country]"]');
     const usFields = document.getElementById('usLocationFields');
     const intlFields = document.getElementById('intlLocationFields');
+    const jobState = document.getElementById('jobState');
 
     function toggleLocationFields() {
       const selectedCountry = document.querySelector('input[name="fields[country]"]:checked').value;
@@ -698,123 +752,6 @@
 
     // Initialize on page load
     toggleLocationFields();
-
-    // Save Changes button handlers
-    function handleSaveChanges() {
-      console.log('Save changes clicked');
-
-      // Ensure CKEditor content is synced before submission
-      if (jobDescriptionEditor) {
-        document.querySelector('#jobDescription').value = jobDescriptionEditor.getData();
-      }
-      if (opportunityStatementEditor) {
-        document.querySelector('#jobOpportunityStatement').value = opportunityStatementEditor.getData();
-      }
-
-      // Force remove all Bootstrap validation classes and states
-      const form = document.querySelector('form');
-      form.classList.remove('was-validated');
-      form.querySelectorAll('.is-valid, .is-invalid').forEach(el => {
-        el.classList.remove('is-valid', 'is-invalid');
-      });
-
-      // Create form data manually to bypass any form validation
-      const formData = new FormData();
-
-      // Add essential form fields
-      formData.append('CRAFT_CSRF_TOKEN', document.querySelector('input[name="CRAFT_CSRF_TOKEN"]').value);
-      formData.append('action', 'entries/save-entry');
-      formData.append('entryId', document.querySelector('input[name="entryId"]').value);
-      formData.append('sectionId', document.querySelector('input[name="sectionId"]').value);
-
-      // Handle enabled/paid status based on current job state
-      const isPaid = {{ jobEntry.paid ? 'true' : 'false' }};
-
-      if (isPaid) {
-        // For paid jobs, preserve existing enabled status
-        const currentEnabled = document.querySelector('input[name="enabled"]');
-        if (currentEnabled && currentEnabled.value) {
-          formData.append('enabled', currentEnabled.value);
-        }
-        formData.append('fields[paid]', '1'); // Keep paid status
-      } else {
-        // For unpaid jobs, always keep disabled until payment
-        formData.append('enabled', '0');
-        formData.append('fields[paid]', '0');
-      }
-
-      formData.append('redirect', '{{ url("profile") }}');
-
-      // Add job data fields (only if they have values)
-      const title = document.getElementById('title').value;
-      if (title) formData.append('title', title);
-
-      const category = document.querySelector('select[name="fields[jobCategory][]"]').value;
-      if (category) formData.append('fields[jobCategory][]', category);
-
-      const description = document.getElementById('jobDescription').value;
-      if (description) formData.append('fields[jobDescription]', description);
-
-      const opportunityStatement = document.getElementById('jobOpportunityStatement').value;
-      if (opportunityStatement) formData.append('fields[jobOpportunityStatement]', opportunityStatement);
-
-      const salaryLow = document.getElementById('jobSalaryLow').value;
-      if (salaryLow) formData.append('fields[jobSalaryLow]', salaryLow);
-
-      const salaryHigh = document.getElementById('jobSalaryHigh').value;
-      if (salaryHigh) formData.append('fields[jobSalaryHigh]', salaryHigh);
-
-      const schoolUrl = document.querySelector('input[name="fields[jobSchoolUrl][value]"]').value;
-      if (schoolUrl) {
-        formData.append('fields[jobSchoolUrl][value]', schoolUrl);
-        formData.append('fields[jobSchoolUrl][type]', 'url');
-      }
-
-      const country = document.querySelector('input[name="fields[country]"]:checked');
-      if (country) formData.append('fields[country]', country.value);
-
-      const city = document.getElementById('jobCity').value;
-      if (city) formData.append('fields[jobCity]', city);
-
-      const state = document.getElementById('jobState').value;
-      if (state) formData.append('fields[jobState]', state);
-
-      const location = document.getElementById('jobLocation').value;
-      if (location) formData.append('fields[jobLocation]', location);
-
-      const applicationInstructions = document.getElementById('jobApplicationInstructions').value;
-      if (applicationInstructions) formData.append('fields[jobApplicationInstructions]', applicationInstructions);
-
-      console.log('About to submit edit form data via fetch');
-      console.log('Form data entries:', Array.from(formData.entries()));
-
-      // Submit via fetch to avoid browser form validation issues
-      fetch(form.action, {
-        method: 'POST',
-        body: formData
-      }).then(response => {
-        console.log('Fetch response received:', response);
-        if (response.redirected) {
-          window.location.href = response.url;
-        } else {
-          window.location.href = '{{ url("profile") }}';
-        }
-      }).catch(error => {
-        console.error('Fetch error:', error);
-        window.location.href = '{{ url("profile") }}';
-      });
-    }
-
-    // Attach handlers to both save buttons
-    const saveChangesBtn = document.getElementById('saveChanges');
-    if (saveChangesBtn) {
-      saveChangesBtn.addEventListener('click', handleSaveChanges);
-    }
-
-    const saveChangesPaidBtn = document.getElementById('saveChangesPaid');
-    if (saveChangesPaidBtn) {
-      saveChangesPaidBtn.addEventListener('click', handleSaveChanges);
-    }
 
     // Form validation
     const form = document.querySelector('form');

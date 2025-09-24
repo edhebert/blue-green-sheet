@@ -273,6 +273,9 @@ return [
                         // Activate the job (set enabled = true)
                         $job->enabled = true;
 
+                        // Mark as paid (for invoice payment)
+                        $job->setFieldValue('paid', true);
+
                         // Set expiration date based on duration
                         $expiryDate = new DateTime();
                         $expiryDate->add(new DateInterval('P' . $duration . 'M')); // Add months
@@ -384,6 +387,9 @@ return [
                     {
                         // Activate the job (set enabled = true)
                         $job->enabled = true;
+
+                        // Mark as paid
+                        $job->setFieldValue('paid', true);
 
                         // Set expiration date based on duration
                         $expiryDate = new DateTime();
@@ -500,6 +506,15 @@ return [
                     // Only for site requests (not CP)
                     if (!Craft::$app->getRequest()->getIsSiteRequest()) {
                         return;
+                    }
+
+                    $request = Craft::$app->getRequest();
+                    $submitType = $request->getBodyParam('submitType', 'payment');
+
+                    // If saving as draft, set success message but don't redirect here
+                    if ($submitType === 'draft') {
+                        Craft::$app->getSession()->setNotice('Job posting saved as draft. You can complete it later from your profile.');
+                        return; // Let Craft handle the redirect to profile page
                     }
 
                     // Store the job ID in session for payment processing

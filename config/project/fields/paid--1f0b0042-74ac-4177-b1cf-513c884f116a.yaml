@@ -1,0 +1,12 @@
+columnSuffix: null
+handle: paid
+instructions: 'Has the user completed the form and processed payment?'
+name: 'Paid?'
+searchable: false
+settings:
+  default: false
+  offLabel: 'No'
+  onLabel: 'Yes'
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\Lightswitch

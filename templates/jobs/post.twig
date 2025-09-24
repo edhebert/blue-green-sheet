@@ -6,6 +6,12 @@
   {% set entry = entry ?? null %}
   {% set currentUser = currentUser %}
 
+  {# Handle continuing from a draft #}
+  {% set continueFromId = craft.app.request.getParam('continueFrom') %}
+  {% if continueFromId and not entry %}
+    {% set entry = craft.entries().section('jobs').id(continueFromId).authorId(currentUser.id).one() %}
+  {% endif %}
+
   <div class="container" style="max-width: 800px;">
     <div class="row">
       <div class="col-12">
@@ -83,15 +89,26 @@
             </ul>
           </div>
         {% endif %}
-        <h1 class="h3 mb-4">Post a New Job Opening</h1>
-        <form method="post" class="needs-validation" enctype="multipart/form-data" novalidate>
+        <h1 class="h3 mb-4">
+          {% if entry and entry.id %}
+            Complete Your Job Posting
+          {% else %}
+            Post a New Job Opening
+          {% endif %}
+        </h1>
+        <form method="post" class="" enctype="multipart/form-data" novalidate>
           {{ csrfInput() }}
           {{ actionInput('entries/save-entry') }}
           {% set jobsSection = craft.entries.section('jobs').one().section %}
           {{ hiddenInput('sectionId', jobsSection.id) }}
           {{ hiddenInput('typeId', jobsSection.entryTypes[0].id) }}
+          {% if entry and entry.id %}
+            {{ hiddenInput('entryId', entry.id) }}
+          {% endif %}
           {{ hiddenInput('enabled', false) }} {# Keep disabled until payment #}
-          {{ redirectInput('jobs/payment') }}
+          {{ hiddenInput('fields[paid]', false) }} {# Default to unpaid #}
+          <input type="hidden" name="redirect" id="redirectInput" value="{{ url('jobs/payment') }}">
+          {{ hiddenInput('draftRedirect', url('profile')) }}
 
           <!-- Job Title -->
           <div class="mb-4">
@@ -103,7 +120,6 @@
               class="form-control{% if entry and entry.getErrors('title') %} is-invalid{% endif %}"
               value="{{ (entry ? entry.title : '')|e }}"
               placeholder="e.g., Head of School, Business Manager, Development Director"
-              required
             >
             {% if entry and entry.getErrors('title') %}
               <div class="invalid-feedback">
@@ -119,7 +135,6 @@
               id="jobCategory"
               name="fields[jobCategory][]"
               class="form-select{% if entry and entry.getErrors('jobCategory') %} is-invalid{% endif %}"
-              required
             >
               <option value="">Select a category...</option>
               {% for category in craft.categories().group('jobCategories').all() %}
@@ -151,7 +166,6 @@
               id="jobDescription"
               name="fields[jobDescription]"
               class="d-none{% if entry and entry.getErrors('jobDescription') %} is-invalid{% endif %}"
-              required
             >{{ entry ? entry.jobDescription : '' }}</textarea>
             {% if entry and entry.getErrors('jobDescription') %}
               <div class="invalid-feedback">
@@ -239,7 +253,6 @@
                     id="countryUS"
                     value="unitedStates"
                     {% if not entry or (entry.country is defined and entry.country == 'unitedStates') or not entry.country %}checked{% endif %}
-                    required
                   >
                   <label class="form-check-label" for="countryUS">
                     United States
@@ -253,7 +266,6 @@
                     id="countryIntl"
                     value="international"
                     {% if entry and entry.country is defined and entry.country == 'international' %}checked{% endif %}
-                    required
                   >
                   <label class="form-check-label" for="countryIntl">
                     International
@@ -322,7 +334,6 @@
               class="form-control{% if entry and entry.getErrors('jobApplicationInstructions') %} is-invalid{% endif %}"
               rows="4"
               placeholder="How should candidates apply? Include contact information, required documents, application deadlines, etc."
-              required
             >{{ entry ? entry.jobApplicationInstructions : '' }}</textarea>
             {% if entry and entry.getErrors('jobApplicationInstructions') %}
               <div class="invalid-feedback">
@@ -406,7 +417,6 @@
                         id="duration6mo"
                         value="6"
                         checked
-                        required
                       >
                       <label class="form-check-label" for="duration6mo">
                         <div class="fw-bold">6 Months</div>
@@ -426,7 +436,6 @@
                         name="postingDuration"
                         id="duration12mo"
                         value="12"
-                        required
                       >
                       <label class="form-check-label" for="duration12mo">
                         <div class="fw-bold">12 Months</div>
@@ -454,7 +463,6 @@
                         id="paymentCredit"
                         value="credit"
                         checked
-                        required
                       >
                       <label class="form-check-label" for="paymentCredit">
                         <div class="fw-bold">Credit Card</div>
@@ -474,7 +482,6 @@
                         name="paymentMethod"
                         id="paymentInvoice"
                         value="invoice"
-                        required
                       >
                       <label class="form-check-label" for="paymentInvoice">
                         <div class="fw-bold">Invoice</div>
@@ -488,13 +495,25 @@
           </div>
 
           <div class="d-grid gap-2">
-            <button type="submit" class="btn btn-primary btn-lg">
-              Continue to Payment
+            <button type="submit" class="btn btn-primary btn-lg" id="continueToPayment">
+              {% if entry and entry.id %}
+                Complete & Continue to Payment
+              {% else %}
+                Continue to Payment
+              {% endif %}
             </button>
+            {% if not entry or not entry.id %}
+              <button type="button" class="btn btn-outline-primary btn-lg" id="saveAsDraft">
+                <i class="bi bi-save me-2"></i>Save as Draft
+              </button>
+            {% endif %}
             <a href="{{ url('jobs') }}" class="btn btn-outline-secondary">
               Cancel
             </a>
           </div>
+
+          <!-- Hidden fields for draft handling -->
+          <input type="hidden" name="submitType" id="submitType" value="payment">
         </form>
 
         {% endif %}
@@ -753,9 +772,26 @@
     // Initialize on page load
     toggleLocationFields();
 
-    // Form validation
-    const form = document.querySelector('form');
-    form.addEventListener('submit', function(e) {
+    // Handle draft vs payment button clicks
+    document.getElementById('continueToPayment').addEventListener('click', function() {
+      document.getElementById('submitType').value = 'payment';
+    });
+
+    document.getElementById('saveAsDraft').addEventListener('click', function(e) {
+      e.preventDefault(); // Prevent any default behavior
+      e.stopPropagation(); // Stop event bubbling
+      e.stopImmediatePropagation(); // Stop all other handlers
+
+      console.log('Save as draft clicked');
+
+      document.getElementById('submitType').value = 'draft';
+
+      // For drafts, change redirect to profile
+      const redirectInput = document.getElementById('redirectInput');
+      if (redirectInput) {
+        redirectInput.value = '{{ url("profile") }}';
+      }
+
       // Ensure CKEditor content is synced before submission
       if (jobDescriptionEditor) {
         document.querySelector('#jobDescription').value = jobDescriptionEditor.getData();
@@ -764,11 +800,215 @@
         document.querySelector('#jobOpportunityStatement').value = opportunityStatementEditor.getData();
       }
 
-      if (!form.checkValidity()) {
-        e.preventDefault();
-        e.stopPropagation();
+      // Force remove all Bootstrap validation classes and states
+      const form = document.querySelector('form');
+      form.classList.remove('was-validated');
+      form.querySelectorAll('.is-valid, .is-invalid').forEach(el => {
+        el.classList.remove('is-valid', 'is-invalid');
+      });
+
+      // Disable all validation by temporarily removing form attributes
+      form.removeAttribute('novalidate');
+      form.setAttribute('novalidate', 'novalidate');
+
+      // Create form data manually to bypass any form validation
+      const formData = new FormData();
+
+      // Add essential form fields
+      formData.append('CRAFT_CSRF_TOKEN', document.querySelector('input[name="CRAFT_CSRF_TOKEN"]').value);
+      formData.append('action', 'entries/save-entry');
+      formData.append('sectionId', document.querySelector('input[name="sectionId"]').value);
+      formData.append('typeId', document.querySelector('input[name="typeId"]').value);
+      formData.append('enabled', '0');
+      formData.append('fields[paid]', '0');
+      formData.append('redirect', '{{ url("profile") }}');
+      formData.append('submitType', 'draft');
+
+      // Add job data fields (only if they have values)
+      const title = document.getElementById('title').value;
+      if (title) formData.append('title', title);
+
+      const category = document.querySelector('select[name="fields[jobCategory][]"]').value;
+      if (category) formData.append('fields[jobCategory][]', category);
+
+      const description = document.getElementById('jobDescription').value;
+      if (description) formData.append('fields[jobDescription]', description);
+
+      const opportunityStatement = document.getElementById('jobOpportunityStatement').value;
+      if (opportunityStatement) formData.append('fields[jobOpportunityStatement]', opportunityStatement);
+
+      const salaryLow = document.getElementById('jobSalaryLow').value;
+      if (salaryLow) formData.append('fields[jobSalaryLow]', salaryLow);
+
+      const salaryHigh = document.getElementById('jobSalaryHigh').value;
+      if (salaryHigh) formData.append('fields[jobSalaryHigh]', salaryHigh);
+
+      const schoolUrl = document.querySelector('input[name="fields[jobSchoolUrl][value]"]').value;
+      if (schoolUrl) {
+        formData.append('fields[jobSchoolUrl][value]', schoolUrl);
+        formData.append('fields[jobSchoolUrl][type]', 'url');
       }
-      form.classList.add('was-validated');
+
+      const country = document.querySelector('input[name="fields[country]"]:checked');
+      if (country) formData.append('fields[country]', country.value);
+
+      const city = document.getElementById('jobCity').value;
+      if (city) formData.append('fields[jobCity]', city);
+
+      const state = document.getElementById('jobState').value;
+      if (state) formData.append('fields[jobState]', state);
+
+      const location = document.getElementById('jobLocation').value;
+      if (location) formData.append('fields[jobLocation]', location);
+
+      const applicationInstructions = document.getElementById('jobApplicationInstructions').value;
+      if (applicationInstructions) formData.append('fields[jobApplicationInstructions]', applicationInstructions);
+
+      // Handle existing entry ID if continuing from draft
+      const entryIdField = document.querySelector('input[name="entryId"]');
+      if (entryIdField && entryIdField.value) {
+        formData.append('entryId', entryIdField.value);
+      }
+
+      console.log('About to submit form data via fetch');
+      console.log('Form data entries:', Array.from(formData.entries()));
+
+      // Submit via fetch to avoid browser form validation issues
+      fetch(form.action, {
+        method: 'POST',
+        body: formData
+      }).then(response => {
+        console.log('Fetch response received:', response);
+        if (response.redirected) {
+          window.location.href = response.url;
+        } else {
+          window.location.href = '{{ url("profile") }}';
+        }
+      }).catch(error => {
+        console.error('Fetch error:', error);
+        window.location.href = '{{ url("profile") }}';
+      });
+
+      // Prevent normal form submission
+      return false;
+    });
+
+    // Custom validation function
+    function validatePaymentForm() {
+      let isValid = true;
+      const errors = [];
+
+      // Validate required fields
+      const title = document.getElementById('title').value.trim();
+      if (!title) {
+        errors.push('Job Title is required');
+        document.getElementById('title').classList.add('is-invalid');
+        isValid = false;
+      } else {
+        document.getElementById('title').classList.remove('is-invalid');
+      }
+
+      const category = document.querySelector('select[name="fields[jobCategory][]"]').value;
+      if (!category) {
+        errors.push('Job Category is required');
+        document.querySelector('select[name="fields[jobCategory][]"]').classList.add('is-invalid');
+        isValid = false;
+      } else {
+        document.querySelector('select[name="fields[jobCategory][]"]').classList.remove('is-invalid');
+      }
+
+      const description = document.getElementById('jobDescription').value.trim();
+      if (!description) {
+        errors.push('Job Description is required');
+        isValid = false;
+      }
+
+      const applicationInstructions = document.getElementById('jobApplicationInstructions').value.trim();
+      if (!applicationInstructions) {
+        errors.push('Application Instructions are required');
+        document.getElementById('jobApplicationInstructions').classList.add('is-invalid');
+        isValid = false;
+      } else {
+        document.getElementById('jobApplicationInstructions').classList.remove('is-invalid');
+      }
+
+      // Validate country selection
+      const countrySelected = document.querySelector('input[name="fields[country]"]:checked');
+      if (!countrySelected) {
+        errors.push('Country selection is required');
+        isValid = false;
+      } else {
+        // Validate location fields based on country
+        if (countrySelected.value === 'unitedStates') {
+          const city = document.getElementById('jobCity').value.trim();
+          const state = document.getElementById('jobState').value;
+          if (!city) {
+            errors.push('City is required for US locations');
+            document.getElementById('jobCity').classList.add('is-invalid');
+            isValid = false;
+          } else {
+            document.getElementById('jobCity').classList.remove('is-invalid');
+          }
+          if (!state) {
+            errors.push('State is required for US locations');
+            document.getElementById('jobState').classList.add('is-invalid');
+            isValid = false;
+          } else {
+            document.getElementById('jobState').classList.remove('is-invalid');
+          }
+        } else if (countrySelected.value === 'international') {
+          const location = document.getElementById('jobLocation').value.trim();
+          if (!location) {
+            errors.push('Location is required for international positions');
+            document.getElementById('jobLocation').classList.add('is-invalid');
+            isValid = false;
+          } else {
+            document.getElementById('jobLocation').classList.remove('is-invalid');
+          }
+        }
+      }
+
+      // Validate payment fields
+      const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
+      if (!paymentMethod) {
+        errors.push('Payment Method is required');
+        isValid = false;
+      }
+
+      const duration = document.querySelector('input[name="postingDuration"]:checked');
+      if (!duration) {
+        errors.push('Posting Duration is required');
+        isValid = false;
+      }
+
+      if (!isValid && errors.length > 0) {
+        // Show error message
+        alert('Please fix the following errors:\n\n' + errors.join('\n'));
+      }
+
+      return isValid;
+    }
+
+    // Form validation and submission handling (only for payment submissions)
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+      // Only validate when continuing to payment
+      const submitType = document.getElementById('submitType').value;
+      if (submitType === 'payment') {
+        // Ensure CKEditor content is synced before submission
+        if (jobDescriptionEditor) {
+          document.querySelector('#jobDescription').value = jobDescriptionEditor.getData();
+        }
+        if (opportunityStatementEditor) {
+          document.querySelector('#jobOpportunityStatement').value = opportunityStatementEditor.getData();
+        }
+
+        // Custom validation for payment
+        if (!validatePaymentForm()) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }
     });
   });
   </script>
