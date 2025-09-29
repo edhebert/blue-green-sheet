@@ -1,0 +1,247 @@
+{% extends "_layout.twig" %}
+
+{% block title %}BGS Overview · {{ siteName }}{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <!-- Header Section -->
+      <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold mb-3">BGS Overview</h1>
+        <p class="lead text-muted">
+          Understanding Blue Green Sheet's mission and services
+        </p>
+      </div>
+
+      <!-- What We Do Section -->
+      <div class="mb-5">
+        <div class="card border-0 shadow-sm mb-4">
+          <div class="card-body p-4">
+            <div class="d-flex align-items-center mb-3">
+              <i class="bi bi-check-circle-fill text-success me-3" style="font-size: 1.5rem;"></i>
+              <h2 class="h4 fw-bold mb-0 text-success">What We Do</h2>
+            </div>
+            <p class="mb-4">
+              Blue Green Sheet is a specialized job board platform designed exclusively for independent educational institutions and admininistrative professionals. We provide a streamlined way for independent schools to connect with qualified candidates.
+            </p>
+
+            <h3 class="h5 fw-bold mb-3">Job Advertisement Services</h3>
+            <p class="mb-3">
+              We offer premium job posting services with two flexible options to meet your hiring needs:
+            </p>
+
+            <div class="row g-3 mb-4">
+              <div class="col-md-6">
+                <div class="border rounded p-3 h-100">
+                  <h4 class="h6 fw-bold text-primary mb-2">6-Month Posting - $300</h4>
+                  <ul class="list-unstyled small">
+                    <li class="mb-1"><i class="bi bi-check text-success me-2"></i>6 months of visibility</li>
+                    <li class="mb-1"><i class="bi bi-check text-success me-2"></i>Featured in search results</li>
+                    <li class="mb-1"><i class="bi bi-check text-success me-2"></i>Upload job attachments</li>
+                    <li class="mb-1"><i class="bi bi-check text-success me-2"></i>Perfect for most positions</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="border rounded p-3 h-100">
+                  <h4 class="h6 fw-bold text-primary mb-2">12-Month Posting - $400</h4>
+                  <ul class="list-unstyled small">
+                    <li class="mb-1"><i class="bi bi-check text-success me-2"></i>12 months of visibility</li>
+                    <li class="mb-1"><i class="bi bi-check text-success me-2"></i>Extended reach & exposure</li>
+                    <li class="mb-1"><i class="bi bi-check text-success me-2"></i>Upload job attachments</li>
+                    <li class="mb-1"><i class="bi bi-check text-success me-2"></i>Ideal for hard-to-fill positions</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <p class="text-muted">
+              All job postings include professional formatting, categorized listings, and access to our qualified candidate network.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- What We Don't Do Section -->
+      <div class="mb-5">
+        <div class="card border-0 shadow-sm mb-4" style="border-left: 4px solid #dc3545 !important;">
+          <div class="card-body p-4">
+            <div class="d-flex align-items-center mb-3">
+              <i class="bi bi-x-circle-fill text-danger me-3" style="font-size: 1.5rem;"></i>
+              <h2 class="h4 fw-bold mb-0 text-danger">What We Don't Do</h2>
+            </div>
+            <p class="mb-3">
+              It's important to understand that Blue Green Sheet is <strong>not a recruitment agency</strong> or headhunting service.
+            </p>
+
+            <h3 class="h5 fw-bold mb-3">We Do NOT Provide:</h3>
+            <ul class="list-unstyled">
+              <li class="mb-2"><i class="bi bi-x text-danger me-2"></i><strong>Executive search services</strong> - We don't actively recruit candidates for you</li>
+              <li class="mb-2"><i class="bi bi-x text-danger me-2"></i><strong>Candidate screening</strong> - We don't pre-screen or interview candidates</li>
+              <li class="mb-2"><i class="bi bi-x text-danger me-2"></i><strong>Placement guarantees</strong> - We don't guarantee successful hires</li>
+              <li class="mb-2"><i class="bi bi-x text-danger me-2"></i><strong>Recruiting consultation</strong> - We don't provide hiring strategy advice</li>
+            </ul>
+
+            <div class="alert alert-light border-start border-4 border-warning mt-4">
+              <p class="mb-0">
+                <strong>Our role is simple:</strong> We provide the platform for you to showcase your opportunities to qualified educational professionals who are actively seeking new positions.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Free Search Section -->
+      <div class="mb-5">
+        <div class="card border-0 shadow-sm" style="border-left: 4px solid #198754 !important;">
+          <div class="card-body p-4">
+            <div class="d-flex align-items-center mb-3">
+              <i class="bi bi-search text-success me-3" style="font-size: 1.5rem;"></i>
+              <h2 class="h4 fw-bold mb-0 text-success">Free for Job Seekers</h2>
+            </div>
+            <p class="mb-3">
+              Educational professionals can search and browse all job opportunities on Blue Green Sheet completely free of charge.
+            </p>
+
+            <h3 class="h5 fw-bold mb-3">Candidates Can:</h3>
+            <ul class="list-unstyled">
+              <li class="mb-2"><i class="bi bi-check text-success me-2"></i><strong>Search unlimited job postings</strong> - No registration required to browse</li>
+              <li class="mb-2"><i class="bi bi-check text-success me-2"></i><strong>Filter by location, category, and keywords</strong> - Find exactly what they're looking for</li>
+              <li class="mb-2"><i class="bi bi-check text-success me-2"></i><strong>Access job details and contact information</strong> - Connect directly with employers</li>
+              <li class="mb-2"><i class="bi bi-check text-success me-2"></i><strong>View and download job attachments</strong> - Get complete application information</li>
+            </ul>
+
+            <div class="alert alert-info border-start border-4 border-info mt-4">
+              <p class="mb-0">
+                <strong>Our mission:</strong> Remove barriers for educational professionals seeking new opportunities while providing institutions with targeted access to qualified candidates.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Section -->
+      <div class="text-center">
+        <div class="card border-0" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+          <div class="card-body p-4">
+            <h3 class="h5 mb-3">Ready to Connect with Educational Professionals?</h3>
+            {% if currentUser %}
+              <!-- User is logged in -->
+              <p class="text-muted mb-4">
+                Welcome back, {{ currentUser.firstName }}! Start reaching qualified candidates with your next job posting.
+              </p>
+              <a href="{{ url('jobs/post') }}" class="btn btn-primary btn-lg px-5">
+                <i class="bi bi-plus-circle me-2"></i>Post a Job Opportunity
+              </a>
+            {% else %}
+              <!-- User is not logged in -->
+              <p class="text-muted mb-4">
+                Join educational institutions nationwide who trust Blue Green Sheet to find their next great hire.
+              </p>
+              <div class="d-flex gap-3 justify-content-center flex-wrap">
+                <a href="{{ url('register') }}" class="button button-xlarge rounded-pill px-4">
+                  <i class="bi bi-person-plus me-2"></i>Get Started Today
+                </a>
+                <a href="{{ url('login') }}" class="button button-xlarge rounded-pill button-border px-4">
+                  <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+                </a>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Platform Benefits -->
+      <div class="row g-4 mt-5">
+        <div class="col-md-4 text-center">
+          <div class="mb-3">
+            <i class="bi bi-mortarboard-fill text-primary" style="font-size: 2rem;"></i>
+          </div>
+          <h4 class="h6 fw-bold">Education Focused</h4>
+          <p class="text-muted small">
+            Specialized exclusively for educational institutions and professionals - no generic job board clutter.
+          </p>
+        </div>
+        <div class="col-md-4 text-center">
+          <div class="mb-3">
+            <i class="bi bi-graph-up text-primary" style="font-size: 2rem;"></i>
+          </div>
+          <h4 class="h6 fw-bold">Simple & Effective</h4>
+          <p class="text-muted small">
+            Straightforward job posting process with transparent pricing - no hidden fees or complex packages.
+          </p>
+        </div>
+        <div class="col-md-4 text-center">
+          <div class="mb-3">
+            <i class="bi bi-heart-fill text-primary" style="font-size: 2rem;"></i>
+          </div>
+          <h4 class="h6 fw-bold">Candidate Friendly</h4>
+          <p class="text-muted small">
+            Free access for job seekers creates a larger, more engaged pool of educational professionals.
+          </p>
+        </div>
+      </div>
+
+      <!-- FAQ Section -->
+      <div class="mt-5">
+        <h3 class="h4 text-center mb-4">Common Questions</h3>
+        <div class="accordion" id="overviewFAQ">
+
+          <div class="accordion-item border-0 mb-3">
+            <h4 class="accordion-header">
+              <button class="accordion-button collapsed bg-light border-0 rounded" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                Do you help with the hiring process?
+              </button>
+            </h4>
+            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#overviewFAQ">
+              <div class="accordion-body">
+                No, we are strictly a job board platform. We don't screen candidates, conduct interviews, or provide recruitment services. We simply connect employers with job seekers through our specialized platform.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item border-0 mb-3">
+            <h4 class="accordion-header">
+              <button class="accordion-button collapsed bg-light border-0 rounded" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                Why should candidates use Blue Green Sheet over other job boards?
+              </button>
+            </h4>
+            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#overviewFAQ">
+              <div class="accordion-body">
+                Blue Green Sheet specializes exclusively in educational positions, so candidates find relevant opportunities without filtering through unrelated jobs. Plus, it's completely free to search and apply - no registration fees or premium subscriptions required.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item border-0 mb-3">
+            <h4 class="accordion-header">
+              <button class="accordion-button collapsed bg-light border-0 rounded" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                What makes your pricing different from other job boards?
+              </button>
+            </h4>
+            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#overviewFAQ">
+              <div class="accordion-body">
+                We offer simple, transparent pricing with just two options - no confusing packages or hidden fees. You pay once and your job stays active for the full duration. Most general job boards charge monthly fees or have complex pricing tiers.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item border-0 mb-3">
+            <h4 class="accordion-header">
+              <button class="accordion-button collapsed bg-light border-0 rounded" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                How do I get started as an employer?
+              </button>
+            </h4>
+            <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#overviewFAQ">
+              <div class="accordion-body">
+                Simply create a free account, post your job with all the details, and choose your posting duration (6 or 12 months). After payment, your job goes live within 24 hours and stays active for the full duration you selected.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
