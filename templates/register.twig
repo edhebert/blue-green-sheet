@@ -5,8 +5,88 @@
 {% block content %}
   {% set user = user ?? null %}
 
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <!-- Header Section -->
+      <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold mb-3">Account Registration</h1>
+        <p class="lead text-muted">
+          Job posters register here
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
   <div class="container" style="max-width: 680px;">
-    <h1 class="h3 mb-4">Create your account</h1>
+
+    <!-- User Guidance Section -->
+    <div class="row g-4 mb-5">
+      <!-- Schools and Recruiting Firms -->
+      <div class="col-lg-6">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body p-4">
+            <div class="d-flex align-items-center mb-3">
+              <i class="bi bi-building text-primary me-3" style="font-size: 1.5rem;"></i>
+              <h2 class="h5 fw-bold mb-0 text-primary">Schools and Recruiting Firms</h2>
+            </div>
+            <ul class="list-unstyled">
+              <li class="mb-2">
+                <i class="bi bi-check-circle text-success me-2"></i>
+                Please sign up below if you wish to create an account to be able to list opportunities.
+              </li>
+              <li class="mb-2">
+                <i class="bi bi-envelope text-success me-2"></i>
+                After submitting the information below, you will be sent a validation email.
+              </li>
+              <li class="mb-2">
+                <i class="bi bi-person-check text-success me-2"></i>
+                Once you have validated your email, you will be able to create your profile and begin posting opportunities.
+              </li>
+            </ul>
+            <div class="mt-3">
+              <i class="bi bi-arrow-down text-primary" style="font-size: 1.2rem;"></i>
+              <span class="text-primary fw-semibold ms-2">Complete the form below to get started</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Candidates and Job Seekers -->
+      <div class="col-lg-6">
+        <div class="card h-100 border-0 shadow-sm">
+          <div class="card-body p-4">
+            <div class="d-flex align-items-center mb-3">
+              <i class="bi bi-people text-success me-3" style="font-size: 1.5rem;"></i>
+              <h2 class="h5 fw-bold mb-0 text-success">Candidates and Job Seekers</h2>
+            </div>
+            <ul class="list-unstyled">
+              <li class="mb-2">
+                <i class="bi bi-search text-success me-2"></i>
+                No account registration is required! Searching for opportunities is always free and open to all.
+              </li>
+              <li class="mb-3">
+                <i class="bi bi-bell text-success me-2"></i>
+                If you wish to receive regular updates about new positions, please subscribe to the BGS Monthly Recap.
+              </li>
+            </ul>
+            <div class="d-grid">
+              <a href="#" class="button rounded-pill">
+                <i class="bi bi-envelope-plus me-2"></i>Subscribe to Monthly Recap
+              </a>
+            </div>
+            <div class="mt-3 text-center">
+              <small class="text-muted">
+                <i class="bi bi-arrow-right me-1"></i>
+                <a href="{{ url('jobs') }}" class="text-decoration-none">Start searching jobs now</a>
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     {% if user and user.getErrors() %}
       <div class="alert alert-danger">
@@ -20,7 +100,7 @@
         </ul>
       </div>
     {% endif %}
-
+<h1 class="h3 mb-4">Job Posters - Create your account</h1>
     <form method="post" class="needs-validation" novalidate>
       {{ csrfInput() }}
       {{ actionInput('users/save-user') }}
