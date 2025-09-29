@@ -1,0 +1,61 @@
+columnSuffix: null
+handle: school
+instructions: null
+name: School
+searchable: false
+settings:
+  allowSelfRelations: false
+  branchLimit: null
+  defaultPlacement: end
+  maintainHierarchy: false
+  maxRelations: null
+  minRelations: null
+  selectionCondition:
+    __assoc__:
+      -
+        - elementType
+        - craft\elements\Entry
+      -
+        - fieldContext
+        - global
+      -
+        - class
+        - craft\elements\conditions\entries\EntryCondition
+      -
+        - conditionRules
+        -
+          -
+            __assoc__:
+              -
+                - class
+                - craft\fields\conditions\OptionsFieldConditionRule
+              -
+                - uid
+                - a07feb22-5a80-4b78-b9f0-ac68b4623d24
+              -
+                - operator
+                - in
+              -
+                - values
+                -
+                  - school
+              -
+                - fieldUid
+                - 12d880c0-a281-4f27-a40b-135b2f5b4654 # Type of Organization
+              -
+                - layoutElementUid
+                - dd6bc44c-74a4-4179-ac11-1f4a1a9aa4bc
+  selectionLabel: null
+  showCardsInGrid: false
+  showSearchInput: true
+  showSiteMenu: true
+  showUnpermittedEntries: false
+  showUnpermittedSections: false
+  sources:
+    - 'section:7a30d7ad-a979-44b7-89f1-35059c005316' # Organizations
+  targetSiteId: null
+  validateRelatedElements: false
+  viewMode: list
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\Entries

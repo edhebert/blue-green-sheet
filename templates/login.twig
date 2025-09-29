@@ -37,6 +37,9 @@
 <form method="post" accept-charset="UTF-8">
     {{ csrfInput() }}
     {{ actionInput('users/login') }}
+
+    {# Redirect to the 'profile' page after login #}
+    {{ redirectInput('profile') }}
     
     <div class="form-group">
         <label for="loginName">Email Address</label>

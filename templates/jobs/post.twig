@@ -402,97 +402,6 @@
             {% endif %}
           {% endif %}
 
-          <!-- Posting Duration & Payment -->
-          <div class="mb-4">
-            <h5 class="fw-bold mb-3">Posting Duration & Payment</h5>
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="radio"
-                        name="postingDuration"
-                        id="duration6mo"
-                        value="6"
-                        checked
-                      >
-                      <label class="form-check-label" for="duration6mo">
-                        <div class="fw-bold">6 Months</div>
-                        <div class="text-muted small">$300</div>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-6 mb-3">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="radio"
-                        name="postingDuration"
-                        id="duration12mo"
-                        value="12"
-                      >
-                      <label class="form-check-label" for="duration12mo">
-                        <div class="fw-bold">12 Months</div>
-                        <div class="text-muted small">$400</div>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Payment Method -->
-          <div class="mb-4">
-            <label class="form-label fw-bold">Payment Method <span class="text-danger">*</span></label>
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="radio"
-                        name="paymentMethod"
-                        id="paymentCredit"
-                        value="credit"
-                        checked
-                      >
-                      <label class="form-check-label" for="paymentCredit">
-                        <div class="fw-bold">Credit Card</div>
-                        <div class="text-muted small">Secure online payment</div>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-6 mb-3">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="radio"
-                        name="paymentMethod"
-                        id="paymentInvoice"
-                        value="invoice"
-                      >
-                      <label class="form-check-label" for="paymentInvoice">
-                        <div class="fw-bold">Invoice</div>
-                        <div class="text-muted small">We will contact you for payment arrangements</div>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
 
           <div class="d-grid gap-2">
             <button type="submit" class="btn btn-primary btn-lg" id="continueToPayment">
@@ -968,18 +877,6 @@
         }
       }
 
-      // Validate payment fields
-      const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
-      if (!paymentMethod) {
-        errors.push('Payment Method is required');
-        isValid = false;
-      }
-
-      const duration = document.querySelector('input[name="postingDuration"]:checked');
-      if (!duration) {
-        errors.push('Posting Duration is required');
-        isValid = false;
-      }
 
       if (!isValid && errors.length > 0) {
         // Show error message
