@@ -27,7 +27,7 @@
                 <h3>Personal Information</h3>
                 <div class="profile-field">
                     <label>Name:</label>
-                    <span>{{ currentUser.firstName }} {{ currentUser.lastName }}</span>
+                    <span><strong>{{ currentUser.firstName }} {{ currentUser.lastName }}</strong></span>
                 </div>
                 <div class="profile-field">
                     <label>Email:</label>
@@ -49,14 +49,14 @@
                 {% if userOrg %}
                     <div class="profile-field">
                         <label>Organization:</label>
-                        <span>{{ userOrg.title }}</span>
+                        <a href="{{ userOrg.url }}"><span><strong>{{ userOrg.title }}</strong></span></a>
                     </div>
-                    {% if userOrg.organizationType %}
+                    {# {% if userOrg.organizationType %}
                         <div class="profile-field">
                             <label>Organization Type:</label>
                             <span>{{ userOrg.organizationType|title }}</span>
                         </div>
-                    {% endif %}
+                    {% endif %} #}
                     {% if userOrg.website %}
                         <div class="profile-field">
                             <label>Website:</label>
@@ -71,6 +71,11 @@
                     </div>
                 {% endif %}
             </div>
+
+             <div class="profile-actions mb-6">
+                <button type="button" id="editProfile" class="button rounded-pill">Edit Profile</button>
+                <a href="/logout" class="button rounded-pill button-border border-width-1">Logout</a>
+            </div>           
 
             <div class="profile-section">
                 <h3>My Job Postings</h3>
@@ -155,11 +160,6 @@
                         {% endif %}
                     </div>
                 {% endif %}
-            </div>
-
-            <div class="profile-actions">
-                <button type="button" id="editProfile" class="button rounded-pill">Edit Profile</button>
-                <a href="/logout" class="button rounded-pill button-border border-width-1">Logout</a>
             </div>
         </div>
 
