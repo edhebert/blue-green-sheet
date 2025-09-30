@@ -59,7 +59,7 @@
             </div>
           </div>
 
-        {% elseif not currentUser.isInGroup('jobPosters') and not currentUser.admin %}
+        {% elseif not currentUser.isInGroup('jobPosters') and not currentUser.admin and not currentUser.isInGroup('bgsStaff') %}
           <!-- Permission Required Message -->
           <div class="text-center py-5">
             <div class="mb-4">
@@ -430,7 +430,7 @@
     </div>
   </div>
 
-  {% if currentUser and (currentUser.isInGroup('jobPosters') or currentUser.admin) %}
+  {% if currentUser and (currentUser.isInGroup('jobPosters') or currentUser.isInGroup('bgsStaff') or currentUser.admin) %}
   <!-- CKEditor CDN -->
   <script src="https://cdn.ckeditor.com/ckeditor5/40.1.0/classic/ckeditor.js"></script>
 
