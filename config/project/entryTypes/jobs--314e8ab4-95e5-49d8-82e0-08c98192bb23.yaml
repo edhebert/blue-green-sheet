@@ -55,6 +55,23 @@ fieldLayouts:
             warning: null
             width: 100
           -
+            dateAdded: '2025-10-03T13:01:31+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: b2206c41-3f40-4586-bca2-2bc4fb379556 # School
+            handle: null
+            includeInCards: false
+            instructions: 'If this organization is a recruiter, then select the school to which this search applies.'
+            label: null
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 3a1f0dd6-dbf6-4166-9e84-e17e98f4221d
+            userCondition: null
+            warning: null
+            width: 100
+          -
             dateAdded: '2025-09-05T17:57:10+00:00'
             editCondition: null
             elementCondition: null

@@ -19,26 +19,6 @@
   {% endif %}
   {% set currentUser = currentUser %}
 
-  {# Check if current user is a recruiter #}
-  {% set userOrg = currentUser.organization.one() %}
-  {% set isRecruiter = userOrg and userOrg.organizationType == 'recruiter' %}
-
-  {# Check if we just created a new school #}
-  {% set newSchoolId = craft.app.request.getParam('newSchoolId') %}
-  {% set newlyCreatedSchool = newSchoolId ? craft.entries().id(newSchoolId).one() : null %}
-
-  {# Get all schools (organizations with type 'school') for recruiter dropdown #}
-  {% set schools = craft.entries().section('organizations').organizationType('school').orderBy('title asc').all() %}
-
-  {# Get section/type IDs for creating new organizations #}
-  {% set orgSample = craft.entries().section('organizations').one() %}
-  {% set orgSectionId = orgSample ? orgSample.sectionId : null %}
-  {% set orgEntryTypeId = orgSample ? orgSample.typeId : null %}
-
-  {# Get options for new school form #}
-  {% set countryOptions = craft.projectTools.options('country') %}
-  {% set stateOptions = craft.projectTools.options('state') %}
-
   <div class="container" style="max-width: 800px;">
     <div class="row">
       <div class="col-12">
@@ -135,10 +115,6 @@
           {{ hiddenInput('entryId', jobEntry.id) }}
           {{ hiddenInput('sectionId', jobEntry.sectionId) }}
           {{ hiddenInput('typeId', jobEntry.typeId) }}
-          {# Auto-populate listingOrganization field with current user's organization (if not already set) #}
-          {% if userOrg and not jobEntry.listingOrganization.one() %}
-            {{ hiddenInput('fields[listingOrganization][]', userOrg.id) }}
-          {% endif %}
           {# Current entry status - will be updated by form #}
           {{ redirectInput('profile?updated=job') }}
 
@@ -159,139 +135,6 @@
               </div>
             {% endif %}
           </div>
-
-          <!-- School Selection (Recruiters Only) -->
-          {% if isRecruiter %}
-            <div class="mb-4">
-              <label for="schoolSelect" class="form-label fw-bold">School/Organization <span class="text-danger">*</span></label>
-              <select
-                id="schoolSelect"
-                name="fields[school][]"
-                class="form-select{% if jobEntry and jobEntry.getErrors('school') %} is-invalid{% endif %}"
-              >
-                <option value="">Select the school for this position...</option>
-                {% for school in schools %}
-                  {% set isSelected = false %}
-                  {% if jobEntry and jobEntry.school %}
-                    {% for selectedSchool in jobEntry.school.all() %}
-                      {% if selectedSchool.id == school.id %}
-                        {% set isSelected = true %}
-                      {% endif %}
-                    {% endfor %}
-                  {% elseif newlyCreatedSchool and newlyCreatedSchool.id == school.id %}
-                    {# Pre-select the newly created school #}
-                    {% set isSelected = true %}
-                  {% endif %}
-                  <option value="{{ school.id }}" {% if isSelected %}selected{% endif %}>
-                    {{ school.title }}
-                    {% if school.orgCity and school.orgState %}
-                      ({{ school.orgCity }}, {{ school.orgState }})
-                    {% elseif school.orgLocation %}
-                      ({{ school.orgLocation }})
-                    {% endif %}
-                  </option>
-                {% endfor %}
-              </select>
-              {% if jobEntry and jobEntry.getErrors('school') %}
-                <div class="invalid-feedback">
-                  {{ jobEntry.getErrors('school')|join(', ') }}
-                </div>
-              {% endif %}
-
-              <!-- Add New School Link -->
-              <div class="mt-2">
-                <button type="button" class="btn btn-sm btn-outline-primary"
-                        data-bs-toggle="collapse" data-bs-target="#addSchoolCollapse"
-                        aria-expanded="false" aria-controls="addSchoolCollapse">
-                  <i class="bi bi-plus-circle me-1"></i>School not listed? Click here to add one
-                </button>
-              </div>
-
-              <!-- Inline Add New School Form (Collapsed) -->
-              <div id="addSchoolCollapse" class="collapse mt-3">
-                <div class="card border-primary">
-                  <div class="card-header bg-primary text-white">
-                    <h6 class="mb-0"><i class="bi bi-building me-2"></i>Add New School</h6>
-                  </div>
-                  <div class="card-body bg-light">
-                    {% if not orgSectionId or not orgEntryTypeId %}
-                      <div class="alert alert-warning mb-0">Unable to add new school at this time. Please contact support.</div>
-                    {% else %}
-                      <p class="text-muted small mb-3">
-                        <i class="bi bi-info-circle me-1"></i>Fill out the school information below. Your job posting will be saved and you can continue afterward.
-                      </p>
-
-                      <div id="newSchoolFields">
-                        <div class="mb-3">
-                          <label for="newSchoolName" class="form-label">School Name <span class="text-danger">*</span></label>
-                          <input type="text" id="newSchoolName" class="form-control" placeholder="Enter school name">
-                        </div>
-
-                        <div class="mb-3">
-                          <label for="newSchoolWebsite" class="form-label">Website</label>
-                          <input type="text" id="newSchoolWebsite" class="form-control" placeholder="example.com or https://example.com">
-                        </div>
-
-                        <div class="mb-3">
-                          <label for="newSchoolCountry" class="form-label">Country <span class="text-danger">*</span></label>
-                          <select id="newSchoolCountry" class="form-select">
-                            <option value="">— Select —</option>
-                            {% for opt in countryOptions %}
-                              <option value="{{ opt.value }}">{{ opt.label }}</option>
-                            {% endfor %}
-                          </select>
-                        </div>
-
-                        <!-- US Fields -->
-                        <div id="newSchoolUSFields" style="display:none;">
-                          <div class="row g-3">
-                            <div class="col-md-6">
-                              <label for="newSchoolCity" class="form-label">City <span class="text-danger">*</span></label>
-                              <input type="text" id="newSchoolCity" class="form-control">
-                            </div>
-                            <div class="col-md-6">
-                              <label for="newSchoolState" class="form-label">State <span class="text-danger">*</span></label>
-                              <select id="newSchoolState" class="form-select">
-                                <option value="">— Select —</option>
-                                {% for opt in stateOptions %}
-                                  <option value="{{ opt.value }}">{{ opt.label }}</option>
-                                {% endfor %}
-                              </select>
-                            </div>
-                          </div>
-                        </div>
-
-                        <!-- International Fields -->
-                        <div id="newSchoolIntlFields" style="display:none;">
-                          <div class="mb-3">
-                            <label for="newSchoolLocation" class="form-label">Location (City / Country) <span class="text-danger">*</span></label>
-                            <input type="text" id="newSchoolLocation" class="form-control" placeholder="London, United Kingdom">
-                          </div>
-                        </div>
-
-                        <!-- Logo Upload -->
-                        <div class="mb-3">
-                          <label for="newSchoolLogo" class="form-label">Logo</label>
-                          <input type="file" id="newSchoolLogo" class="form-control" accept="image/*">
-                          <div class="form-text">Upload your school's logo (optional)</div>
-                        </div>
-
-                        <div class="d-grid gap-2 d-sm-flex mt-3">
-                          <button type="button" class="btn btn-primary" id="saveNewSchoolBtn">
-                            <i class="bi bi-check-circle me-1"></i>Save School & Continue
-                          </button>
-                          <button type="button" class="btn btn-outline-secondary"
-                                  data-bs-toggle="collapse" data-bs-target="#addSchoolCollapse">
-                            Cancel
-                          </button>
-                        </div>
-                      </div>
-                    {% endif %}
-                  </div>
-                </div>
-              </div>
-            </div>
-          {% endif %}
 
           <!-- Job Category -->
           <div class="mb-4">
@@ -915,12 +758,6 @@
       const title = document.getElementById('title').value;
       if (title) formData.append('title', title);
 
-      // Add school selection (for recruiters)
-      const schoolSelect = document.getElementById('schoolSelect');
-      if (schoolSelect && schoolSelect.value) {
-        formData.append('fields[school][]', schoolSelect.value);
-      }
-
       const category = document.querySelector('select[name="fields[jobCategory][]"]').value;
       if (category) formData.append('fields[jobCategory][]', category);
 
@@ -956,12 +793,6 @@
 
       const applicationInstructions = document.getElementById('jobApplicationInstructions').value;
       if (applicationInstructions) formData.append('fields[jobApplicationInstructions]', applicationInstructions);
-
-      // Add listingOrganization (from hidden field)
-      const listingOrgField = document.querySelector('input[name="fields[listingOrganization][]"]');
-      if (listingOrgField && listingOrgField.value) {
-        formData.append('fields[listingOrganization][]', listingOrgField.value);
-      }
 
       console.log('About to submit edit form data via fetch');
       console.log('Form data entries:', Array.from(formData.entries()));
@@ -1118,12 +949,6 @@
         const title = document.getElementById('title').value;
         if (title) formData.append('title', title);
 
-        // Add school selection (for recruiters)
-        const schoolSelect = document.getElementById('schoolSelect');
-        if (schoolSelect && schoolSelect.value) {
-          formData.append('fields[school][]', schoolSelect.value);
-        }
-
         const category = document.querySelector('select[name="fields[jobCategory][]"]').value;
         if (category) formData.append('fields[jobCategory][]', category);
 
@@ -1160,12 +985,6 @@
         const applicationInstructions = document.getElementById('jobApplicationInstructions').value;
         if (applicationInstructions) formData.append('fields[jobApplicationInstructions]', applicationInstructions);
 
-        // Add listingOrganization (from hidden field)
-        const listingOrgField = document.querySelector('input[name="fields[listingOrganization][]"]');
-        if (listingOrgField && listingOrgField.value) {
-          formData.append('fields[listingOrganization][]', listingOrgField.value);
-        }
-
         // Submit and redirect to payment
         fetch(form.action, {
           method: 'POST',
@@ -1176,197 +995,6 @@
         }).catch(error => {
           console.error('Save error:', error);
           alert('There was an error saving your job posting. Please try again.');
-        });
-      });
-    }
-
-    // Add New School functionality (for recruiters)
-    const newSchoolCountry = document.getElementById('newSchoolCountry');
-    const newSchoolUSFields = document.getElementById('newSchoolUSFields');
-    const newSchoolIntlFields = document.getElementById('newSchoolIntlFields');
-    const saveNewSchoolBtn = document.getElementById('saveNewSchoolBtn');
-
-    // Show/hide location fields based on country selection
-    if (newSchoolCountry) {
-      newSchoolCountry.addEventListener('change', function() {
-        const country = this.value;
-        if (country === 'unitedStates') {
-          newSchoolUSFields.style.display = 'block';
-          newSchoolIntlFields.style.display = 'none';
-        } else if (country === 'international') {
-          newSchoolUSFields.style.display = 'none';
-          newSchoolIntlFields.style.display = 'block';
-        } else {
-          newSchoolUSFields.style.display = 'none';
-          newSchoolIntlFields.style.display = 'none';
-        }
-      });
-    }
-
-    // Save new school button handler
-    if (saveNewSchoolBtn) {
-      saveNewSchoolBtn.addEventListener('click', function() {
-        const schoolName = document.getElementById('newSchoolName').value.trim();
-        const schoolWebsite = document.getElementById('newSchoolWebsite').value.trim();
-        const schoolCountry = document.getElementById('newSchoolCountry').value;
-        const schoolCity = document.getElementById('newSchoolCity').value.trim();
-        const schoolState = document.getElementById('newSchoolState').value;
-        const schoolLocation = document.getElementById('newSchoolLocation').value.trim();
-
-        // Validate required fields
-        const errors = [];
-        if (!schoolName) errors.push('School Name is required');
-        if (!schoolCountry) errors.push('Country is required');
-
-        if (schoolCountry === 'unitedStates') {
-          if (!schoolCity) errors.push('City is required');
-          if (!schoolState) errors.push('State is required');
-        } else if (schoolCountry === 'international') {
-          if (!schoolLocation) errors.push('Location is required');
-        }
-
-        if (errors.length > 0) {
-          alert('Please correct the following errors:\n\n' + errors.join('\n'));
-          return;
-        }
-
-        // Use AJAX to submit school without reloading the page
-        const schoolFormData = new FormData();
-        schoolFormData.append('CRAFT_CSRF_TOKEN', document.querySelector('input[name="CRAFT_CSRF_TOKEN"]').value);
-        schoolFormData.append('action', 'entries/save-entry');
-        schoolFormData.append('sectionId', '{{ orgSectionId }}');
-        schoolFormData.append('entryTypeId', '{{ orgEntryTypeId }}');
-        schoolFormData.append('enabled', '1');
-        schoolFormData.append('title', schoolName);
-        schoolFormData.append('fields[organizationType]', 'school');
-        schoolFormData.append('fields[country]', schoolCountry);
-
-        if (schoolWebsite) {
-          let url = schoolWebsite;
-          if (!url.match(/^https?:\/\//i)) {
-            url = 'https://' + url;
-          }
-          schoolFormData.append('fields[website]', url);
-        }
-
-        if (schoolCountry === 'unitedStates') {
-          schoolFormData.append('fields[orgCity]', schoolCity);
-          schoolFormData.append('fields[orgState]', schoolState);
-        } else if (schoolCountry === 'international') {
-          schoolFormData.append('fields[orgLocation]', schoolLocation);
-        }
-
-        // Add logo file if one was selected
-        const logoInput = document.getElementById('newSchoolLogo');
-        if (logoInput && logoInput.files && logoInput.files.length > 0) {
-          schoolFormData.append('fields[logo][]', logoInput.files[0]);
-        }
-
-        // Disable button and show loading
-        saveNewSchoolBtn.disabled = true;
-        saveNewSchoolBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Saving...';
-
-        // Submit via AJAX with JSON response
-        fetch(window.location.origin, {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json'
-          },
-          body: schoolFormData
-        })
-        .then(response => {
-          console.log('Response status:', response.status);
-          console.log('Response OK:', response.ok);
-
-          // Parse JSON response
-          return response.json();
-        })
-        .then(data => {
-          console.log('JSON response:', data);
-
-          // Extract entry ID from Craft's JSON response
-          let entryId = null;
-
-          if (data.id) {
-            entryId = data.id;
-          } else if (data.entry && data.entry.id) {
-            entryId = data.entry.id;
-          }
-
-          console.log('Extracted entry ID:', entryId);
-
-          return Promise.resolve({
-            ok: true,
-            schoolId: entryId,
-            schoolName: schoolName,
-            schoolCity: schoolCity,
-            schoolState: schoolState,
-            schoolLocation: schoolLocation,
-            schoolCountry: schoolCountry
-          });
-        })
-        .then(data => {
-          // Add new school to dropdown
-          const schoolSelect = document.getElementById('schoolSelect');
-          const newOption = document.createElement('option');
-
-          // Use the school data we collected
-          let locationText = '';
-          if (data.schoolCountry === 'unitedStates') {
-            locationText = ` (${data.schoolCity}, ${data.schoolState})`;
-          } else if (data.schoolCountry === 'international') {
-            locationText = ` (${data.schoolLocation})`;
-          }
-
-          newOption.value = data.schoolId;
-          newOption.text = data.schoolName + locationText;
-
-          console.log('Adding school to dropdown with ID:', data.schoolId);
-
-          // Insert alphabetically
-          let inserted = false;
-          for (let i = 1; i < schoolSelect.options.length; i++) {
-            if (schoolSelect.options[i].text.localeCompare(newOption.text) > 0) {
-              schoolSelect.add(newOption, schoolSelect.options[i]);
-              inserted = true;
-              break;
-            }
-          }
-          if (!inserted) {
-            schoolSelect.add(newOption);
-          }
-
-          // Set as selected AFTER adding to dropdown
-          newOption.selected = true;
-          console.log('School select current value after adding:', schoolSelect.value);
-
-          // Clear the form
-          document.getElementById('newSchoolName').value = '';
-          document.getElementById('newSchoolWebsite').value = '';
-          document.getElementById('newSchoolCountry').value = '';
-          document.getElementById('newSchoolCity').value = '';
-          document.getElementById('newSchoolState').value = '';
-          document.getElementById('newSchoolLocation').value = '';
-          document.getElementById('newSchoolLogo').value = '';
-          newSchoolUSFields.style.display = 'none';
-          newSchoolIntlFields.style.display = 'none';
-
-          // Collapse the form
-          const collapseElement = document.getElementById('addSchoolCollapse');
-          const bsCollapse = bootstrap.Collapse.getInstance(collapseElement) || new bootstrap.Collapse(collapseElement, {toggle: false});
-          bsCollapse.hide();
-
-          // Show success
-          alert('School added successfully and selected!');
-        })
-        .catch(error => {
-          console.error('Error creating school:', error);
-          alert('There was an error creating the school. Please try again.');
-        })
-        .finally(() => {
-          // Re-enable button
-          saveNewSchoolBtn.disabled = false;
-          saveNewSchoolBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i>Save School & Continue';
         });
       });
     }
