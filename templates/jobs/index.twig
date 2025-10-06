@@ -372,7 +372,7 @@
                                     {# Category badge only #}
                                     <div class="d-flex flex-wrap gap-1 mb-3">
                                         {% if job.jobCategory|length %}
-                                            <span class="badge bg-primary bg-opacity-10 text-primary">{{ job.jobCategory.one().title }}</span>
+                                            <span class="badge bg-primary bg-opacity-10 text-primary" style="white-space: normal; text-align: left; line-height: 1.4;">{{ job.jobCategory.one().title }}</span>
                                         {% endif %}
                                     </div>
 
