@@ -12,8 +12,8 @@
                     <h1 class="display-5 fw-bold mb-3">{{ entry.title }}</h1>
 
                     <!-- Organization Info -->
-                    {% if entry.school.one() %}
-                        {% set organization = entry.school.one() %}
+                    {% if entry.listingOrganization.one() %}
+                        {% set organization = entry.listingOrganization.one() %}
                         <div class="d-flex align-items-center mb-3">
                             {% if organization.logo.one() %}
                                 <img src="{{ organization.logo.one().getUrl('height100') }}"
@@ -32,14 +32,6 @@
                                 {% endif %}
                             </div>
                         </div>
-                    {% endif %}
-
-                    <!-- Recruiter Attribution -->
-                    {% set listingOrg = entry.listingOrganization.one() %}
-                    {% if listingOrg and listingOrg.organizationType == 'recruiter' %}
-                        <p class="text-muted small fst-italic mb-3">
-                            Search being conducted by <a href="{{ listingOrg.url }}" class="text-decoration-none">{{ listingOrg.title }}</a>
-                        </p>
                     {% endif %}
 
                     <!-- Job Meta Info -->
@@ -240,8 +232,8 @@
                     </div>
 
                     <!-- Organization Contact Card -->
-                    {% if entry.school.one() %}
-                        {% set organization = entry.school.one() %}
+                    {% if entry.listingOrganization.one() %}
+                        {% set organization = entry.listingOrganization.one() %}
                         <div class="card border-0 shadow-sm mt-4">
                             <div class="card-header bg-light border-0">
                                 <h3 class="h5 mb-0">

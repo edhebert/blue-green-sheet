@@ -77,12 +77,21 @@
 
                 <div class="col-lg-8">
                     <!-- Current Job Openings -->
-                    {% set activeJobs = craft.entries()
-                        .section('jobs')
-                        .listingOrganization(entry.id)
-                        .status('live')
-                        .orderBy('postDate DESC')
-                        .all() %}
+                    {% if entry.organizationType == 'school' %}
+                        {% set activeJobs = craft.entries()
+                            .section('jobs')
+                            .school(entry.id)
+                            .status('live')
+                            .orderBy('postDate DESC')
+                            .all() %}
+                    {% else %}
+                        {% set activeJobs = craft.entries()
+                            .section('jobs')
+                            .listingOrganization(entry.id)
+                            .status('live')
+                            .orderBy('postDate DESC')
+                            .all() %}
+                    {% endif %}
 
                     <div class="card border-0 shadow-sm h-100">
                         <div class="card-header bg-light border-0">
@@ -106,6 +115,12 @@
                                                                 {{ job.title }}
                                                             </a>
                                                         </h4>
+
+                                                        {% if entry.organizationType == 'recruiter' and job.school.one() %}
+                                                            <p class="text-muted small mb-2">
+                                                                <i class="bi bi-building me-1"></i>{{ job.school.one().title }}
+                                                            </p>
+                                                        {% endif %}
 
                                                         <!-- Job Details -->
                                                         <div class="text-muted small mb-2">
