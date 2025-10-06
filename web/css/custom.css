@@ -41,6 +41,6 @@
 
 /* test comment */
 
-.card-body {
+.card-body.tombstone {
     text-align: center;
 }
