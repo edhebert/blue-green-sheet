@@ -341,7 +341,7 @@
                                                     {% set initials = initials ~ word|slice(0, 1)|upper %}
                                                 {% endif %}
                                             {% endfor %}
-                                            <div class="school-initials mb-3" style="width: 100px; height: 100px; background-color: #e3f2fd; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                            <div class="school-initials mb-3" style="width: 100px; height: 100px; background-color: #e3f2fd; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
                                                 <span style="font-size: 1.5rem; font-weight: 600; color: #1976d2;">{{ initials }}</span>
                                             </div>
                                         {% endif %}
@@ -371,7 +371,7 @@
                                     {% endif %}
 
                                     {# Category badge only #}
-                                    <div class="d-flex flex-wrap gap-1 mb-3">
+                                    <div class="d-flex flex-wrap gap-1 mb-3" style="justify-content: center;">
                                         {% if job.jobCategory|length %}
                                             <span class="badge bg-primary bg-opacity-10 text-primary" style="white-space: normal; text-align: left; line-height: 1.4;">{{ job.jobCategory.one().title }}</span>
                                         {% endif %}
