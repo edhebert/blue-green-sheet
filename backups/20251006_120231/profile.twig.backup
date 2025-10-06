@@ -100,10 +100,23 @@
                                 </div>
 
                                 <div class="job-card-content">
-                                    {% if userOrg and userOrg.organizationType == 'recruiter' and job.school|length %}
+                                    {% if job.jobCategory|length %}
                                         <div class="job-meta">
-                                            <span class="meta-label">School:</span>
-                                            <span>{{ job.school.one().title }}</span>
+                                            <span class="meta-label">Category:</span>
+                                            <span>{{ job.jobCategory.one().title }}</span>
+                                        </div>
+                                    {% endif %}
+
+                                    {% if job.jobLocation or job.jobCity or job.jobState %}
+                                        <div class="job-meta">
+                                            <span class="meta-label">Location:</span>
+                                            <span>
+                                                {% if job.jobLocation %}
+                                                    {{ job.jobLocation }}
+                                                {% else %}
+                                                    {{ job.jobCity }}{% if job.jobCity and job.jobState %}, {% endif %}{{ job.jobState }}
+                                                {% endif %}
+                                            </span>
                                         </div>
                                     {% endif %}
 
@@ -189,25 +202,20 @@
 
                 <div class="profile-section">
                     <h3>Organization</h3>
+                    {% set organizations = craft.entries.section('organizations').orderBy('title').all() %}
                     <div class="form-group">
-                        <label>Current Organization</label>
-                        {% if currentUser.organization.one() %}
-                            <div class="mb-2">
-                                <strong>{{ currentUser.organization.one().title }}</strong>
-                                {% if currentUser.organization.one().organizationType %}
-                                    ({{ currentUser.organization.one().organizationType|title }})
-                                {% endif %}
-                            </div>
-                            <a href="{{ url('profile/edit-organization') }}" class="button rounded-pill">
-                                <i class="bi bi-pencil"></i> Edit My Organization
-                            </a>
-                        {% else %}
-                            <p class="text-muted">No organization selected</p>
-                            <a href="{{ url('profile/select-organization') }}" class="btn btn-sm btn-primary">Select Organization</a>
-                        {% endif %}
-                        <div class="form-text mt-2">
-                            Need to change organizations? <a href="mailto:support@bluegreensheet.com">Contact support@bluegreensheet.com</a>
-                        </div>
+                        <label for="organization">Organization</label>
+                        <select id="organization" name="fields[organization][]">
+                            <option value="">-- Select Organization --</option>
+                            {% for org in organizations %}
+                                <option value="{{ org.id }}" 
+                                        {% if currentUser.organization.one() and currentUser.organization.one().id == org.id %}selected{% endif %}>
+                                    {{ org.title }}
+                                    {% if org.organizationType %}({{ org.organizationType|title }}){% endif %}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <small><a href="/profile/select-organization">Need to add a new organization?</a></small>
                     </div>
                 </div>
 

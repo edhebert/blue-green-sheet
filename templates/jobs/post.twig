@@ -97,6 +97,33 @@
         {% else %}
           <!-- Authorized User - Show Job Posting Form -->
 
+        {# Check if user's organization has required location data #}
+        {% set skipJobForm = false %}
+        {% if userOrg %}
+          {% set hasLocation = false %}
+          {% if userOrg.country == 'unitedStates' %}
+            {% set hasLocation = userOrg.orgCity and userOrg.orgState %}
+          {% elseif userOrg.country == 'international' %}
+            {% set hasLocation = userOrg.orgLocation %}
+          {% endif %}
+
+          {% if not hasLocation %}
+            <!-- Organization Missing Location Data -->
+            <div class="alert alert-warning">
+              <h4 class="alert-heading"><i class="bi bi-exclamation-triangle me-2"></i>Location Information Required</h4>
+              <p>Your organization is missing required location information. Please update your organization profile before posting jobs.</p>
+              <a href="{{ url('profile/edit-organization') }}" class="btn btn-primary">
+                <i class="bi bi-pencil me-2"></i>Edit My Organization
+              </a>
+              <a href="{{ url('profile') }}" class="btn btn-outline-secondary ms-2">
+                <i class="bi bi-arrow-left me-2"></i>Back to Profile
+              </a>
+            </div>
+            {% set skipJobForm = true %}
+          {% endif %}
+        {% endif %}
+
+        {% if not skipJobForm %}
         {% if entry and entry.getErrors() %}
           <div class="alert alert-danger">
             <strong>We couldn't save your job posting.</strong>
@@ -170,7 +197,12 @@
                     {# Pre-select the newly created school #}
                     {% set isSelected = true %}
                   {% endif %}
-                  <option value="{{ school.id }}" {% if isSelected %}selected{% endif %}>
+                  <option value="{{ school.id }}"
+                          data-country="{{ school.country }}"
+                          data-city="{{ school.orgCity }}"
+                          data-state="{{ school.orgState }}"
+                          data-location="{{ school.orgLocation }}"
+                          {% if isSelected %}selected{% endif %}>
                     {{ school.title }}
                     {% if school.orgCity and school.orgState %}
                       ({{ school.orgCity }}, {{ school.orgState }})
@@ -188,7 +220,7 @@
 
               <!-- Add New School Link -->
               <div class="mt-2">
-                <button type="button" class="btn btn-sm btn-outline-primary"
+                <button type="button" class="button rounded-pill button-border mt-3"
                         data-bs-toggle="collapse" data-bs-target="#addSchoolCollapse"
                         aria-expanded="false" aria-controls="addSchoolCollapse">
                   <i class="bi bi-plus-circle me-1"></i>School not listed? Click here to add one
@@ -197,8 +229,8 @@
 
               <!-- Inline Add New School Form (Collapsed) -->
               <div id="addSchoolCollapse" class="collapse mt-3">
-                <div class="card border-primary">
-                  <div class="card-header bg-primary text-white">
+                <div class="card">
+                  <div class="card-header">
                     <h6 class="mb-0"><i class="bi bi-building me-2"></i>Add New School</h6>
                   </div>
                   <div class="card-body bg-light">
@@ -265,10 +297,10 @@
                         </div>
 
                         <div class="d-grid gap-2 d-sm-flex mt-3">
-                          <button type="button" class="btn btn-primary" id="saveNewSchoolBtn">
+                          <button type="button" class="button rounded-pill" id="saveNewSchoolBtn">
                             <i class="bi bi-check-circle me-1"></i>Save School & Continue
                           </button>
-                          <button type="button" class="btn btn-outline-secondary"
+                          <button type="button" class="button rounded-pill button-border"
                                   data-bs-toggle="collapse" data-bs-target="#addSchoolCollapse">
                             Cancel
                           </button>
@@ -389,94 +421,11 @@
             {{ hiddenInput('fields[jobSchoolUrl][type]', 'url') }}
           </div>
 
-          <!-- Location Information -->
-          <div class="mb-4">
-            <h5 class="fw-bold mb-3">Location Information</h5>
-
-
-            <!-- Country Selection -->
-            <div class="mb-3">
-              <label class="form-label fw-bold">Country <span class="text-danger">*</span></label>
-              <div>
-                <div class="form-check form-check-inline">
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    name="fields[country]"
-                    id="countryUS"
-                    value="unitedStates"
-                    {% if not entry or (entry.country is defined and entry.country == 'unitedStates') or not entry.country %}checked{% endif %}
-                  >
-                  <label class="form-check-label" for="countryUS">
-                    United States
-                  </label>
-                </div>
-                <div class="form-check form-check-inline">
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    name="fields[country]"
-                    id="countryIntl"
-                    value="international"
-                    {% if entry and entry.country is defined and entry.country == 'international' %}checked{% endif %}
-                  >
-                  <label class="form-check-label" for="countryIntl">
-                    International
-                  </label>
-                </div>
-              </div>
-            </div>
-
-
-            <!-- US Location Fields -->
-            <div id="usLocationFields" class="{% if entry and entry.country is defined and entry.country == 'international' %}d-none{% endif %}">
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label for="jobCity" class="form-label fw-bold">City <span id="cityrequired" class="text-danger d-none">*</span></label>
-                  <input
-                    type="text"
-                    id="jobCity"
-                    name="fields[jobCity]"
-                    class="form-control"
-                    value="{{ entry ? entry.jobCity : '' }}"
-                    placeholder="your city"
-                  >
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label for="jobState" class="form-label fw-bold">State <span id="staterequired" class="text-danger d-none">*</span></label>
-                  <select
-                    id="jobState"
-                    name="fields[jobState]"
-                    class="form-select"
-                  >
-                    <option value="">Select state...</option>
-                    {% set states = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY', 'DC'] %}
-                    {% for state in states %}
-                      <option value="{{ state }}"
-                        {% if entry and entry.jobState == state %}selected{% endif %}>
-                        {{ state }}
-                      </option>
-                    {% endfor %}
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <!-- International Location Field -->
-            <div id="intlLocationFields" class="{% if not entry or not entry.country is defined or entry.country != 'international' %}d-none{% endif %}">
-              <div class="mb-3">
-                <label for="jobLocation" class="form-label fw-bold">Location <span id="locationrequired" class="text-danger d-none">*</span></label>
-                <input
-                  type="text"
-                  id="jobLocation"
-                  name="fields[jobLocation]"
-                  class="form-control"
-                  value="{{ entry ? entry.jobLocation : '' }}"
-                  placeholder="London, United Kingdom"
-                >
-              </div>
-            </div>
-          </div>
+          <!-- Hidden Location Fields (Auto-populated from school/organization) -->
+          <input type="hidden" id="hiddenCountry" name="fields[country]" value="{{ entry ? entry.country : '' }}">
+          <input type="hidden" id="hiddenJobCity" name="fields[jobCity]" value="{{ entry ? entry.jobCity : '' }}">
+          <input type="hidden" id="hiddenJobState" name="fields[jobState]" value="{{ entry ? entry.jobState : '' }}">
+          <input type="hidden" id="hiddenJobLocation" name="fields[jobLocation]" value="{{ entry ? entry.jobLocation : '' }}">
 
           <!-- Application Instructions -->
           <div class="mb-4">
@@ -538,9 +487,12 @@
           </div>
 
           <!-- Organization (automatically set) -->
-          {% set userOrganization = currentUser.organization.one() %}
-          {% if userOrganization %}
-            {{ hiddenInput('fields[listingOrganization][]', userOrganization.id) }}
+          {% if userOrg %}
+            {{ hiddenInput('fields[listingOrganization][]', userOrg.id) }}
+            {# For schools posting jobs, also set the school field to their own organization #}
+            {% if not isRecruiter %}
+              {{ hiddenInput('fields[school][]', userOrg.id) }}
+            {% endif %}
           {% else %}
             <!-- Debug: User has no organization, trying different access methods -->
             {{ hiddenInput('debug_user_id', currentUser.id) }}
@@ -557,7 +509,7 @@
 
 
           <div class="d-grid gap-2">
-            <button type="submit" class="btn btn-primary btn-lg" id="continueToPayment">
+            <button type="submit" class="button button-large rounded-pill" id="continueToPayment">
               {% if entry and entry.id %}
                 Complete & Continue to Payment
               {% else %}
@@ -565,11 +517,11 @@
               {% endif %}
             </button>
             {% if not entry or not entry.id %}
-              <button type="button" class="btn btn-outline-primary btn-lg" id="saveAsDraft">
+              <button type="button" class="button button-large rounded-pill button-border" id="saveAsDraft">
                 <i class="bi bi-save me-2"></i>Save as Draft
               </button>
             {% endif %}
-            <a href="{{ url('jobs') }}" class="btn btn-outline-secondary">
+            <a href="{{ url('jobs') }}" class="button button-small rounded-pill button-border">
               Cancel
             </a>
           </div>
@@ -577,6 +529,8 @@
           <!-- Hidden fields for draft handling -->
           <input type="hidden" name="submitType" id="submitType" value="payment">
         </form>
+
+        {% endif %}{# end skipJobForm #}
 
         {% endif %}
       </div>
@@ -642,53 +596,39 @@
         console.error('CKEditor initialization failed:', error);
       });
 
-    // Handle country/location field visibility
-    const countryRadios = document.querySelectorAll('input[name="fields[country]"]');
-    const usFields = document.getElementById('usLocationFields');
-    const intlFields = document.getElementById('intlLocationFields');
-    const jobState = document.getElementById('jobState');
+    // Auto-populate location fields from school selection (for recruiters)
+    const schoolSelect = document.getElementById('schoolSelect');
+    if (schoolSelect) {
+      schoolSelect.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
 
-    function toggleLocationFields() {
-      const selectedCountry = document.querySelector('input[name="fields[country]"]:checked').value;
-      const jobCity = document.getElementById('jobCity');
-      const jobState = document.getElementById('jobState');
-      const jobLocation = document.getElementById('jobLocation');
-      const cityRequired = document.getElementById('cityrequired');
-      const stateRequired = document.getElementById('staterequired');
-      const locationRequired = document.getElementById('locationrequired');
+        if (!selectedOption || !selectedOption.value) {
+          return; // No school selected
+        }
 
-      if (selectedCountry === 'unitedStates') {
-        usFields.classList.remove('d-none');
-        intlFields.classList.add('d-none');
+        // Get location data from data attributes
+        const schoolCountry = selectedOption.dataset.country;
+        const schoolCity = selectedOption.dataset.city;
+        const schoolState = selectedOption.dataset.state;
+        const schoolLocation = selectedOption.dataset.location;
 
-        // Make US fields required
-        jobCity.setAttribute('required', 'required');
-        jobState.setAttribute('required', 'required');
-        jobLocation.removeAttribute('required');
+        // Validate school has location data
+        const hasLocation = (schoolCountry === 'unitedStates' && schoolCity && schoolState) ||
+                           (schoolCountry === 'international' && schoolLocation);
 
-        // Show US required asterisks
-        cityRequired.classList.remove('d-none');
-        stateRequired.classList.remove('d-none');
-        locationRequired.classList.add('d-none');
-      } else {
-        usFields.classList.add('d-none');
-        intlFields.classList.remove('d-none');
+        if (!hasLocation) {
+          alert('⚠️ This school is missing location information.\n\nPlease contact support@bluegreensheet.com to have it updated.');
+          this.value = ''; // Clear selection
+          return;
+        }
 
-        // Make international field required
-        jobLocation.setAttribute('required', 'required');
-        jobCity.removeAttribute('required');
-        jobState.removeAttribute('required');
-
-        // Show international required asterisk
-        locationRequired.classList.remove('d-none');
-        cityRequired.classList.add('d-none');
-        stateRequired.classList.add('d-none');
-      }
+        // Populate hidden location fields
+        document.getElementById('hiddenCountry').value = schoolCountry || '';
+        document.getElementById('hiddenJobCity').value = schoolCity || '';
+        document.getElementById('hiddenJobState').value = schoolState || '';
+        document.getElementById('hiddenJobLocation').value = schoolLocation || '';
+      });
     }
-
-    countryRadios.forEach(radio => {
-      radio.addEventListener('change', toggleLocationFields);
-    });
 
     // File upload functionality
     const jobAttachmentsInput = document.getElementById('jobAttachments');
@@ -831,8 +771,13 @@
       attachmentItem.remove();
     };
 
-    // Initialize on page load
-    toggleLocationFields();
+    // Auto-populate location for school users on page load
+    {% if not isRecruiter and userOrg %}
+      document.getElementById('hiddenCountry').value = '{{ userOrg.country }}';
+      document.getElementById('hiddenJobCity').value = '{{ userOrg.orgCity }}';
+      document.getElementById('hiddenJobState').value = '{{ userOrg.orgState }}';
+      document.getElementById('hiddenJobLocation').value = '{{ userOrg.orgLocation }}';
+    {% endif %}
 
     // Handle draft vs payment button clicks
     document.getElementById('continueToPayment').addEventListener('click', function() {
@@ -911,20 +856,32 @@
         formData.append('fields[jobSchoolUrl][type]', 'url');
       }
 
-      const country = document.querySelector('input[name="fields[country]"]:checked');
-      if (country) formData.append('fields[country]', country.value);
+      const country = document.getElementById('hiddenCountry').value;
+      if (country) formData.append('fields[country]', country);
 
-      const city = document.getElementById('jobCity').value;
+      const city = document.getElementById('hiddenJobCity').value;
       if (city) formData.append('fields[jobCity]', city);
 
-      const state = document.getElementById('jobState').value;
+      const state = document.getElementById('hiddenJobState').value;
       if (state) formData.append('fields[jobState]', state);
 
-      const location = document.getElementById('jobLocation').value;
+      const location = document.getElementById('hiddenJobLocation').value;
       if (location) formData.append('fields[jobLocation]', location);
 
       const applicationInstructions = document.getElementById('jobApplicationInstructions').value;
       if (applicationInstructions) formData.append('fields[jobApplicationInstructions]', applicationInstructions);
+
+      // Add listingOrganization (from hidden field)
+      const listingOrgFieldDraft = document.querySelector('input[name="fields[listingOrganization][]"]');
+      if (listingOrgFieldDraft && listingOrgFieldDraft.value) {
+        formData.append('fields[listingOrganization][]', listingOrgFieldDraft.value);
+      }
+
+      // Add school field (for schools posting their own jobs)
+      const schoolFieldDraft = document.querySelector('input[name="fields[school][]"]');
+      if (schoolFieldDraft && schoolFieldDraft.value) {
+        formData.append('fields[school][]', schoolFieldDraft.value);
+      }
 
       // Handle existing entry ID if continuing from draft
       const entryIdField = document.querySelector('input[name="entryId"]');
@@ -994,39 +951,23 @@
         document.getElementById('jobApplicationInstructions').classList.remove('is-invalid');
       }
 
-      // Validate country selection
-      const countrySelected = document.querySelector('input[name="fields[country]"]:checked');
-      if (!countrySelected) {
-        errors.push('Country selection is required');
+      // Location validation - check hidden fields are populated
+      const country = document.getElementById('hiddenCountry').value;
+      if (!country) {
+        errors.push('Location information is missing - please select a school');
         isValid = false;
-      } else {
-        // Validate location fields based on country
-        if (countrySelected.value === 'unitedStates') {
-          const city = document.getElementById('jobCity').value.trim();
-          const state = document.getElementById('jobState').value;
-          if (!city) {
-            errors.push('City is required for US locations');
-            document.getElementById('jobCity').classList.add('is-invalid');
-            isValid = false;
-          } else {
-            document.getElementById('jobCity').classList.remove('is-invalid');
-          }
-          if (!state) {
-            errors.push('State is required for US locations');
-            document.getElementById('jobState').classList.add('is-invalid');
-            isValid = false;
-          } else {
-            document.getElementById('jobState').classList.remove('is-invalid');
-          }
-        } else if (countrySelected.value === 'international') {
-          const location = document.getElementById('jobLocation').value.trim();
-          if (!location) {
-            errors.push('Location is required for international positions');
-            document.getElementById('jobLocation').classList.add('is-invalid');
-            isValid = false;
-          } else {
-            document.getElementById('jobLocation').classList.remove('is-invalid');
-          }
+      } else if (country === 'unitedStates') {
+        const city = document.getElementById('hiddenJobCity').value;
+        const state = document.getElementById('hiddenJobState').value;
+        if (!city || !state) {
+          errors.push('School location information is incomplete');
+          isValid = false;
+        }
+      } else if (country === 'international') {
+        const location = document.getElementById('hiddenJobLocation').value;
+        if (!location) {
+          errors.push('School location information is incomplete');
+          isValid = false;
         }
       }
 
@@ -1108,16 +1049,16 @@
           formData.append('fields[jobSchoolUrl][type]', 'url');
         }
 
-        const country = document.querySelector('input[name="fields[country]"]:checked');
-        if (country) formData.append('fields[country]', country.value);
+        const country = document.getElementById('hiddenCountry').value;
+        if (country) formData.append('fields[country]', country);
 
-        const city = document.getElementById('jobCity').value;
+        const city = document.getElementById('hiddenJobCity').value;
         if (city) formData.append('fields[jobCity]', city);
 
-        const state = document.getElementById('jobState').value;
+        const state = document.getElementById('hiddenJobState').value;
         if (state) formData.append('fields[jobState]', state);
 
-        const location = document.getElementById('jobLocation').value;
+        const location = document.getElementById('hiddenJobLocation').value;
         if (location) formData.append('fields[jobLocation]', location);
 
         const applicationInstructions = document.getElementById('jobApplicationInstructions').value;
@@ -1127,6 +1068,12 @@
         const listingOrgField = document.querySelector('input[name="fields[listingOrganization][]"]');
         if (listingOrgField && listingOrgField.value) {
           formData.append('fields[listingOrganization][]', listingOrgField.value);
+        }
+
+        // Add school field (for schools posting their own jobs)
+        const schoolField = document.querySelector('input[name="fields[school][]"]');
+        if (schoolField && schoolField.value) {
+          formData.append('fields[school][]', schoolField.value);
         }
 
         // Submit and redirect to payment (using exact same logic as edit.twig)
@@ -1285,6 +1232,12 @@
           newOption.value = data.schoolId;
           newOption.text = data.schoolName + locationText;
 
+          // Add data attributes for location auto-population
+          newOption.setAttribute('data-country', data.schoolCountry || '');
+          newOption.setAttribute('data-city', data.schoolCity || '');
+          newOption.setAttribute('data-state', data.schoolState || '');
+          newOption.setAttribute('data-location', data.schoolLocation || '');
+
           console.log('Adding school to dropdown with ID:', data.schoolId);
 
           // Insert alphabetically
@@ -1303,6 +1256,18 @@
           // Set as selected AFTER adding to dropdown
           newOption.selected = true;
           console.log('School select current value after adding:', schoolSelect.value);
+
+          // Auto-populate hidden location fields with newly created school's data
+          document.getElementById('hiddenCountry').value = data.schoolCountry || '';
+          if (data.schoolCountry === 'unitedStates') {
+            document.getElementById('hiddenJobCity').value = data.schoolCity || '';
+            document.getElementById('hiddenJobState').value = data.schoolState || '';
+            document.getElementById('hiddenJobLocation').value = '';
+          } else if (data.schoolCountry === 'international') {
+            document.getElementById('hiddenJobCity').value = '';
+            document.getElementById('hiddenJobState').value = '';
+            document.getElementById('hiddenJobLocation').value = data.schoolLocation || '';
+          }
 
           // Clear the form
           document.getElementById('newSchoolName').value = '';

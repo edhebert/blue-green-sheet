@@ -319,47 +319,27 @@
             {% if jobs|length %}
                 <div class="row g-4" id="jobResults">
                     {% for job in jobs %}
-                        {% set school = job.school.one() %}
-                        {% set listingOrg = job.listingOrganization.one() %}
-                        {% set isRecruiterPosted = listingOrg and listingOrg.organizationType == 'recruiter' %}
-
                         <div class="col-lg-6 col-xl-4 job-card-wrapper">
                             <article class="card h-100 border-0 shadow-sm job-card">
                                 <div class="card-body">
-                                    {# School Logo or Initials #}
-                                    {% if school %}
-                                        {% if school.logo|length %}
-                                            <div class="img-container mb-3">
-                                                <img src="{{ school.logo.one().url('height100') }}" alt="{{ school.title }}" style="max-height: 80px; max-width: 100%;">
-                                            </div>
-                                        {% else %}
-                                            {# Show initials if no logo #}
-                                            {% set words = school.title|split(' ') %}
-                                            {% set initials = '' %}
-                                            {% for word in words %}
-                                                {% if word|length > 0 and loop.index <= 3 %}
-                                                    {% set initials = initials ~ word|slice(0, 1)|upper %}
-                                                {% endif %}
-                                            {% endfor %}
-                                            <div class="school-initials mb-3" style="width: 80px; height: 80px; background-color: #e3f2fd; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                                                <span style="font-size: 1.5rem; font-weight: 600; color: #1976d2;">{{ initials }}</span>
-                                            </div>
-                                        {% endif %}
+                                    {% if job.author.organization.one().logo[0]|length %}
+                                        <div class="img-container">
+                                            <img src="{{ job.author.organization.one().logo[0].url('height100') }}" alt="{{ job.author.organization.title }}" class="mb-4">
+                                        </div>
                                     {% endif %}
-
-                                    {# School Name (first line, prominent) #}
-                                    {% if school %}
-                                        <h3 class="h6 fw-bold mb-1">{{ school.title }}</h3>
-                                    {% endif %}
-
-                                    {# Job Title (second line) #}
+                                    
                                     <h2 class="h6 mb-2">
                                         <a href="{{ job.url }}" class="text-decoration-none stretched-link">{{ job.title }}</a>
                                     </h2>
 
+                                    {# Organization #}
+                                    {% if job.organization|length %}
+                                        <p class="text-muted small mb-2">{{ job.organization.one().title }}</p>
+                                    {% endif %}
+
                                     {# Location #}
                                     {% if job.jobLocation or job.jobCity or job.jobState %}
-                                        <p class="text-muted small mb-2">
+                                        <p class="text-muted small mb-3">
                                             <i class="bi bi-geo-alt me-1"></i>
                                             {% if job.jobLocation %}
                                                 {{ job.jobLocation }}
@@ -369,24 +349,38 @@
                                         </p>
                                     {% endif %}
 
-                                    {# Category badge only #}
+                                    {# Meta badges #}
                                     <div class="d-flex flex-wrap gap-1 mb-3">
                                         {% if job.jobCategory|length %}
                                             <span class="badge bg-primary bg-opacity-10 text-primary">{{ job.jobCategory.one().title }}</span>
                                         {% endif %}
+                                        {% if job.jobRegion|length %}
+                                            <span class="badge bg-secondary bg-opacity-10 text-secondary">{{ job.jobRegion.one().title }}</span>
+                                        {% endif %}
+                                        {% if job.jobSalaryLow or job.jobSalaryHigh %}
+                                            <span class="badge bg-success bg-opacity-10 text-success">
+                                                {% if job.jobSalaryLow and job.jobSalaryHigh %}
+                                                    ${{ job.jobSalaryLow|number_format }} - ${{ job.jobSalaryHigh|number_format }}K
+                                                {% elseif job.jobSalaryLow %}
+                                                    From ${{ job.jobSalaryLow|number_format }}K
+                                                {% elseif job.jobSalaryHigh %}
+                                                    Up to ${{ job.jobSalaryHigh|number_format }}K
+                                                {% endif %}
+                                            </span>
+                                        {% endif %}
                                     </div>
 
-                                    {# Recruiter Attribution (if posted by recruiter) #}
-                                    {% if isRecruiterPosted %}
-                                        <p class="text-muted small fst-italic mb-3" style="position: relative; z-index: 2;">
-                                            Search being conducted by<br> <a href="{{ listingOrg.url }}" class="text-decoration-none" style="position: relative;">{{ listingOrg.title }}</a>
+                                    {# Summary #}
+                                    {% if job.jobOpportunityStatement %}
+                                        <p class="text-muted small mb-3 job-summary" style="height: 3.6em; overflow: hidden; line-height: 1.2em;">
+                                            {{ job.jobOpportunityStatement|striptags|truncate(140, true, '...') }}
                                         </p>
                                     {% endif %}
 
                                     {# Posted date #}
-                                    {# <div class="text-muted small">
+                                    <div class="text-muted small">
                                         Posted {{ job.postDate|date('M j, Y') }}
-                                    </div> #}
+                                    </div>
                                 </div>
                             </article>
                         </div>

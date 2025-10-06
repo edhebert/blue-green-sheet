@@ -1,0 +1,259 @@
+{% requireLogin %}
+{% extends "_layout.twig" %}
+
+{% block title %}Edit My Organization · {{ siteName }}{% endblock %}
+
+{% block content %}
+  {# Get current user's organization #}
+  {% set userOrg = currentUser.organization.one() %}
+
+  {# Access check - user must have an organization #}
+  {% if not userOrg %}
+    <div class="container" style="max-width: 720px;">
+      <div class="alert alert-warning">
+        <h4 class="alert-heading">No Organization Found</h4>
+        <p>You don't have an organization associated with your account.</p>
+        <a href="{{ url('profile') }}" class="button rounded-pill button-border">Back to Profile</a>
+      </div>
+    </div>
+  {% else %}
+
+  {# Get field options #}
+  {% set stateOptions = craft.projectTools.options('state') %}
+
+  <div class="container" style="max-width: 860px;">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h1 class="h4 mb-0">Edit My Organization</h1>
+          <a href="{{ url('profile') }}" class="button button-small rounded-pill button-border">
+            <i class="bi bi-arrow-left me-1"></i>Back to Profile
+          </a>
+        </div>
+
+        {% if craft.app.session.hasFlash('success') %}
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ craft.app.session.getFlash('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data" id="editOrgForm" novalidate>
+          {{ csrfInput() }}
+          {{ actionInput('entries/save-entry') }}
+          {{ hiddenInput('entryId', userOrg.id) }}
+          {{ hiddenInput('sectionId', userOrg.sectionId) }}
+          {{ hiddenInput('enabled', '1') }}
+          {{ redirectInput('profile') }}
+
+          {# Client-side error summary #}
+          <div class="alert alert-danger d-none client-error-summary" role="alert"></div>
+
+          {# Organization Name - READ ONLY #}
+          <div class="mb-3">
+            <label class="form-label fw-bold">Organization Name</label>
+            <input type="text" class="form-control" value="{{ userOrg.title }}" disabled>
+            <div class="form-text">
+              Need to change your organization name?
+              <a href="mailto:support@bluegreensheet.com">Contact support@bluegreensheet.com</a>
+            </div>
+          </div>
+
+          {# Organization Type - READ ONLY #}
+          <div class="mb-3">
+            <label class="form-label fw-bold">Organization Type</label>
+            <input type="text" class="form-control" value="{{ userOrg.organizationType == 'school' ? 'School' : 'Recruiter' }}" disabled>
+            <div class="form-text">Organization type cannot be changed</div>
+          </div>
+
+          {# Website - EDITABLE #}
+          <div class="mb-3">
+            <label for="website" class="form-label fw-bold">Website</label>
+            <input type="text" id="website" name="fields[website]" class="form-control"
+                   value="{{ userOrg.website }}" placeholder="example.com or https://example.com">
+            <div class="form-text">Enter your website URL (with or without https://)</div>
+          </div>
+
+          {# Description - EDITABLE (CKEditor) #}
+          <div class="mb-3">
+            <label for="orgDescription" class="form-label fw-bold">Description</label>
+            <div id="orgDescription-editor" style="min-height: 200px; border: 1px solid #ced4da; border-radius: 0.375rem;"></div>
+            <textarea id="orgDescription" name="fields[orgDescription]" class="d-none">{{ userOrg.orgDescription }}</textarea>
+          </div>
+
+          {# Phone - EDITABLE #}
+          <div class="mb-3">
+            <label for="orgPhone" class="form-label fw-bold">Phone</label>
+            <input type="text" id="orgPhone" name="fields[orgPhone]" class="form-control"
+                   value="{{ userOrg.orgPhone }}">
+          </div>
+
+          {# Country - READ ONLY (locked) #}
+          <div class="mb-3">
+            <label class="form-label fw-bold">Country</label>
+            <input type="text" class="form-control"
+                   value="{{ userOrg.country == 'unitedStates' ? 'United States' : 'International' }}" disabled>
+            {{ hiddenInput('fields[country]', userOrg.country) }}
+            <div class="form-text">
+              Need to change your country?
+              <a href="mailto:support@bluegreensheet.com">Contact support@bluegreensheet.com</a>
+            </div>
+          </div>
+
+          {# US Location Fields - EDITABLE (if US) #}
+          {% if userOrg.country == 'unitedStates' %}
+            <div class="row g-3 mb-3">
+              <div class="col-md-5">
+                <label for="orgCity" class="form-label fw-bold">City <span class="text-danger">*</span></label>
+                <input type="text" id="orgCity" name="fields[orgCity]" class="form-control"
+                       value="{{ userOrg.orgCity }}" required>
+              </div>
+              <div class="col-md-3">
+                <label for="orgState" class="form-label fw-bold">State <span class="text-danger">*</span></label>
+                <select id="orgState" name="fields[orgState]" class="form-select" required>
+                  <option value="">— Select —</option>
+                  {% for opt in stateOptions %}
+                    <option value="{{ opt.value }}" {% if userOrg.orgState == opt.value %}selected{% endif %}>
+                      {{ opt.label }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label for="orgZip" class="form-label fw-bold">Zip Code <span class="text-danger">*</span></label>
+                <input type="text" id="orgZip" name="fields[orgZip]" class="form-control"
+                       value="{{ userOrg.orgZip }}" required>
+              </div>
+            </div>
+          {% endif %}
+
+          {# International Location Field - EDITABLE (if International) #}
+          {% if userOrg.country == 'international' %}
+            <div class="mb-3">
+              <label for="orgLocation" class="form-label fw-bold">Location (City / Country) <span class="text-danger">*</span></label>
+              <input type="text" id="orgLocation" name="fields[orgLocation]" class="form-control"
+                     value="{{ userOrg.orgLocation }}" required>
+            </div>
+          {% endif %}
+
+          {# Logo - EDITABLE #}
+          <div class="mb-3">
+            <label for="logo" class="form-label fw-bold">Logo</label>
+
+            {# Show current logo if exists #}
+            {% if userOrg.logo|length %}
+              {% set currentLogo = userOrg.logo.one() %}
+              <div class="mb-2">
+                <img src="{{ currentLogo.url }}" alt="{{ userOrg.title }} logo"
+                     style="max-width: 200px; max-height: 100px;" class="border rounded p-2">
+                <div class="form-text">Current logo</div>
+              </div>
+            {% endif %}
+
+            <input type="file" id="logo" name="fields[logo][]" class="form-control" accept="image/*">
+            <div class="form-text">Upload a new logo to replace the current one (JPG, PNG, or GIF)</div>
+          </div>
+
+          {# Form Actions #}
+          <div class="d-grid gap-2 d-sm-flex mt-4">
+            <button type="submit" class="button rounded-pill">
+              <i class="bi bi-check-circle me-1"></i>Save Changes
+            </button>
+            <a href="{{ url('profile') }}" class="button rounded-pill button-border">
+              Cancel
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  {# CKEditor CDN #}
+  <script src="https://cdn.ckeditor.com/ckeditor5/40.1.0/classic/ckeditor.js"></script>
+
+  {# CKEditor Height Styling #}
+  <style>
+    #orgDescription-editor .ck-editor__editable {
+      min-height: 200px !important;
+    }
+  </style>
+
+  {# CKEditor initialization and validation script #}
+  <script>
+  (function(){
+    let orgDescriptionEditor;
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize CKEditor for description field
+      ClassicEditor
+        .create(document.querySelector('#orgDescription-editor'), {
+          toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'outdent', 'indent', '|', 'undo', 'redo']
+        })
+        .then(editor => {
+          orgDescriptionEditor = editor;
+          // Sync with hidden textarea
+          editor.model.document.on('change:data', () => {
+            document.querySelector('#orgDescription').value = editor.getData();
+          });
+          // Load existing content
+          const existingContent = document.querySelector('#orgDescription').value;
+          if (existingContent) {
+            editor.setData(existingContent);
+          }
+        })
+        .catch(error => {
+          console.error('CKEditor initialization failed:', error);
+        });
+
+      const form = document.getElementById('editOrgForm');
+      const errorSummary = form.querySelector('.client-error-summary');
+
+      // Auto-fix website URLs before submission
+      form.addEventListener('submit', function(e) {
+        // Sync CKEditor content before submission
+        if (orgDescriptionEditor) {
+          document.querySelector('#orgDescription').value = orgDescriptionEditor.getData();
+        }
+
+        const websiteField = document.getElementById('website');
+        if (websiteField && websiteField.value.trim()) {
+          let url = websiteField.value.trim();
+          // If the URL doesn't start with http:// or https://, add https://
+          if (url && !url.match(/^https?:\/\//i)) {
+            websiteField.value = 'https://' + url;
+          }
+        }
+
+        // Validate required fields
+        const errors = [];
+
+        {% if userOrg.country == 'unitedStates' %}
+          const city = document.getElementById('orgCity');
+          const state = document.getElementById('orgState');
+          const zip = document.getElementById('orgZip');
+
+          if (!city.value.trim()) errors.push('City is required');
+          if (!state.value) errors.push('State is required');
+          if (!zip.value.trim()) errors.push('Zip Code is required');
+        {% endif %}
+
+        {% if userOrg.country == 'international' %}
+          const location = document.getElementById('orgLocation');
+          if (!location.value.trim()) errors.push('Location is required');
+        {% endif %}
+
+        if (errors.length > 0) {
+          e.preventDefault();
+          errorSummary.innerHTML = '<strong>Please correct the following:</strong><ul class="mb-0">' +
+            errors.map(err => '<li>' + err + '</li>').join('') +
+            '</ul>';
+          errorSummary.classList.remove('d-none');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      });
+    });
+  })();
+  </script>
+
+  {% endif %}
+{% endblock %}

@@ -1,23 +1,16 @@
 {% extends "_layout.twig" %}
 
-{% block title %}Edit Job Posting · {{ siteName }}{% endblock %}
+{% block title %}Post a New Job · {{ siteName }}{% endblock %}
 
 {% block content %}
-  {# Get and validate the job entry from URL parameter #}
-  {% set entryId = craft.app.request.getSegment(3) %}
-
-  {# Ensure we have a valid entry ID #}
-  {% if not entryId or not entryId|number_format %}
-    {% set jobEntry = null %}
-  {% else %}
-    {# Only load entries that belong to current user (unless admin) #}
-    {% if currentUser.admin %}
-      {% set jobEntry = craft.entries().section('jobs').id(entryId).status(null).one() %}
-    {% else %}
-      {% set jobEntry = craft.entries().section('jobs').id(entryId).status(null).authorId(currentUser.id).one() %}
-    {% endif %}
-  {% endif %}
+  {% set entry = entry ?? null %}
   {% set currentUser = currentUser %}
+
+  {# Handle continuing from a draft #}
+  {% set continueFromId = craft.app.request.getParam('continueFrom') %}
+  {% if continueFromId and not entry %}
+    {% set entry = craft.entries().section('jobs').id(continueFromId).authorId(currentUser.id).one() %}
+  {% endif %}
 
   {# Check if current user is a recruiter #}
   {% set userOrg = currentUser.organization.one() %}
@@ -44,20 +37,49 @@
       <div class="col-12">
         {% if not currentUser %}
           <!-- Account Required Message -->
-          <div class="text-center py-5">
+          <div class="text-center pb-5">
             <div class="mb-4">
               <i class="bi bi-person-circle text-primary" style="font-size: 4rem;"></i>
             </div>
             <h2 class="h4 mb-3">Account Required</h2>
             <p class="text-muted mb-4 lead">
-              You need to be logged in to edit job postings.
+              To post a job opening on Blue Green Sheet, you need to create an account or sign in to your existing account.
             </p>
-            <a href="{{ url('login') }}" class="button button-xlarge rounded-pill px-4">
-              <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
-            </a>
+
+            <div class="row justify-content-center mb-4">
+              <div class="col-md-8">
+                <div class="card border-0 bg-light">
+                  <div class="card-body p-4">
+                    <h5 class="h6 mb-3">What you'll be able to do:</h5>
+                    <ul class="list-unstyled text-start">
+                      <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Post job openings for 6 or 12 months</li>
+                      <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Reach qualified educational professionals</li>
+                      <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Edit your postings anytime</li>
+                      <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Upload job attachments and documents</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex gap-3 justify-content-center flex-wrap">
+              <a href="{{ url('login') }}" class="button button-xlarge rounded-pill px-4">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Sign In to Existing Account
+              </a>
+              <a href="{{ url('register') }}" class="button button-xlarge rounded-pill button-border px-4">
+                <i class="bi bi-person-plus me-2"></i>Create New Account
+              </a>
+            </div>
+
+            <div class="mt-4">
+              <p class="text-muted small">
+                Already have an account? <a href="{{ url('login') }}" class="text-decoration-none">Sign in here</a><br>
+                Questions about posting jobs? <a href="{{ url('pricing') }}" class="text-decoration-none">View our pricing</a>
+              </p>
+            </div>
           </div>
 
-        {% elseif not currentUser.isInGroup('jobPosters') and not currentUser.admin %}
+        {% elseif not currentUser.isInGroup('jobPosters') and not currentUser.admin and not currentUser.isInGroup('bgsStaff') %}
           <!-- Permission Required Message -->
           <div class="text-center py-5">
             <div class="mb-4">
@@ -65,82 +87,21 @@
             </div>
             <h2 class="h4 mb-3">Access Restricted</h2>
             <p class="text-muted mb-4 lead">
-              Your account doesn't have permission to edit jobs.
+              Your account doesn't have permission to post jobs. Please contact us if you need access to post job openings.
             </p>
             <a href="{{ url('contact') }}" class="button button-xlarge button-rounded px-4">
               <i class="bi bi-envelope me-2"></i>Contact Us
             </a>
           </div>
 
-        {% elseif not jobEntry %}
-          <!-- Job Not Found -->
-          <div class="text-center py-5">
-            <div class="mb-4">
-              <i class="bi bi-exclamation-triangle text-warning" style="font-size: 4rem;"></i>
-            </div>
-            <h2 class="h4 mb-3">Job Not Found</h2>
-            <p class="text-muted mb-4 lead">
-              The job posting you're trying to edit could not be found.
-            </p>
-            <a href="{{ url('profile') }}" class="button button-xlarge rounded-pill px-4">
-              <i class="bi bi-arrow-left me-2"></i>Back to Profile
-            </a>
-          </div>
-
-        {% elseif not jobEntry or (jobEntry.authorId != currentUser.id and not currentUser.admin) %}
-          <!-- Job Not Found or Not Owner -->
-          <div class="text-center py-5">
-            <div class="mb-4">
-              <i class="bi bi-shield-exclamation text-danger" style="font-size: 4rem;"></i>
-            </div>
-            <h2 class="h4 mb-3">Access Denied</h2>
-            <p class="text-muted mb-4 lead">
-              {% if not jobEntry %}
-                The job posting you're trying to edit could not be found or you don't have permission to access it.
-              {% else %}
-                You can only edit your own job postings.
-              {% endif %}
-            </p>
-            <a href="{{ url('profile') }}" class="button button-xlarge rounded-pill px-4">
-              <i class="bi bi-arrow-left me-2"></i>Back to Profile
-            </a>
-          </div>
-
         {% else %}
-          <!-- Authorized User - Show Job Editing Form -->
+          <!-- Authorized User - Show Job Posting Form -->
 
-        {# Check if user's organization has required location data #}
-        {% set skipJobForm = false %}
-        {% if userOrg %}
-          {% set hasLocation = false %}
-          {% if userOrg.country == 'unitedStates' %}
-            {% set hasLocation = userOrg.orgCity and userOrg.orgState %}
-          {% elseif userOrg.country == 'international' %}
-            {% set hasLocation = userOrg.orgLocation %}
-          {% endif %}
-
-          {% if not hasLocation %}
-            <!-- Organization Missing Location Data -->
-            <div class="alert alert-warning">
-              <h4 class="alert-heading"><i class="bi bi-exclamation-triangle me-2"></i>Location Information Required</h4>
-              <p>Your organization is missing required location information. Please update your organization profile before editing jobs.</p>
-              <a href="{{ url('profile/edit-organization') }}" class="btn btn-primary">
-                <i class="bi bi-pencil me-2"></i>Edit My Organization
-              </a>
-              <a href="{{ url('profile') }}" class="btn btn-outline-secondary ms-2">
-                <i class="bi bi-arrow-left me-2"></i>Back to Profile
-              </a>
-            </div>
-            {% set skipJobForm = true %}
-          {% endif %}
-        {% endif %}
-
-        {% if not skipJobForm %}
-        {% if jobEntry and jobEntry.getErrors() %}
+        {% if entry and entry.getErrors() %}
           <div class="alert alert-danger">
             <strong>We couldn't save your job posting.</strong>
             <ul class="mb-0">
-              {% for attr, errs in jobEntry.getErrors() %}
+              {% for attr, errs in entry.getErrors() %}
                 {% for err in errs %}
                   <li>{{ err }}</li>
                 {% endfor %}
@@ -148,26 +109,26 @@
             </ul>
           </div>
         {% endif %}
-
-        <div class="d-flex align-items-center mb-4">
-          <a href="{{ url('profile') }}" class="button button-small button-border rounded-pill me-3">
-            <i class="bi bi-arrow-left"></i> Back to Profile
-          </a>
-          <h1 class="h3 mb-0">Edit Job Posting</h1>
-        </div>
-
+        <h1 class="h3 mb-4">
+          {% if entry and entry.id %}
+            Complete Your Job Posting
+          {% else %}
+            Post a New Job Opening
+          {% endif %}
+        </h1>
         <form method="post" class="" enctype="multipart/form-data" novalidate>
           {{ csrfInput() }}
           {{ actionInput('entries/save-entry') }}
-          {{ hiddenInput('entryId', jobEntry.id) }}
-          {{ hiddenInput('sectionId', jobEntry.sectionId) }}
-          {{ hiddenInput('typeId', jobEntry.typeId) }}
-          {# Auto-populate listingOrganization field with current user's organization (if not already set) #}
-          {% if userOrg and not jobEntry.listingOrganization.one() %}
-            {{ hiddenInput('fields[listingOrganization][]', userOrg.id) }}
+          {% set jobsSection = craft.entries.section('jobs').one().section %}
+          {{ hiddenInput('sectionId', jobsSection.id) }}
+          {{ hiddenInput('typeId', jobsSection.entryTypes[0].id) }}
+          {% if entry and entry.id %}
+            {{ hiddenInput('entryId', entry.id) }}
           {% endif %}
-          {# Current entry status - will be updated by form #}
-          {{ redirectInput('profile?updated=job') }}
+          {{ hiddenInput('enabled', false) }} {# Keep disabled until payment #}
+          {{ hiddenInput('fields[paid]', false) }} {# Default to unpaid #}
+          <input type="hidden" name="redirect" id="redirectInput" value="{{ url('jobs/payment') }}">
+          {{ hiddenInput('draftRedirect', url('profile')) }}
 
           <!-- Job Title -->
           <div class="mb-4">
@@ -176,13 +137,13 @@
               type="text"
               id="title"
               name="title"
-              class="form-control{% if jobEntry and jobEntry.getErrors('title') %} is-invalid{% endif %}"
-              value="{{ (jobEntry ? jobEntry.title : '')|e }}"
+              class="form-control{% if entry and entry.getErrors('title') %} is-invalid{% endif %}"
+              value="{{ (entry ? entry.title : '')|e }}"
               placeholder="e.g., Head of School, Business Manager, Development Director"
             >
-            {% if jobEntry and jobEntry.getErrors('title') %}
+            {% if entry and entry.getErrors('title') %}
               <div class="invalid-feedback">
-                {{ jobEntry.getErrors('title')|join(', ') }}
+                {{ entry.getErrors('title')|join(', ') }}
               </div>
             {% endif %}
           </div>
@@ -194,13 +155,13 @@
               <select
                 id="schoolSelect"
                 name="fields[school][]"
-                class="form-select{% if jobEntry and jobEntry.getErrors('school') %} is-invalid{% endif %}"
+                class="form-select{% if entry and entry.getErrors('school') %} is-invalid{% endif %}"
               >
                 <option value="">Select the school for this position...</option>
                 {% for school in schools %}
                   {% set isSelected = false %}
-                  {% if jobEntry and jobEntry.school %}
-                    {% for selectedSchool in jobEntry.school.all() %}
+                  {% if entry and entry.school %}
+                    {% for selectedSchool in entry.school.all() %}
                       {% if selectedSchool.id == school.id %}
                         {% set isSelected = true %}
                       {% endif %}
@@ -209,12 +170,7 @@
                     {# Pre-select the newly created school #}
                     {% set isSelected = true %}
                   {% endif %}
-                  <option value="{{ school.id }}"
-                          data-country="{{ school.country }}"
-                          data-city="{{ school.orgCity }}"
-                          data-state="{{ school.orgState }}"
-                          data-location="{{ school.orgLocation }}"
-                          {% if isSelected %}selected{% endif %}>
+                  <option value="{{ school.id }}" {% if isSelected %}selected{% endif %}>
                     {{ school.title }}
                     {% if school.orgCity and school.orgState %}
                       ({{ school.orgCity }}, {{ school.orgState }})
@@ -224,9 +180,9 @@
                   </option>
                 {% endfor %}
               </select>
-              {% if jobEntry and jobEntry.getErrors('school') %}
+              {% if entry and entry.getErrors('school') %}
                 <div class="invalid-feedback">
-                  {{ jobEntry.getErrors('school')|join(', ') }}
+                  {{ entry.getErrors('school')|join(', ') }}
                 </div>
               {% endif %}
 
@@ -331,13 +287,13 @@
             <select
               id="jobCategory"
               name="fields[jobCategory][]"
-              class="form-select{% if jobEntry and jobEntry.getErrors('jobCategory') %} is-invalid{% endif %}"
+              class="form-select{% if entry and entry.getErrors('jobCategory') %} is-invalid{% endif %}"
             >
               <option value="">Select a category...</option>
               {% for category in craft.categories().group('jobCategories').all() %}
                 {% set isSelected = false %}
-                {% if jobEntry and jobEntry.jobCategory %}
-                  {% for selectedCategory in jobEntry.jobCategory.all() %}
+                {% if entry and entry.jobCategory %}
+                  {% for selectedCategory in entry.jobCategory.all() %}
                     {% if selectedCategory.id == category.id %}
                       {% set isSelected = true %}
                     {% endif %}
@@ -348,9 +304,9 @@
                 </option>
               {% endfor %}
             </select>
-            {% if jobEntry and jobEntry.getErrors('jobCategory') %}
+            {% if entry and entry.getErrors('jobCategory') %}
               <div class="invalid-feedback">
-                {{ jobEntry.getErrors('jobCategory')|join(', ') }}
+                {{ entry.getErrors('jobCategory')|join(', ') }}
               </div>
             {% endif %}
           </div>
@@ -362,12 +318,11 @@
             <textarea
               id="jobDescription"
               name="fields[jobDescription]"
-              class="d-none{% if jobEntry and jobEntry.getErrors('jobDescription') %} is-invalid{% endif %}"
-              required
-            >{{ jobEntry ? jobEntry.jobDescription : '' }}</textarea>
-            {% if jobEntry and jobEntry.getErrors('jobDescription') %}
+              class="d-none{% if entry and entry.getErrors('jobDescription') %} is-invalid{% endif %}"
+            >{{ entry ? entry.jobDescription : '' }}</textarea>
+            {% if entry and entry.getErrors('jobDescription') %}
               <div class="invalid-feedback">
-                {{ jobEntry.getErrors('jobDescription')|join(', ') }}
+                {{ entry.getErrors('jobDescription')|join(', ') }}
               </div>
             {% endif %}
           </div>
@@ -381,7 +336,7 @@
               id="jobOpportunityStatement"
               name="fields[jobOpportunityStatement]"
               class="d-none"
-            >{{ jobEntry ? jobEntry.jobOpportunityStatement : '' }}</textarea>
+            >{{ entry ? entry.jobOpportunityStatement : '' }}</textarea>
           </div>
 
           <!-- Salary Range -->
@@ -395,7 +350,7 @@
                   id="jobSalaryLow"
                   name="fields[jobSalaryLow]"
                   class="form-control"
-                  value="{{ jobEntry ? jobEntry.jobSalaryLow : '' }}"
+                  value="{{ entry ? entry.jobSalaryLow : '' }}"
                   placeholder="75000"
                   min="0"
                   step="1000"
@@ -411,7 +366,7 @@
                   id="jobSalaryHigh"
                   name="fields[jobSalaryHigh]"
                   class="form-control"
-                  value="{{ jobEntry ? jobEntry.jobSalaryHigh : '' }}"
+                  value="{{ entry ? entry.jobSalaryHigh : '' }}"
                   placeholder="125000"
                   min="0"
                   step="1000"
@@ -428,17 +383,100 @@
               id="jobSchoolUrl"
               name="fields[jobSchoolUrl][value]"
               class="form-control"
-              value="{{ jobEntry and jobEntry.jobSchoolUrl ? jobEntry.jobSchoolUrl.url : '' }}"
+              value="{{ entry and entry.jobSchoolUrl ? entry.jobSchoolUrl.url : '' }}"
               placeholder="www.yourschool.edu"
             >
             {{ hiddenInput('fields[jobSchoolUrl][type]', 'url') }}
           </div>
 
-          <!-- Hidden Location Fields (Auto-populated from school/organization) -->
-          <input type="hidden" id="hiddenCountry" name="fields[country]" value="{{ jobEntry ? jobEntry.country : '' }}">
-          <input type="hidden" id="hiddenJobCity" name="fields[jobCity]" value="{{ jobEntry ? jobEntry.jobCity : '' }}">
-          <input type="hidden" id="hiddenJobState" name="fields[jobState]" value="{{ jobEntry ? jobEntry.jobState : '' }}">
-          <input type="hidden" id="hiddenJobLocation" name="fields[jobLocation]" value="{{ jobEntry ? jobEntry.jobLocation : '' }}">
+          <!-- Location Information -->
+          <div class="mb-4">
+            <h5 class="fw-bold mb-3">Location Information</h5>
+
+
+            <!-- Country Selection -->
+            <div class="mb-3">
+              <label class="form-label fw-bold">Country <span class="text-danger">*</span></label>
+              <div>
+                <div class="form-check form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="fields[country]"
+                    id="countryUS"
+                    value="unitedStates"
+                    {% if not entry or (entry.country is defined and entry.country == 'unitedStates') or not entry.country %}checked{% endif %}
+                  >
+                  <label class="form-check-label" for="countryUS">
+                    United States
+                  </label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="fields[country]"
+                    id="countryIntl"
+                    value="international"
+                    {% if entry and entry.country is defined and entry.country == 'international' %}checked{% endif %}
+                  >
+                  <label class="form-check-label" for="countryIntl">
+                    International
+                  </label>
+                </div>
+              </div>
+            </div>
+
+
+            <!-- US Location Fields -->
+            <div id="usLocationFields" class="{% if entry and entry.country is defined and entry.country == 'international' %}d-none{% endif %}">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="jobCity" class="form-label fw-bold">City <span id="cityrequired" class="text-danger d-none">*</span></label>
+                  <input
+                    type="text"
+                    id="jobCity"
+                    name="fields[jobCity]"
+                    class="form-control"
+                    value="{{ entry ? entry.jobCity : '' }}"
+                    placeholder="your city"
+                  >
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="jobState" class="form-label fw-bold">State <span id="staterequired" class="text-danger d-none">*</span></label>
+                  <select
+                    id="jobState"
+                    name="fields[jobState]"
+                    class="form-select"
+                  >
+                    <option value="">Select state...</option>
+                    {% set states = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY', 'DC'] %}
+                    {% for state in states %}
+                      <option value="{{ state }}"
+                        {% if entry and entry.jobState == state %}selected{% endif %}>
+                        {{ state }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- International Location Field -->
+            <div id="intlLocationFields" class="{% if not entry or not entry.country is defined or entry.country != 'international' %}d-none{% endif %}">
+              <div class="mb-3">
+                <label for="jobLocation" class="form-label fw-bold">Location <span id="locationrequired" class="text-danger d-none">*</span></label>
+                <input
+                  type="text"
+                  id="jobLocation"
+                  name="fields[jobLocation]"
+                  class="form-control"
+                  value="{{ entry ? entry.jobLocation : '' }}"
+                  placeholder="London, United Kingdom"
+                >
+              </div>
+            </div>
+          </div>
 
           <!-- Application Instructions -->
           <div class="mb-4">
@@ -446,14 +484,13 @@
             <textarea
               id="jobApplicationInstructions"
               name="fields[jobApplicationInstructions]"
-              class="form-control{% if jobEntry and jobEntry.getErrors('jobApplicationInstructions') %} is-invalid{% endif %}"
+              class="form-control{% if entry and entry.getErrors('jobApplicationInstructions') %} is-invalid{% endif %}"
               rows="4"
               placeholder="How should candidates apply? Include contact information, required documents, application deadlines, etc."
-              required
-            >{{ jobEntry ? jobEntry.jobApplicationInstructions : '' }}</textarea>
-            {% if jobEntry and jobEntry.getErrors('jobApplicationInstructions') %}
+            >{{ entry ? entry.jobApplicationInstructions : '' }}</textarea>
+            {% if entry and entry.getErrors('jobApplicationInstructions') %}
               <div class="invalid-feedback">
-                {{ jobEntry.getErrors('jobApplicationInstructions')|join(', ') }}
+                {{ entry.getErrors('jobApplicationInstructions')|join(', ') }}
               </div>
             {% endif %}
           </div>
@@ -465,8 +502,8 @@
 
             <div id="attachmentsList" class="mb-3">
               <!-- Existing attachments will be displayed here -->
-              {% if jobEntry and jobEntry.jobAttachments %}
-                {% for attachment in jobEntry.jobAttachments.all() %}
+              {% if entry and entry.jobAttachments %}
+                {% for attachment in entry.jobAttachments.all() %}
                   <div class="attachment-item d-flex align-items-center mb-2 p-2 border rounded" data-asset-id="{{ attachment.id }}">
                     <i class="fas fa-file-pdf text-danger me-2"></i>
                     <span class="me-auto">{{ attachment.filename }}</span>
@@ -493,75 +530,60 @@
               >
             </div>
 
-            {% if jobEntry and jobEntry.getErrors('jobAttachments') %}
+            {% if entry and entry.getErrors('jobAttachments') %}
               <div class="invalid-feedback d-block">
-                {{ jobEntry.getErrors('jobAttachments')|join(', ') }}
+                {{ entry.getErrors('jobAttachments')|join(', ') }}
               </div>
             {% endif %}
           </div>
 
-          <!-- Job Status -->
-          <div class="mb-4">
-            <h5 class="fw-bold mb-3">Job Status</h5>
-            {% if jobEntry.status == 'live' and jobEntry.enabled %}
-              <div class="alert alert-success">
-                <strong>Published:</strong> This job posting is currently live and visible to candidates.
-              </div>
-            {% else %}
-              <div class="alert alert-warning">
-                <strong>Draft:</strong> This job posting is currently not visible to candidates.
-              </div>
+          <!-- Organization (automatically set) -->
+          {% set userOrganization = currentUser.organization.one() %}
+          {% if userOrganization %}
+            {{ hiddenInput('fields[listingOrganization][]', userOrganization.id) }}
+          {% else %}
+            <!-- Debug: User has no organization, trying different access methods -->
+            {{ hiddenInput('debug_user_id', currentUser.id) }}
+            {% set orgQuery = currentUser.organization %}
+            {% if orgQuery %}
+              {{ hiddenInput('debug_org_query', 'exists') }}
+              {% set orgResult = orgQuery.all() %}
+              {% if orgResult|length %}
+                {{ hiddenInput('fields[listingOrganization][]', orgResult[0].id) }}
+                {{ hiddenInput('debug_org_found', orgResult[0].title) }}
+              {% endif %}
             {% endif %}
+          {% endif %}
 
-            {% if jobEntry.paid %}
-              <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="jobEnabled" name="enabled" value="1" {% if jobEntry.status == 'live' and jobEntry.enabled %}checked{% endif %}>
-                <label class="form-check-label" for="jobEnabled">
-                  <strong>Publish and make visible to candidates</strong>
-                  <div class="form-text">Check to publish this job posting</div>
-                </label>
-              </div>
-            {% else %}
-              <div class="alert alert-info">
-                <i class="bi bi-info-circle me-2"></i>
-                <strong>Payment Required</strong><br>
-                This job posting cannot be published until payment is completed.
-                <a href="{{ url('jobs/payment') }}?jobId={{ jobEntry.id }}" class="btn btn-sm btn-primary ms-2">
-                  Complete Payment
-                </a>
-              </div>
-            {% endif %}
-          </div>
-
-          <!-- Validation Alert Area -->
-          <div id="validationAlert" class="alert alert-danger d-none mb-4">
-            <h6 class="alert-heading mb-2"><i class="bi bi-exclamation-triangle me-2"></i>Required Fields Missing</h6>
-            <p class="mb-2">Please complete the following required fields before continuing to payment:</p>
-            <ul id="missingFieldsList" class="mb-0"></ul>
-          </div>
 
           <div class="d-grid gap-2">
-            {% if not jobEntry.paid %}
-              {# For unpaid/incomplete jobs, show option to complete and pay #}
-              <button type="button" class="btn btn-primary btn-lg" id="saveChanges">
-                Save Changes
-              </button>
-              <button type="button" class="btn btn-success btn-lg" id="completeAndPay">
-                <i class="bi bi-credit-card me-2"></i>Complete & Continue to Payment
-              </button>
-            {% else %}
-              {# For paid jobs, just allow editing #}
-              <button type="button" class="btn btn-primary btn-lg" id="saveChangesPaid">
-                Save Changes
+            <button type="submit" class="btn btn-primary btn-lg" id="continueToPayment">
+              {% if entry and entry.id %}
+                Complete & Continue to Payment
+              {% else %}
+                Continue to Payment
+              {% endif %}
+            </button>
+            {% if not entry or not entry.id %}
+              <button type="button" class="btn btn-outline-primary btn-lg" id="saveAsDraft">
+                <i class="bi bi-save me-2"></i>Save as Draft
               </button>
             {% endif %}
-            <a href="{{ url('profile') }}" class="btn btn-outline-secondary">
+            <a href="{{ url('jobs') }}" class="btn btn-outline-secondary">
               Cancel
             </a>
           </div>
+
+          <!-- Hidden fields for draft handling -->
+          <input type="hidden" name="submitType" id="submitType" value="payment">
         </form>
 
-  {% if currentUser and (currentUser.isInGroup('jobPosters') or currentUser.admin) %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  {% if currentUser and (currentUser.isInGroup('jobPosters') or currentUser.isInGroup('bgsStaff') or currentUser.admin) %}
   <!-- CKEditor CDN -->
   <script src="https://cdn.ckeditor.com/ckeditor5/40.1.0/classic/ckeditor.js"></script>
 
@@ -620,39 +642,53 @@
         console.error('CKEditor initialization failed:', error);
       });
 
-    // Auto-populate location fields from school selection (for recruiters)
-    const schoolSelect = document.getElementById('schoolSelect');
-    if (schoolSelect) {
-      schoolSelect.addEventListener('change', function() {
-        const selectedOption = this.options[this.selectedIndex];
+    // Handle country/location field visibility
+    const countryRadios = document.querySelectorAll('input[name="fields[country]"]');
+    const usFields = document.getElementById('usLocationFields');
+    const intlFields = document.getElementById('intlLocationFields');
+    const jobState = document.getElementById('jobState');
 
-        if (!selectedOption || !selectedOption.value) {
-          return; // No school selected
-        }
+    function toggleLocationFields() {
+      const selectedCountry = document.querySelector('input[name="fields[country]"]:checked').value;
+      const jobCity = document.getElementById('jobCity');
+      const jobState = document.getElementById('jobState');
+      const jobLocation = document.getElementById('jobLocation');
+      const cityRequired = document.getElementById('cityrequired');
+      const stateRequired = document.getElementById('staterequired');
+      const locationRequired = document.getElementById('locationrequired');
 
-        // Get location data from data attributes
-        const schoolCountry = selectedOption.dataset.country;
-        const schoolCity = selectedOption.dataset.city;
-        const schoolState = selectedOption.dataset.state;
-        const schoolLocation = selectedOption.dataset.location;
+      if (selectedCountry === 'unitedStates') {
+        usFields.classList.remove('d-none');
+        intlFields.classList.add('d-none');
 
-        // Validate school has location data
-        const hasLocation = (schoolCountry === 'unitedStates' && schoolCity && schoolState) ||
-                           (schoolCountry === 'international' && schoolLocation);
+        // Make US fields required
+        jobCity.setAttribute('required', 'required');
+        jobState.setAttribute('required', 'required');
+        jobLocation.removeAttribute('required');
 
-        if (!hasLocation) {
-          alert('⚠️ This school is missing location information.\n\nPlease contact support@bluegreensheet.com to have it updated.');
-          this.value = ''; // Clear selection
-          return;
-        }
+        // Show US required asterisks
+        cityRequired.classList.remove('d-none');
+        stateRequired.classList.remove('d-none');
+        locationRequired.classList.add('d-none');
+      } else {
+        usFields.classList.add('d-none');
+        intlFields.classList.remove('d-none');
 
-        // Populate hidden location fields
-        document.getElementById('hiddenCountry').value = schoolCountry || '';
-        document.getElementById('hiddenJobCity').value = schoolCity || '';
-        document.getElementById('hiddenJobState').value = schoolState || '';
-        document.getElementById('hiddenJobLocation').value = schoolLocation || '';
-      });
+        // Make international field required
+        jobLocation.setAttribute('required', 'required');
+        jobCity.removeAttribute('required');
+        jobState.removeAttribute('required');
+
+        // Show international required asterisk
+        locationRequired.classList.remove('d-none');
+        cityRequired.classList.add('d-none');
+        stateRequired.classList.add('d-none');
+      }
     }
+
+    countryRadios.forEach(radio => {
+      radio.addEventListener('change', toggleLocationFields);
+    });
 
     // File upload functionality
     const jobAttachmentsInput = document.getElementById('jobAttachments');
@@ -795,17 +831,28 @@
       attachmentItem.remove();
     };
 
-    // Auto-populate location for school users on page load
-    {% if not isRecruiter and userOrg %}
-      document.getElementById('hiddenCountry').value = '{{ userOrg.country }}';
-      document.getElementById('hiddenJobCity').value = '{{ userOrg.orgCity }}';
-      document.getElementById('hiddenJobState').value = '{{ userOrg.orgState }}';
-      document.getElementById('hiddenJobLocation').value = '{{ userOrg.orgLocation }}';
-    {% endif %}
+    // Initialize on page load
+    toggleLocationFields();
 
-    // Save Changes button handlers
-    function handleSaveChanges() {
-      console.log('Save changes clicked');
+    // Handle draft vs payment button clicks
+    document.getElementById('continueToPayment').addEventListener('click', function() {
+      document.getElementById('submitType').value = 'payment';
+    });
+
+    document.getElementById('saveAsDraft').addEventListener('click', function(e) {
+      e.preventDefault(); // Prevent any default behavior
+      e.stopPropagation(); // Stop event bubbling
+      e.stopImmediatePropagation(); // Stop all other handlers
+
+      console.log('Save as draft clicked');
+
+      document.getElementById('submitType').value = 'draft';
+
+      // For drafts, change redirect to profile
+      const redirectInput = document.getElementById('redirectInput');
+      if (redirectInput) {
+        redirectInput.value = '{{ url("profile") }}';
+      }
 
       // Ensure CKEditor content is synced before submission
       if (jobDescriptionEditor) {
@@ -822,42 +869,26 @@
         el.classList.remove('is-valid', 'is-invalid');
       });
 
+      // Disable all validation by temporarily removing form attributes
+      form.removeAttribute('novalidate');
+      form.setAttribute('novalidate', 'novalidate');
+
       // Create form data manually to bypass any form validation
       const formData = new FormData();
 
       // Add essential form fields
       formData.append('CRAFT_CSRF_TOKEN', document.querySelector('input[name="CRAFT_CSRF_TOKEN"]').value);
       formData.append('action', 'entries/save-entry');
-      formData.append('entryId', document.querySelector('input[name="entryId"]').value);
       formData.append('sectionId', document.querySelector('input[name="sectionId"]').value);
-
-      // Handle enabled/paid status based on current job state
-      const isPaid = {{ jobEntry.paid ? 'true' : 'false' }};
-
-      if (isPaid) {
-        // For paid jobs, preserve existing enabled status
-        const currentEnabled = document.querySelector('input[name="enabled"]');
-        if (currentEnabled && currentEnabled.value) {
-          formData.append('enabled', currentEnabled.value);
-        }
-        formData.append('fields[paid]', '1'); // Keep paid status
-      } else {
-        // For unpaid jobs, always keep disabled until payment
-        formData.append('enabled', '0');
-        formData.append('fields[paid]', '0');
-      }
-
+      formData.append('typeId', document.querySelector('input[name="typeId"]').value);
+      formData.append('enabled', '0');
+      formData.append('fields[paid]', '0');
       formData.append('redirect', '{{ url("profile") }}');
+      formData.append('submitType', 'draft');
 
       // Add job data fields (only if they have values)
       const title = document.getElementById('title').value;
       if (title) formData.append('title', title);
-
-      // Add school selection (for recruiters)
-      const schoolSelect = document.getElementById('schoolSelect');
-      if (schoolSelect && schoolSelect.value) {
-        formData.append('fields[school][]', schoolSelect.value);
-      }
 
       const category = document.querySelector('select[name="fields[jobCategory][]"]').value;
       if (category) formData.append('fields[jobCategory][]', category);
@@ -880,28 +911,28 @@
         formData.append('fields[jobSchoolUrl][type]', 'url');
       }
 
-      const countryValue = document.getElementById('hiddenCountry').value;
-      if (countryValue) formData.append('fields[country]', countryValue);
+      const country = document.querySelector('input[name="fields[country]"]:checked');
+      if (country) formData.append('fields[country]', country.value);
 
-      const cityValue = document.getElementById('hiddenJobCity').value;
-      if (cityValue) formData.append('fields[jobCity]', cityValue);
+      const city = document.getElementById('jobCity').value;
+      if (city) formData.append('fields[jobCity]', city);
 
-      const stateValue = document.getElementById('hiddenJobState').value;
-      if (stateValue) formData.append('fields[jobState]', stateValue);
+      const state = document.getElementById('jobState').value;
+      if (state) formData.append('fields[jobState]', state);
 
-      const locationValue = document.getElementById('hiddenJobLocation').value;
-      if (locationValue) formData.append('fields[jobLocation]', locationValue);
+      const location = document.getElementById('jobLocation').value;
+      if (location) formData.append('fields[jobLocation]', location);
 
       const applicationInstructions = document.getElementById('jobApplicationInstructions').value;
       if (applicationInstructions) formData.append('fields[jobApplicationInstructions]', applicationInstructions);
 
-      // Add listingOrganization (from hidden field)
-      const listingOrgField = document.querySelector('input[name="fields[listingOrganization][]"]');
-      if (listingOrgField && listingOrgField.value) {
-        formData.append('fields[listingOrganization][]', listingOrgField.value);
+      // Handle existing entry ID if continuing from draft
+      const entryIdField = document.querySelector('input[name="entryId"]');
+      if (entryIdField && entryIdField.value) {
+        formData.append('entryId', entryIdField.value);
       }
 
-      console.log('About to submit edit form data via fetch');
+      console.log('About to submit form data via fetch');
       console.log('Form data entries:', Array.from(formData.entries()));
 
       // Submit via fetch to avoid browser form validation issues
@@ -919,24 +950,102 @@
         console.error('Fetch error:', error);
         window.location.href = '{{ url("profile") }}';
       });
+
+      // Prevent normal form submission
+      return false;
+    });
+
+    // Custom validation function
+    function validatePaymentForm() {
+      let isValid = true;
+      const errors = [];
+
+      // Validate required fields
+      const title = document.getElementById('title').value.trim();
+      if (!title) {
+        errors.push('Job Title is required');
+        document.getElementById('title').classList.add('is-invalid');
+        isValid = false;
+      } else {
+        document.getElementById('title').classList.remove('is-invalid');
+      }
+
+      const category = document.querySelector('select[name="fields[jobCategory][]"]').value;
+      if (!category) {
+        errors.push('Job Category is required');
+        document.querySelector('select[name="fields[jobCategory][]"]').classList.add('is-invalid');
+        isValid = false;
+      } else {
+        document.querySelector('select[name="fields[jobCategory][]"]').classList.remove('is-invalid');
+      }
+
+      const description = document.getElementById('jobDescription').value.trim();
+      if (!description) {
+        errors.push('Job Description is required');
+        isValid = false;
+      }
+
+      const applicationInstructions = document.getElementById('jobApplicationInstructions').value.trim();
+      if (!applicationInstructions) {
+        errors.push('Application Instructions are required');
+        document.getElementById('jobApplicationInstructions').classList.add('is-invalid');
+        isValid = false;
+      } else {
+        document.getElementById('jobApplicationInstructions').classList.remove('is-invalid');
+      }
+
+      // Validate country selection
+      const countrySelected = document.querySelector('input[name="fields[country]"]:checked');
+      if (!countrySelected) {
+        errors.push('Country selection is required');
+        isValid = false;
+      } else {
+        // Validate location fields based on country
+        if (countrySelected.value === 'unitedStates') {
+          const city = document.getElementById('jobCity').value.trim();
+          const state = document.getElementById('jobState').value;
+          if (!city) {
+            errors.push('City is required for US locations');
+            document.getElementById('jobCity').classList.add('is-invalid');
+            isValid = false;
+          } else {
+            document.getElementById('jobCity').classList.remove('is-invalid');
+          }
+          if (!state) {
+            errors.push('State is required for US locations');
+            document.getElementById('jobState').classList.add('is-invalid');
+            isValid = false;
+          } else {
+            document.getElementById('jobState').classList.remove('is-invalid');
+          }
+        } else if (countrySelected.value === 'international') {
+          const location = document.getElementById('jobLocation').value.trim();
+          if (!location) {
+            errors.push('Location is required for international positions');
+            document.getElementById('jobLocation').classList.add('is-invalid');
+            isValid = false;
+          } else {
+            document.getElementById('jobLocation').classList.remove('is-invalid');
+          }
+        }
+      }
+
+
+      if (!isValid && errors.length > 0) {
+        // Show error message
+        alert('Please fix the following errors:\n\n' + errors.join('\n'));
+      }
+
+      return isValid;
     }
 
-    // Attach handlers to both save buttons
-    const saveChangesBtn = document.getElementById('saveChanges');
-    if (saveChangesBtn) {
-      saveChangesBtn.addEventListener('click', handleSaveChanges);
-    }
+    // Handle Continue to Payment button click
+    const continueToPaymentBtn = document.getElementById('continueToPayment');
+    if (continueToPaymentBtn) {
+      continueToPaymentBtn.addEventListener('click', function(e) {
+        e.preventDefault(); // Always prevent default form submission
 
-    const saveChangesPaidBtn = document.getElementById('saveChangesPaid');
-    if (saveChangesPaidBtn) {
-      saveChangesPaidBtn.addEventListener('click', handleSaveChanges);
-    }
-
-    // Complete & Continue to Payment button handler with validation
-    const completeAndPayBtn = document.getElementById('completeAndPay');
-    if (completeAndPayBtn) {
-      completeAndPayBtn.addEventListener('click', function() {
-        console.log('Complete and pay clicked');
+        console.log('Continue to payment clicked');
 
         // Ensure CKEditor content is synced before validation
         if (jobDescriptionEditor) {
@@ -946,136 +1055,36 @@
           document.querySelector('#jobOpportunityStatement').value = opportunityStatementEditor.getData();
         }
 
-        // Enable Bootstrap validation for this submission
-        const form = document.querySelector('form');
-        form.classList.add('was-validated');
-
-        // Collect validation errors
-        const missingFields = [];
-
-        // Check Job Description (CKEditor)
-        const jobDescriptionContent = document.querySelector('#jobDescription').value;
-        const jobDescriptionEditorEl = document.querySelector('#jobDescription-editor');
-        const jobDescriptionContainer = jobDescriptionEditorEl.closest('.mb-4');
-
-        if (!jobDescriptionContent || jobDescriptionContent.trim() === '' || jobDescriptionContent === '<p><br></p>') {
-          missingFields.push({
-            name: 'Job Description',
-            element: jobDescriptionEditorEl,
-            container: jobDescriptionContainer
-          });
-          // Add validation styling to CKEditor
-          jobDescriptionEditorEl.style.borderColor = '#dc3545';
-        } else {
-          // Remove error styling if content is valid
-          jobDescriptionEditorEl.style.borderColor = '#ced4da';
-          const errorDiv = jobDescriptionContainer.querySelector('.invalid-feedback');
-          if (errorDiv) {
-            errorDiv.style.display = 'none';
-          }
+        // Custom validation for payment
+        if (!validatePaymentForm()) {
+          return; // Stop if validation fails
         }
 
-        // Check other required fields
-        const requiredFields = [
-          { selector: '#title', name: 'Job Title' },
-          { selector: 'select[name="fields[jobCategory][]"]', name: 'Job Category' },
-          { selector: '#jobApplicationInstructions', name: 'Application Instructions' },
-        ];
+        console.log('Payment form validation passed, saving entry');
 
-        // Check each required field
-        requiredFields.forEach(field => {
-          const element = document.querySelector(field.selector);
-          if (element && (!element.value || element.value.trim() === '')) {
-            missingFields.push({
-              name: field.name,
-              element: element,
-              container: element.closest('.mb-4') || element.closest('.mb-3')
-            });
-          }
-        });
-
-        // Validate location data from hidden fields
-        const hiddenCountry = document.getElementById('hiddenCountry').value;
-        if (!hiddenCountry) {
-          missingFields.push({
-            name: 'Location Information',
-            element: null,
-            container: null
-          });
-        } else if (hiddenCountry === 'unitedStates') {
-          const hiddenCity = document.getElementById('hiddenJobCity').value;
-          const hiddenState = document.getElementById('hiddenJobState').value;
-          if (!hiddenCity || !hiddenState) {
-            missingFields.push({
-              name: 'School Location (City/State)',
-              element: null,
-              container: null
-            });
-          }
-        } else if (hiddenCountry === 'international') {
-          const hiddenLocation = document.getElementById('hiddenJobLocation').value;
-          if (!hiddenLocation) {
-            missingFields.push({
-              name: 'School Location',
-              element: null,
-              container: null
-            });
-          }
-        }
-
-        // If there are missing fields, show the alert and stop
-        if (missingFields.length > 0) {
-          console.log('Validation failed - missing fields:', missingFields.map(f => f.name));
-
-          // Populate the missing fields list
-          const missingFieldsList = document.getElementById('missingFieldsList');
-          const validationAlert = document.getElementById('validationAlert');
-
-          missingFieldsList.innerHTML = '';
-          missingFields.forEach(field => {
-            const li = document.createElement('li');
-            li.textContent = field.name;
-            missingFieldsList.appendChild(li);
-          });
-
-          // Show the alert
-          validationAlert.classList.remove('d-none');
-
-          // Scroll to the alert so user sees the message
-          validationAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-          return;
-        }
-
-        // Hide validation alert if everything is valid
-        document.getElementById('validationAlert').classList.add('d-none');
-
-        console.log('Form validation passed, saving and redirecting to payment');
-
-        // Create form data for submission
+        // Create form data manually to avoid unwanted fields
         const formData = new FormData();
 
         // Add essential form fields
         formData.append('CRAFT_CSRF_TOKEN', document.querySelector('input[name="CRAFT_CSRF_TOKEN"]').value);
         formData.append('action', 'entries/save-entry');
-        formData.append('entryId', document.querySelector('input[name="entryId"]').value);
         formData.append('sectionId', document.querySelector('input[name="sectionId"]').value);
-
-        // Keep entry disabled until actual payment
+        formData.append('typeId', document.querySelector('input[name="typeId"]').value);
         formData.append('enabled', '0');
         formData.append('fields[paid]', '0');
+        formData.append('redirect', '{{ url("jobs/payment") }}');
 
-        // Set redirect to payment page
-        formData.append('redirect', '{{ url("jobs/payment") }}?jobId={{ jobEntry.id }}');
-
-        // Add all required form data
+        // Add job data fields
         const title = document.getElementById('title').value;
         if (title) formData.append('title', title);
 
         // Add school selection (for recruiters)
         const schoolSelect = document.getElementById('schoolSelect');
         if (schoolSelect && schoolSelect.value) {
+          console.log('School select value being submitted:', schoolSelect.value);
           formData.append('fields[school][]', schoolSelect.value);
+        } else {
+          console.log('No school selected or schoolSelect not found');
         }
 
         const category = document.querySelector('select[name="fields[jobCategory][]"]').value;
@@ -1099,17 +1108,17 @@
           formData.append('fields[jobSchoolUrl][type]', 'url');
         }
 
-        const paymentCountry = document.getElementById('hiddenCountry').value;
-        if (paymentCountry) formData.append('fields[country]', paymentCountry);
+        const country = document.querySelector('input[name="fields[country]"]:checked');
+        if (country) formData.append('fields[country]', country.value);
 
-        const paymentCity = document.getElementById('hiddenJobCity').value;
-        if (paymentCity) formData.append('fields[jobCity]', paymentCity);
+        const city = document.getElementById('jobCity').value;
+        if (city) formData.append('fields[jobCity]', city);
 
-        const paymentState = document.getElementById('hiddenJobState').value;
-        if (paymentState) formData.append('fields[jobState]', paymentState);
+        const state = document.getElementById('jobState').value;
+        if (state) formData.append('fields[jobState]', state);
 
-        const paymentLocation = document.getElementById('hiddenJobLocation').value;
-        if (paymentLocation) formData.append('fields[jobLocation]', paymentLocation);
+        const location = document.getElementById('jobLocation').value;
+        if (location) formData.append('fields[jobLocation]', location);
 
         const applicationInstructions = document.getElementById('jobApplicationInstructions').value;
         if (applicationInstructions) formData.append('fields[jobApplicationInstructions]', applicationInstructions);
@@ -1120,13 +1129,14 @@
           formData.append('fields[listingOrganization][]', listingOrgField.value);
         }
 
-        // Submit and redirect to payment
+        // Submit and redirect to payment (using exact same logic as edit.twig)
+        const form = document.querySelector('form');
         fetch(form.action, {
           method: 'POST',
           body: formData
         }).then(response => {
           console.log('Entry saved, redirecting to payment');
-          window.location.href = '{{ url("jobs/payment") }}?jobId={{ jobEntry.id }}';
+          window.location.href = '{{ url("jobs/payment") }}';
         }).catch(error => {
           console.error('Save error:', error);
           alert('There was an error saving your job posting. Please try again.');
@@ -1143,11 +1153,11 @@
     // Show/hide location fields based on country selection
     if (newSchoolCountry) {
       newSchoolCountry.addEventListener('change', function() {
-        const newCountry = this.value;
-        if (newCountry === 'unitedStates') {
+        const country = this.value;
+        if (country === 'unitedStates') {
           newSchoolUSFields.style.display = 'block';
           newSchoolIntlFields.style.display = 'none';
-        } else if (newCountry === 'international') {
+        } else if (country === 'international') {
           newSchoolUSFields.style.display = 'none';
           newSchoolIntlFields.style.display = 'block';
         } else {
@@ -1275,12 +1285,6 @@
           newOption.value = data.schoolId;
           newOption.text = data.schoolName + locationText;
 
-          // Add data attributes for location auto-population
-          newOption.setAttribute('data-country', data.schoolCountry || '');
-          newOption.setAttribute('data-city', data.schoolCity || '');
-          newOption.setAttribute('data-state', data.schoolState || '');
-          newOption.setAttribute('data-location', data.schoolLocation || '');
-
           console.log('Adding school to dropdown with ID:', data.schoolId);
 
           // Insert alphabetically
@@ -1299,18 +1303,6 @@
           // Set as selected AFTER adding to dropdown
           newOption.selected = true;
           console.log('School select current value after adding:', schoolSelect.value);
-
-          // Auto-populate hidden location fields with newly created school's data
-          document.getElementById('hiddenCountry').value = data.schoolCountry || '';
-          if (data.schoolCountry === 'unitedStates') {
-            document.getElementById('hiddenJobCity').value = data.schoolCity || '';
-            document.getElementById('hiddenJobState').value = data.schoolState || '';
-            document.getElementById('hiddenJobLocation').value = '';
-          } else if (data.schoolCountry === 'international') {
-            document.getElementById('hiddenJobCity').value = '';
-            document.getElementById('hiddenJobState').value = '';
-            document.getElementById('hiddenJobLocation').value = data.schoolLocation || '';
-          }
 
           // Clear the form
           document.getElementById('newSchoolName').value = '';
@@ -1342,33 +1334,7 @@
         });
       });
     }
-
-    // Form validation
-    const form = document.querySelector('form');
-    form.addEventListener('submit', function(e) {
-      // Ensure CKEditor content is synced before submission
-      if (jobDescriptionEditor) {
-        document.querySelector('#jobDescription').value = jobDescriptionEditor.getData();
-      }
-      if (opportunityStatementEditor) {
-        document.querySelector('#jobOpportunityStatement').value = opportunityStatementEditor.getData();
-      }
-
-      if (!form.checkValidity()) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-      form.classList.add('was-validated');
-    });
   });
   </script>
-  {% endif %}{# end currentUser.isInGroup check #}
-
-  {% endif %}{# end skipJobForm #}
-
-  {% endif %}{# end else (authorized user) #}
-      </div>
-    </div>
-  </div>
-
+  {% endif %}
 {% endblock %}
