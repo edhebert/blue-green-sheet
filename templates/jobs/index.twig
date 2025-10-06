@@ -357,15 +357,16 @@
                                         <a href="{{ job.url }}" class="text-decoration-none stretched-link">{{ job.title }}</a>
                                     </h2>
 
-                                    {# Location #}
-                                    {% if job.jobLocation or job.jobCity or job.jobState %}
+                                    {# Location - based on country #}
+                                    {% if job.country == 'international' and job.jobLocation|length %}
                                         <p class="text-muted small mb-2">
                                             <i class="bi bi-geo-alt me-1"></i>
-                                            {% if job.jobLocation %}
-                                                {{ job.jobLocation }}
-                                            {% else %}
-                                                {{ job.jobCity }}{% if job.jobCity and job.jobState %}, {% endif %}{{ job.jobState }}
-                                            {% endif %}
+                                            {{ job.jobLocation }}
+                                        </p>
+                                    {% elseif job.country == 'unitedStates' and (job.jobCity|length or job.jobState|length) %}
+                                        <p class="text-muted small mb-2">
+                                            <i class="bi bi-geo-alt me-1"></i>
+                                            {{ job.jobCity }}{% if job.jobCity|length and job.jobState|length %}, {% endif %}{{ job.jobState }}
                                         </p>
                                     {% endif %}
 

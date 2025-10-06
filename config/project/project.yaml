@@ -1,4 +1,4 @@
-dateModified: 1759496491
+dateModified: 1759784965
 elementSources:
   craft\elements\Entry:
     -
@@ -42,6 +42,8 @@ elementSources:
       disabled: false
       key: 'section:bfd2eaee-0f5f-44f6-81f2-1f5e563a0e2e' # Jobs
       tableAttributes:
+        - 'field:b2206c41-3f40-4586-bca2-2bc4fb379556' # School
+        - 'fieldInstance:a88f10db-34c2-4551-bc98-ecec0053834d'
         - status
         - postDate
         - expiryDate
