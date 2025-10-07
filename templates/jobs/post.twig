@@ -8,12 +8,12 @@
 
   {# Handle continuing from a draft #}
   {% set continueFromId = craft.app.request.getParam('continueFrom') %}
-  {% if continueFromId and not entry %}
+  {% if continueFromId and not entry and currentUser %}
     {% set entry = craft.entries().section('jobs').id(continueFromId).authorId(currentUser.id).one() %}
   {% endif %}
 
   {# Check if current user is a recruiter #}
-  {% set userOrg = currentUser.organization.one() %}
+  {% set userOrg = currentUser ? currentUser.organization.one() : null %}
   {% set isRecruiter = userOrg and userOrg.organizationType == 'recruiter' %}
 
   {# Check if we just created a new school #}
