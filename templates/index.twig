@@ -59,39 +59,70 @@
 
       <div class="row g-4">
         {% for job in recentJobs %}
+          {% set school = job.school.one() %}
+          {% set listingOrg = job.listingOrganization.one() %}
+          {% set isRecruiterPosted = listingOrg and listingOrg.organizationType == 'recruiter' %}
+
           <div class="col-md-4">
             <div class="card h-100 border-0 shadow-sm">
               <div class="card-body">
-                
-
-                {% if job.author.organization.one().logo[0]|length %}
-                    <div class="img-container mb-4" style="min-height: 100px">
-                        <img src="{{ job.author.organization.one().logo[0].url('height100') }}" alt="{{ job.author.organization.title }}" style="display:block; margin:0 auto;">
-                    </div>                   
+                {# School Logo or Initials #}
+                {% if school %}
+                  {% if school.logo|length %}
+                    <div class="img-container mb-3">
+                      <img src="{{ school.logo.one().url('height100') }}" alt="{{ school.title }}" style="max-height: 80px; max-width: 100%; display:block; margin:0 auto;">
+                    </div>
+                  {% else %}
+                    {# Show initials if no logo #}
+                    {% set words = school.title|split(' ') %}
+                    {% set initials = '' %}
+                    {% for word in words %}
+                      {% if word|length > 0 and loop.index <= 3 %}
+                        {% set initials = initials ~ word|slice(0, 1)|upper %}
+                      {% endif %}
+                    {% endfor %}
+                    <div class="school-initials mb-3" style="width: 80px; height: 80px; background-color: #e3f2fd; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                      <span style="font-size: 1.5rem; font-weight: 600; color: #1976d2;">{{ initials }}</span>
+                    </div>
+                  {% endif %}
                 {% endif %}
 
+                {# School Name (first line, prominent) #}
+                {% if school %}
+                  <h3 class="h6 fw-bold mb-1 text-center">{{ school.title }}</h3>
+                {% endif %}
 
-                <h3 class="h6 mb-2">
-                  <a href="{{ job.url }}" class="text-decoration-none">{{ job.title }}</a>
-                </h3>
+                {# Job Title (second line) #}
+                <h2 class="h6 mb-2 text-center">
+                  <a href="{{ job.url }}" class="text-decoration-none stretched-link">{{ job.title }}</a>
+                </h2>
 
-                <div class="d-flex flex-wrap gap-1 mb-3">
+                {# Location - based on country #}
+                {% if job.country == 'international' and job.jobLocation|length %}
+                  <p class="text-muted small mb-2 text-center">
+                    <i class="bi bi-geo-alt me-1"></i>
+                    {{ job.jobLocation }}
+                  </p>
+                {% elseif job.country == 'unitedStates' and (job.jobCity|length or job.jobState|length) %}
+                  <p class="text-muted small mb-2 text-center">
+                    <i class="bi bi-geo-alt me-1"></i>
+                    {{ job.jobCity }}{% if job.jobCity|length and job.jobState|length %}, {% endif %}{{ job.jobState }}
+                  </p>
+                {% endif %}
+
+                {# Category badge only #}
+                <div class="d-flex flex-wrap gap-1 mb-3" style="justify-content: center;">
                   {% if job.jobCategory|length %}
-                    <span class="badge bg-primary bg-opacity-10 text-primary">{{ job.jobCategory.one().title }}</span>
-                  {% endif %}
-                  {% if job.jobRegion|length %}
-                    <span class="badge bg-secondary bg-opacity-10 text-secondary">{{ job.jobRegion.one().title }}</span>
+                    <span class="badge bg-primary bg-opacity-10 text-primary" style="white-space: normal; text-align: left; line-height: 1.4;">{{ job.jobCategory.one().title }}</span>
                   {% endif %}
                 </div>
 
-                {% if job.jobOpportunityStatement %}
-                  <p class="text-muted small mb-3">{{ job.jobOpportunityStatement|length > 100 ? job.jobOpportunityStatement|slice(0, 100) ~ '...' : job.jobOpportunityStatement }}</p>
+                {# Recruiter Attribution (if posted by recruiter) #}
+                {% if isRecruiterPosted %}
+                  <p class="text-muted small fst-italic mb-3 text-center" style="position: relative; z-index: 2;">
+                    Search being conducted by<br> <a href="{{ listingOrg.url }}" class="text-decoration-none" style="position: relative;">{{ listingOrg.title }}</a>
+                  </p>
                 {% endif %}
-
-                <div class="d-flex justify-content-between align-items-center">
-                  <small class="text-muted">Posted {{ job.postDate|date('M j') }}</small>
-                  <a href="{{ job.url }}" class="button button-outline button-mini rounded-pill">View Details</a>
-                </div>
               </div>
             </div>
           </div>
