@@ -4,7 +4,7 @@ handle: wide250
 height: null
 interlace: none
 mode: crop
-name: 'Wide 250'
+name: wide250
 position: center-center
 quality: null
 upscale: true
