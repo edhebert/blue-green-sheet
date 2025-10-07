@@ -120,6 +120,7 @@
                 {# Recruiter Attribution (if posted by recruiter) #}
                 {% if isRecruiterPosted %}
                   <p class="text-muted small fst-italic mb-3 text-center" style="position: relative; z-index: 2;">
+                    <a href="{{ listingOrg.url }}" style="display:block; margin: 0 auto;" class="mt-5 mb-3"><img src="{{ listingOrg.logo.one().url('height50') }}" alt="{{ listingOrg.title }}"></a>
                     Search being conducted by<br> <a href="{{ listingOrg.url }}" class="text-decoration-none" style="position: relative;">{{ listingOrg.title }}</a>
                   </p>
                 {% endif %}
