@@ -90,13 +90,51 @@
                 <div class="mt-4">
                     <h6 class="text-white mb-2">Stay Updated</h6>
                     <p class="text-light small mb-2">Get notified about new opportunities</p>
-                    <div class="input-group input-group-sm">
-                        <input type="email" class="form-control" placeholder="Your email" aria-label="Email">
-                        <button class="btn btn-primary" type="button" style="background-color: var(--cnvs-themecolor); border: 0">
-                            <i class="bi bi-envelope"></i>
-                        </button>
-                    </div>
+                    <form action="https://bluegreensheet.us9.list-manage.com/subscribe/post-json?u=4df298beef9630e5c726af09f&amp;id=7981660f13&amp;f_id=009c57e1f0" method="post" id="mc-footer-subscribe-form" name="mc-footer-subscribe-form" class="validate">
+                        <div class="input-group input-group-sm">
+                            <input type="email" name="EMAIL" id="footer-email" class="form-control required email" placeholder="Your email" aria-label="Email" required>
+                            <button class="btn btn-primary" type="submit" style="background-color: var(--cnvs-themecolor); border: 0">
+                                <i class="bi bi-envelope"></i>
+                            </button>
+                        </div>
+                        <div aria-hidden="true" style="position: absolute; left: -5000px;">
+                            <input type="text" name="b_4df298beef9630e5c726af09f_7981660f13" tabindex="-1" value="">
+                        </div>
+                        <div id="footer-subscribe-message" style="margin-top: 0.5rem; display: none;">
+                            <small class="text-success">✓ Thanks for subscribing!</small>
+                        </div>
+                    </form>
                 </div>
+
+                <script>
+                document.getElementById('mc-footer-subscribe-form').addEventListener('submit', function(e) {
+                    e.preventDefault();
+
+                    const form = this;
+                    const email = document.getElementById('footer-email').value;
+
+                    // Define callback function first
+                    const callbackName = 'mcCallback' + Date.now();
+                    window[callbackName] = function(data) {
+                        if (data.result === 'success') {
+                            document.getElementById('footer-subscribe-message').style.display = 'block';
+                            form.reset();
+                            setTimeout(function() {
+                                document.getElementById('footer-subscribe-message').style.display = 'none';
+                            }, 5000);
+                        }
+                        // Cleanup
+                        delete window[callbackName];
+                        document.body.removeChild(script);
+                    };
+
+                    // Create script element for JSONP with callback
+                    const url = form.action + '&EMAIL=' + encodeURIComponent(email) + '&c=' + callbackName;
+                    const script = document.createElement('script');
+                    script.src = url;
+                    document.body.appendChild(script);
+                });
+                </script>
             </div>
         </div>
 
