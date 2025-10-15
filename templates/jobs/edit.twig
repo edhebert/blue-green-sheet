@@ -420,20 +420,6 @@
             </div>
           </div>
 
-          <!-- School Website -->
-          <div class="mb-4">
-            <label for="jobSchoolUrl" class="form-label fw-bold">School Website</label>
-            <input
-              type="text"
-              id="jobSchoolUrl"
-              name="fields[jobSchoolUrl][value]"
-              class="form-control"
-              value="{{ jobEntry and jobEntry.jobSchoolUrl ? jobEntry.jobSchoolUrl.url : '' }}"
-              placeholder="www.yourschool.edu"
-            >
-            {{ hiddenInput('fields[jobSchoolUrl][type]', 'url') }}
-          </div>
-
           <!-- Hidden Location Fields (Auto-populated from school/organization) -->
           <input type="hidden" id="hiddenCountry" name="fields[country]" value="{{ jobEntry ? jobEntry.country : '' }}">
           <input type="hidden" id="hiddenJobCity" name="fields[jobCity]" value="{{ jobEntry ? jobEntry.jobCity : '' }}">
@@ -874,12 +860,6 @@
       const salaryHigh = document.getElementById('jobSalaryHigh').value;
       if (salaryHigh) formData.append('fields[jobSalaryHigh]', salaryHigh);
 
-      const schoolUrl = document.querySelector('input[name="fields[jobSchoolUrl][value]"]').value;
-      if (schoolUrl) {
-        formData.append('fields[jobSchoolUrl][value]', schoolUrl);
-        formData.append('fields[jobSchoolUrl][type]', 'url');
-      }
-
       const countryValue = document.getElementById('hiddenCountry').value;
       if (countryValue) formData.append('fields[country]', countryValue);
 
@@ -1092,12 +1072,6 @@
 
         const salaryHigh = document.getElementById('jobSalaryHigh').value;
         if (salaryHigh) formData.append('fields[jobSalaryHigh]', salaryHigh);
-
-        const schoolUrl = document.querySelector('input[name="fields[jobSchoolUrl][value]"]').value;
-        if (schoolUrl) {
-          formData.append('fields[jobSchoolUrl][value]', schoolUrl);
-          formData.append('fields[jobSchoolUrl][type]', 'url');
-        }
 
         const paymentCountry = document.getElementById('hiddenCountry').value;
         if (paymentCountry) formData.append('fields[country]', paymentCountry);

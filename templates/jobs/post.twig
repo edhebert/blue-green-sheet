@@ -407,20 +407,6 @@
             </div>
           </div>
 
-          <!-- School Website -->
-          <div class="mb-4">
-            <label for="jobSchoolUrl" class="form-label fw-bold">School Website</label>
-            <input
-              type="text"
-              id="jobSchoolUrl"
-              name="fields[jobSchoolUrl][value]"
-              class="form-control"
-              value="{{ entry and entry.jobSchoolUrl ? entry.jobSchoolUrl.url : '' }}"
-              placeholder="www.yourschool.edu"
-            >
-            {{ hiddenInput('fields[jobSchoolUrl][type]', 'url') }}
-          </div>
-
           <!-- Hidden Location Fields (Auto-populated from school/organization) -->
           <input type="hidden" id="hiddenCountry" name="fields[country]" value="{{ entry ? entry.country : '' }}">
           <input type="hidden" id="hiddenJobCity" name="fields[jobCity]" value="{{ entry ? entry.jobCity : '' }}">
@@ -857,12 +843,6 @@
       const salaryHigh = document.getElementById('jobSalaryHigh').value;
       if (salaryHigh) formData.append('fields[jobSalaryHigh]', salaryHigh);
 
-      const schoolUrl = document.querySelector('input[name="fields[jobSchoolUrl][value]"]').value;
-      if (schoolUrl) {
-        formData.append('fields[jobSchoolUrl][value]', schoolUrl);
-        formData.append('fields[jobSchoolUrl][type]', 'url');
-      }
-
       const country = document.getElementById('hiddenCountry').value;
       if (country) formData.append('fields[country]', country);
 
@@ -1049,12 +1029,6 @@
 
         const salaryHigh = document.getElementById('jobSalaryHigh').value;
         if (salaryHigh) formData.append('fields[jobSalaryHigh]', salaryHigh);
-
-        const schoolUrl = document.querySelector('input[name="fields[jobSchoolUrl][value]"]').value;
-        if (schoolUrl) {
-          formData.append('fields[jobSchoolUrl][value]', schoolUrl);
-          formData.append('fields[jobSchoolUrl][type]', 'url');
-        }
 
         const country = document.getElementById('hiddenCountry').value;
         if (country) formData.append('fields[country]', country);

@@ -1,4 +1,4 @@
-dateModified: 1760555609
+dateModified: 1760564820
 elementSources:
   craft\elements\Entry:
     -
@@ -260,6 +260,17 @@ plugins:
     edition: standard
     enabled: true
     schemaVersion: 1.2.0
+    settings:
+      createUserIfMissing: false
+      defaultCancelUrl: null
+      defaultSuccessUrl: null
+      productTemplate: ''
+      productUriFormat: ''
+      publishableKey: $STRIPE_PUBLISHABLE_KEY
+      secretKey: $STRIPE_SECRET_KEY
+      syncChangedUserEmailsToStripe: true
+      webhookId: ''
+      webhookSigningSecret: ''
 system:
   edition: pro
   live: true

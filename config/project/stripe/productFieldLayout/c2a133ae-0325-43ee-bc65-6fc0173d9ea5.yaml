@@ -1,0 +1,27 @@
+cardThumbAlignment: end
+cardView:
+  - stripeId
+tabs:
+  -
+    elementCondition: null
+    elements:
+      -
+        attribute: prices
+        dateAdded: '2025-10-15T20:01:28+00:00'
+        elementCondition: null
+        id: null
+        includeInCards: false
+        instructions: null
+        label: null
+        orientation: null
+        providesThumbs: false
+        requirable: false
+        tip: null
+        type: craft\stripe\fieldlayoutelements\PricesField
+        uid: 399af430-f60e-4887-93f4-31bed96548b2
+        userCondition: null
+        warning: null
+        width: 100
+    name: Content
+    uid: c3e478cb-424b-4075-ad1b-5c4e82c78be8
+    userCondition: null

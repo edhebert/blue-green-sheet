@@ -281,23 +281,6 @@ fieldLayouts:
             dateAdded: '2025-09-05T17:57:10+00:00'
             editCondition: null
             elementCondition: null
-            fieldUid: 21bd4595-df6f-4876-9708-5bfadad51b42 # Website
-            handle: jobSchoolUrl
-            includeInCards: false
-            instructions: null
-            label: 'School URL'
-            providesThumbs: false
-            required: false
-            tip: null
-            type: craft\fieldlayoutelements\CustomField
-            uid: 96b82b49-4028-47df-b133-cac8f51d40b9
-            userCondition: null
-            warning: null
-            width: 100
-          -
-            dateAdded: '2025-09-05T17:57:10+00:00'
-            editCondition: null
-            elementCondition: null
             fieldUid: 0d0aac89-9a3b-4d6e-add7-8a1c3a679b77 # Multi Line Text
             handle: jobApplicationInstructions
             includeInCards: false
