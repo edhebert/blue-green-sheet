@@ -2,7 +2,7 @@ columnSuffix: null
 handle: organization
 instructions: null
 name: Organization
-searchable: false
+searchable: true
 settings:
   allowSelfRelations: false
   branchLimit: null
@@ -13,7 +13,7 @@ settings:
   selectionLabel: 'Add an Organization'
   showCardsInGrid: false
   showSearchInput: true
-  showSiteMenu: false
+  showSiteMenu: true
   showUnpermittedEntries: false
   showUnpermittedSections: false
   sources:

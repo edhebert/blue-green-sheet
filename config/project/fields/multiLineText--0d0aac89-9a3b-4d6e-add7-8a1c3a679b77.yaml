@@ -2,7 +2,7 @@ columnSuffix: null
 handle: multiLineText
 instructions: null
 name: 'Multi Line Text'
-searchable: false
+searchable: true
 settings:
   byteLimit: null
   charLimit: null

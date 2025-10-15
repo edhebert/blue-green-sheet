@@ -47,7 +47,7 @@ fieldLayouts:
             instructions: null
             label: 'Listing Organization'
             providesThumbs: true
-            required: false
+            required: true
             tip: null
             type: craft\fieldlayoutelements\CustomField
             uid: a88f10db-34c2-4551-bc98-ecec0053834d
@@ -64,7 +64,7 @@ fieldLayouts:
             instructions: 'If this organization is a recruiter, then select the school to which this search applies.'
             label: null
             providesThumbs: false
-            required: false
+            required: true
             tip: null
             type: craft\fieldlayoutelements\CustomField
             uid: 3a1f0dd6-dbf6-4166-9e84-e17e98f4221d

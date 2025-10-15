@@ -2,7 +2,7 @@ columnSuffix: null
 handle: jobRegion
 instructions: null
 name: 'Job Region'
-searchable: false
+searchable: true
 settings:
   allowSelfRelations: false
   branchLimit: null
@@ -13,7 +13,7 @@ settings:
   selectionLabel: null
   showCardsInGrid: false
   showSearchInput: true
-  showSiteMenu: false
+  showSiteMenu: true
   source: 'group:cdf1f46c-3d43-42f5-9d50-85377f321e61' # Job Region
   targetSiteId: null
   validateRelatedElements: false

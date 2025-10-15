@@ -2,7 +2,7 @@ columnSuffix: null
 handle: website
 instructions: null
 name: Website
-searchable: false
+searchable: true
 settings:
   fullGraphqlData: true
   maxLength: 255

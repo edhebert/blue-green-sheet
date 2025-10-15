@@ -835,6 +835,13 @@
       const title = document.getElementById('title').value;
       if (title) formData.append('title', title);
 
+      // Add school selection (for recruiters)
+      const schoolSelectDraft = document.getElementById('schoolSelect');
+      if (schoolSelectDraft && schoolSelectDraft.value) {
+        console.log('Draft: School select value being submitted:', schoolSelectDraft.value);
+        formData.append('fields[school][]', schoolSelectDraft.value);
+      }
+
       const category = document.querySelector('select[name="fields[jobCategory][]"]').value;
       if (category) formData.append('fields[jobCategory][]', category);
 

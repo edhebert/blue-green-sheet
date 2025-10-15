@@ -145,7 +145,7 @@ return [
                 if ($systemEmail !== '') {
                     return [$systemEmail];
                 }
-                return ['ed@theblueocean.com']; // <-- update this if you don't set env vars
+                return ['ed+bgs@theblueocean.com']; // <-- update this if you don't set env vars
             };
 
             // A) Notify when a user activates their account
@@ -481,6 +481,47 @@ return [
 
                     // Register the controller class
                     Craft::$app->controllerMap['custom/job-posting'] = JobPostingController::class;
+                }
+            );
+
+            // Auto-generate job slug from school + title
+            Event::on(
+                Elements::class,
+                Elements::EVENT_BEFORE_SAVE_ELEMENT,
+                static function(ElementEvent $e) {
+                    $el = $e->element;
+
+                    // Only process Job entries
+                    if (!$el instanceof EntryElement) {
+                        return;
+                    }
+
+                    $section = $el->getSection();
+                    if (!$section || $section->handle !== 'jobs') {
+                        return;
+                    }
+
+                    // Get the school relation
+                    $school = $el->school->one();
+                    if (!$school) {
+                        // No school selected - let Craft generate slug normally from title
+                        return;
+                    }
+
+                    // Build slug from school slug + entry title
+                    $schoolSlug = $school->slug ?? '';
+
+                    // Double-check that school slug exists and isn't empty
+                    if (empty($schoolSlug)) {
+                        // No valid school slug - let Craft generate slug normally from title
+                        return;
+                    }
+
+                    $titleSlug = \craft\helpers\ElementHelper::generateSlug($el->title);
+
+                    if ($titleSlug) {
+                        $el->slug = $schoolSlug . '_' . $titleSlug;
+                    }
                 }
             );
 

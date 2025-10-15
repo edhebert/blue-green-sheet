@@ -2,7 +2,7 @@ columnSuffix: null
 handle: jobCategory
 instructions: null
 name: 'Job Category'
-searchable: false
+searchable: true
 settings:
   allowSelfRelations: false
   branchLimit: null
@@ -13,7 +13,7 @@ settings:
   selectionLabel: null
   showCardsInGrid: false
   showSearchInput: true
-  showSiteMenu: false
+  showSiteMenu: true
   source: 'group:c8a0406a-b6dc-4a1e-a316-5a75ff4d23da' # Job Categories
   targetSiteId: null
   validateRelatedElements: false

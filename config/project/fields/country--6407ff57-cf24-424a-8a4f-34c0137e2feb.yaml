@@ -2,7 +2,7 @@ columnSuffix: null
 handle: country
 instructions: 'Choose whether this organization or job is within the USA or International'
 name: Country
-searchable: false
+searchable: true
 settings:
   customOptions: false
   options:

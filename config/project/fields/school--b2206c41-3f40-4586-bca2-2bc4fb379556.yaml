@@ -2,7 +2,7 @@ columnSuffix: null
 handle: school
 instructions: null
 name: School
-searchable: false
+searchable: true
 settings:
   allowSelfRelations: false
   branchLimit: null
