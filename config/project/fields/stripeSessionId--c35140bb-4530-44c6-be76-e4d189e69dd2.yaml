@@ -1,0 +1,16 @@
+columnSuffix: null
+handle: stripeSessionId
+instructions: 'This field holds the ID that verifies the Stripe payment, and allows you to look up the transaction in the Stripe dashboard.'
+name: 'Stripe Session ID'
+searchable: false
+settings:
+  byteLimit: null
+  charLimit: null
+  code: false
+  initialRows: 4
+  multiline: false
+  placeholder: null
+  uiMode: normal
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\PlainText

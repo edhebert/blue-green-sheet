@@ -4,7 +4,7 @@
   "require": {
     "bluegreensheet/job-region-populator": "@dev",
     "craftcms/ckeditor": "4.10.1",
-    "craftcms/cms": "5.8.17",
+    "craftcms/cms": "5.8.18",
     "craftcms/feed-me": "6.10.1",
     "craftcms/stripe": "1.6.0",
     "doublesecretagency/craft-cpcss": "3.0.0",

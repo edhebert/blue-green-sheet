@@ -161,15 +161,33 @@ return [
                     if (!$to) {
                         return;
                     }
-                    $htmlBody = "<p>A new user has activated their account:</p>";
-                    $htmlBody .= "<p><strong>Email:</strong> {$user->email}</p>";
-                    $htmlBody .= "<p><strong>Name:</strong> {$user->fullName}</p>";
+
+                    // Build HTML email body
+                    $htmlBody = '<html><body style="font-family: Arial, sans-serif; line-height: 1.6;">';
+                    $htmlBody .= '<h2 style="color: #5cb85c;">New User Activated</h2>';
+                    $htmlBody .= '<p>A new user has activated their account:</p>';
+
+                    $htmlBody .= '<table style="border-collapse: collapse; width: 100%; margin: 20px 0;">';
+                    $htmlBody .= '<tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Email:</strong></td><td style="padding: 8px; border-bottom: 1px solid #ddd;">' . htmlspecialchars($user->email) . '</td></tr>';
+                    $htmlBody .= '<tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Name:</strong></td><td style="padding: 8px; border-bottom: 1px solid #ddd;">' . htmlspecialchars($user->fullName) . '</td></tr>';
+                    $htmlBody .= '</table>';
+
+                    // Add link to view user in control panel
+                    $userCpUrl = \craft\helpers\UrlHelper::cpUrl('users/' . $user->id);
+                    $htmlBody .= '<p style="margin: 20px 0;">';
+                    $htmlBody .= '<a href="' . htmlspecialchars($userCpUrl) . '" style="display: inline-block; padding: 10px 20px; background-color: #337ab7; color: white; text-decoration: none; border-radius: 4px;">View user in the BGS Control Panel</a>';
+                    $htmlBody .= '</p>';
+
+                    $htmlBody .= '</body></html>';
 
                     $msg = (new Message())
                         ->setTo($to)
                         ->setSubject('New user activated')
                         ->setHtmlBody($htmlBody);
                     Craft::$app->getMailer()->send($msg);
+
+                    // Set welcome message for the user
+                    Craft::$app->getSession()->setNotice('Welcome to Blue Green Sheet! Your account is now active. Please login below to complete your profile.');
                 }
             );
 
@@ -213,18 +231,56 @@ return [
                     $cpUrl = \craft\helpers\UrlHelper::cpUrl('entries/organizations/' . $el->id);
                     $publicUrl = $el->getUrl();
 
-                    $htmlBody = "<p>A new organization entry was created:</p>";
-                    $htmlBody .= "<p><strong>Title:</strong> {$el->title}</p>";
-                    $htmlBody .= "<p><a href=\"{$cpUrl}\">View in Control Panel</a></p>";
+                    // Build HTML email body
+                    $htmlBody = '<html><body style="font-family: Arial, sans-serif; line-height: 1.6;">';
+                    $htmlBody .= '<h2 style="color: #5cb85c;">New Organization Added</h2>';
+                    $htmlBody .= '<p>A new organization entry was created:</p>';
+
+                    $htmlBody .= '<table style="border-collapse: collapse; width: 100%; margin: 20px 0;">';
+                    $htmlBody .= '<tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Organization Name:</strong></td><td style="padding: 8px; border-bottom: 1px solid #ddd;">' . htmlspecialchars($el->title) . '</td></tr>';
+                    $htmlBody .= '</table>';
+
+                    // Add action links
+                    $htmlBody .= '<p style="margin: 20px 0;">';
                     if ($publicUrl) {
-                        $htmlBody .= "<p><a href=\"{$publicUrl}\">View Public Page</a></p>";
+                        $htmlBody .= '<a href="' . htmlspecialchars($publicUrl) . '" style="display: inline-block; padding: 10px 20px; margin-right: 10px; background-color: #5cb85c; color: white; text-decoration: none; border-radius: 4px;">Visit public-facing organization page</a>';
                     }
+                    $htmlBody .= '<a href="' . htmlspecialchars($cpUrl) . '" style="display: inline-block; padding: 10px 20px; background-color: #337ab7; color: white; text-decoration: none; border-radius: 4px;">Edit this organization in the BGS Control Panel</a>';
+                    $htmlBody .= '</p>';
+
+                    $htmlBody .= '</body></html>';
 
                     $msg = (new Message())
                         ->setTo($to)
                         ->setSubject('New organization added')
                         ->setHtmlBody($htmlBody);
                     Craft::$app->getMailer()->send($msg);
+
+                    // Set thank you message for the user who created the organization
+                    $currentUser = Craft::$app->getUser()->getIdentity();
+                    if ($currentUser && $el->authorId == $currentUser->id) {
+                        $session = Craft::$app->getSession();
+                        // Clear any default Craft messages
+                        $session->removeFlash('notice');
+                        $session->removeFlash('success');
+                        // Set our custom message
+                        $session->setNotice('Thank you for adding ' . $el->title . '! This organization is now connected to your profile and you can start posting jobs.');
+                    }
+                }
+            );
+
+            // C) Set welcome message on first login (when user has no organization yet)
+            Event::on(
+                \craft\web\User::class,
+                \craft\web\User::EVENT_AFTER_LOGIN,
+                static function(\yii\web\UserEvent $e) {
+                    $user = $e->identity;
+
+                    // Check if user has no organization assigned yet (first-time login)
+                    if ($user && !$user->organization->one()) {
+                        $session = Craft::$app->getSession();
+                        $session->setNotice('Login successful! Now select or create your organization to complete your profile.');
+                    }
                 }
             );
 
@@ -251,48 +307,81 @@ return [
                         $request = Craft::$app->getRequest();
                         $session = Craft::$app->getSession();
 
-                        // Get form data
-                        $amount = $request->getRequiredBodyParam('amount');
-                        $duration = $request->getRequiredBodyParam('duration');
-                        $paymentMethod = $request->getRequiredBodyParam('paymentMethod');
+                        try {
+                            // Get form data
+                            $jobId = $request->getBodyParam('jobId');
+                            $duration = $request->getBodyParam('duration');
+                            $paymentMethod = $request->getBodyParam('paymentMethod');
 
-                        // Get the job entry ID from session (set during job creation)
-                        $jobId = $session->get('pendingJobId');
-                        if (!$jobId) {
-                            $session->setError('No pending job found. Please create your job posting again.');
-                            return $this->redirectToPostedUrl();
-                        }
+                            Craft::info("Invoice payment started - JobID: {$jobId}, Duration: {$duration}, Method: {$paymentMethod}", __METHOD__);
 
-                        // Load the job entry
-                        $job = \craft\elements\Entry::find()->id($jobId)->one();
-                        if (!$job) {
-                            $session->setError('Job posting not found.');
+                            if (!$jobId || !$duration || !$paymentMethod) {
+                                $session->setError('Missing required parameters: jobId, duration, or paymentMethod');
+                                Craft::error("Missing params - JobID: {$jobId}, Duration: {$duration}, Method: {$paymentMethod}", __METHOD__);
+                                return $this->redirectToPostedUrl();
+                            }
+
+                            // Calculate amount based on duration
+                            $amount = ($duration == 12) ? 400 : 300;
+
+                            // Load the job entry (including disabled/draft entries)
+                            $job = \craft\elements\Entry::find()
+                                ->id($jobId)
+                                ->status(null)
+                                ->one();
+
+                            if (!$job) {
+                                Craft::error("Job not found with ID: {$jobId}", __METHOD__);
+                                $session->setError('Job posting not found.');
+                                return $this->redirectToPostedUrl();
+                            }
+
+                            Craft::info("Job found: {$job->title} (ID: {$jobId})", __METHOD__);
+
+                        // Verify the current user owns this job
+                        $currentUser = Craft::$app->getUser()->getIdentity();
+                        if ($job->authorId != $currentUser->id && !$currentUser->admin) {
+                            $session->setError('You do not have permission to modify this job posting.');
                             return $this->redirectToPostedUrl();
                         }
 
                         // Activate the job (set enabled = true)
                         $job->enabled = true;
 
-                        // Mark as paid (for invoice payment)
+                        // Mark as paid
                         $job->setFieldValue('paid', true);
+
+                        // Set payment type to 'invoice'
+                        $job->setFieldValue('paymentType', 'invoice');
 
                         // Set expiration date based on duration
                         $expiryDate = new DateTime();
                         $expiryDate->add(new DateInterval('P' . $duration . 'M')); // Add months
                         $job->expiryDate = $expiryDate;
 
-                        // Save the job
-                        if (Craft::$app->getElements()->saveElement($job)) {
-                            // Clear the pending job from session
-                            $session->remove('pendingJobId');
+                            // Save the job
+                            if (Craft::$app->getElements()->saveElement($job)) {
+                                // Send notifications
+                                $this->sendJobPostingNotifications($job, $amount, $duration, $paymentMethod);
 
-                            // Send notifications
-                            $this->sendJobPostingNotifications($job, $amount, $duration, $paymentMethod);
-
-                            $session->setNotice('Your job posting has been published successfully!');
-                            return $this->redirect($job->getUrl());
-                        } else {
-                            $session->setError('Failed to publish your job posting. Please try again.');
+                                Craft::info("Invoice payment successful - Job {$jobId} activated", __METHOD__);
+                                $session->setNotice('Your job posting has been published! An invoice for $' . $amount . ' will soon be sent to your email from a member of the Blue Green Sheet staff.');
+                                return $this->redirectToPostedUrl();
+                            } else {
+                                $errors = $job->getErrors();
+                                $errorMessage = 'Failed to publish your job posting.';
+                                if (!empty($errors)) {
+                                    $errorMessage .= ' Errors: ' . implode(', ', array_map(function($err) {
+                                        return is_array($err) ? implode(', ', $err) : $err;
+                                    }, $errors));
+                                }
+                                Craft::error("Failed to save job {$jobId}: {$errorMessage}", __METHOD__);
+                                $session->setError($errorMessage);
+                                return $this->redirectToPostedUrl();
+                            }
+                        } catch (\Exception $e) {
+                            Craft::error("Invoice payment error: " . $e->getMessage(), __METHOD__);
+                            $session->setError('An error occurred processing your payment: ' . $e->getMessage());
                             return $this->redirectToPostedUrl();
                         }
                     }
@@ -436,27 +525,64 @@ return [
                         }
 
                         $user = Craft::$app->getUser()->getIdentity();
-                        $organization = $user->organization ?? null;
-
-                        $subject = 'New Job Posting: ' . $job->title;
-                        $body = "A new job posting has been created and published:\n\n";
-                        $body .= "Job Title: {$job->title}\n";
-                        $body .= "Organization: " . ($organization ? $organization->title : 'Unknown') . "\n";
-                        $body .= "Posted by: {$user->fullName} ({$user->email})\n";
-                        $body .= "Duration: {$duration} month(s)\n";
-                        $body .= "Payment: \${$amount} via {$paymentMethod}\n";
-                        $body .= "Job URL: " . ($job->getUrl() ?? 'URL not available') . "\n\n";
+                        $organization = $user->organization->one() ?? null;
+                        $school = $job->school->one() ?? null;
 
                         if ($paymentMethod === 'invoice') {
-                            $body .= "NOTE: This was an invoice posting - please send invoice for \${$amount}.\n";
-                        } elseif ($paymentMethod === 'credit' && $paymentIntent) {
-                            $body .= "Payment processed via Stripe (ID: {$paymentIntent->id})\n";
+                            $subject = 'Invoice Request - New Job Posting: ' . $job->title;
+                        } else {
+                            $subject = 'New Job Posting: ' . $job->title;
                         }
+
+                        // Build HTML email body
+                        $htmlBody = '<html><body style="font-family: Arial, sans-serif; line-height: 1.6;">';
+
+                        if ($paymentMethod === 'invoice') {
+                            $htmlBody .= '<h2 style="color: #d9534f;">Invoice Request - New Job Posting</h2>';
+                            $htmlBody .= '<p>A new job posting has been submitted with invoice payment:</p>';
+                        } else {
+                            $htmlBody .= '<h2 style="color: #5cb85c;">New Job Posting</h2>';
+                            $htmlBody .= '<p>A new job posting has been created and paid:</p>';
+                        }
+
+                        $htmlBody .= '<table style="border-collapse: collapse; width: 100%; margin: 20px 0;">';
+                        $htmlBody .= '<tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Job Title:</strong></td><td style="padding: 8px; border-bottom: 1px solid #ddd;">' . htmlspecialchars($job->title) . '</td></tr>';
+                        $htmlBody .= '<tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>School:</strong></td><td style="padding: 8px; border-bottom: 1px solid #ddd;">' . ($school ? htmlspecialchars($school->title) : 'Not specified') . '</td></tr>';
+                        $htmlBody .= '<tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Posted by Organization:</strong></td><td style="padding: 8px; border-bottom: 1px solid #ddd;">' . ($organization ? htmlspecialchars($organization->title) : 'Unknown') . '</td></tr>';
+                        $htmlBody .= '<tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Posted by User:</strong></td><td style="padding: 8px; border-bottom: 1px solid #ddd;">' . htmlspecialchars($user->fullName) . ' (' . htmlspecialchars($user->email) . ')</td></tr>';
+                        $htmlBody .= '<tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Duration:</strong></td><td style="padding: 8px; border-bottom: 1px solid #ddd;">' . $duration . ' month(s)</td></tr>';
+                        $htmlBody .= '<tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Amount:</strong></td><td style="padding: 8px; border-bottom: 1px solid #ddd;">$' . $amount . '</td></tr>';
+                        $htmlBody .= '<tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Payment Method:</strong></td><td style="padding: 8px; border-bottom: 1px solid #ddd;">' . ucfirst($paymentMethod) . '</td></tr>';
+                        $htmlBody .= '</table>';
+
+                        // Add action links
+                        $jobUrl = $job->getUrl() ?? '';
+                        $editUrl = \craft\helpers\UrlHelper::cpUrl('entries/jobs/' . $job->id);
+
+                        $htmlBody .= '<p style="margin: 20px 0;">';
+                        if ($jobUrl) {
+                            $htmlBody .= '<a href="' . htmlspecialchars($jobUrl) . '" style="display: inline-block; padding: 10px 20px; margin-right: 10px; background-color: #5cb85c; color: white; text-decoration: none; border-radius: 4px;">Visit public-facing job URL</a>';
+                        }
+                        $htmlBody .= '<a href="' . htmlspecialchars($editUrl) . '" style="display: inline-block; padding: 10px 20px; background-color: #337ab7; color: white; text-decoration: none; border-radius: 4px;">Edit this job in the BGS Control Panel</a>';
+                        $htmlBody .= '</p>';
+
+                        if ($paymentMethod === 'invoice') {
+                            $htmlBody .= '<div style="background-color: #fcf8e3; border: 2px solid #d9534f; padding: 15px; margin: 20px 0; border-radius: 4px;">';
+                            $htmlBody .= '<h3 style="color: #d9534f; margin-top: 0;">ACTION REQUIRED</h3>';
+                            $htmlBody .= '<p><strong>Please send an invoice for $' . $amount . ' to ' . htmlspecialchars($user->email) . '</strong></p>';
+                            $htmlBody .= '</div>';
+                            $htmlBody .= '<p>The job posting is now live and will expire in ' . $duration . ' month(s).</p>';
+                        } elseif ($paymentMethod === 'credit' && $paymentIntent) {
+                            $htmlBody .= '<p><strong>Payment processed via Stripe</strong><br>';
+                            $htmlBody .= 'Payment Intent ID: ' . htmlspecialchars($paymentIntent->id) . '</p>';
+                        }
+
+                        $htmlBody .= '</body></html>';
 
                         $message = new \craft\mail\Message();
                         $message->setTo($adminEmails)
                                ->setSubject($subject)
-                               ->setTextBody($body);
+                               ->setHtmlBody($htmlBody);
 
                         try {
                             Craft::$app->getMailer()->send($message);
@@ -472,15 +598,8 @@ return [
                 \craft\web\Application::class,
                 \craft\web\Application::EVENT_INIT,
                 static function() {
-                    // Register custom controller actions
-                    $urlManager = Craft::$app->getUrlManager();
-                    $urlManager->addRules([
-                        'actions/entries/activate-job-posting' => 'custom/job-posting/activate-job-posting',
-                        'actions/entries/process-stripe-payment' => 'custom/job-posting/process-stripe-payment',
-                    ]);
-
-                    // Register the controller class
-                    Craft::$app->controllerMap['custom/job-posting'] = JobPostingController::class;
+                    // Register the controller class with a simple namespace
+                    Craft::$app->controllerMap['job-posting'] = JobPostingController::class;
                 }
             );
 

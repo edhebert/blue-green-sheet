@@ -1,0 +1,45 @@
+columnSuffix: null
+handle: paymentType
+instructions: 'Whether payment was taken via Stripe, or whether an invoice was requested'
+name: 'Payment Type'
+searchable: true
+settings:
+  customOptions: false
+  options:
+    -
+      __assoc__:
+        -
+          - label
+          - Stripe
+        -
+          - value
+          - stripe
+        -
+          - icon
+          - credit-card
+        -
+          - color
+          - ''
+        -
+          - default
+          - ''
+    -
+      __assoc__:
+        -
+          - label
+          - Invoice
+        -
+          - value
+          - invoice
+        -
+          - icon
+          - file-invoice-dollar
+        -
+          - color
+          - ''
+        -
+          - default
+          - ''
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\RadioButtons

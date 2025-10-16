@@ -328,6 +328,40 @@ fieldLayouts:
             userCondition: null
             warning: null
             width: 100
+          -
+            dateAdded: '2025-10-16T12:47:09+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: c35140bb-4530-44c6-be76-e4d189e69dd2 # Stripe Session ID
+            handle: null
+            includeInCards: false
+            instructions: null
+            label: null
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: e555ccce-2f7d-40a8-88dd-5f61b5d7c812
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-10-16T12:47:09+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: 06ff70cf-8a32-453c-84c8-54a1c71e3e66 # Payment Type
+            handle: null
+            includeInCards: false
+            instructions: null
+            label: null
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: f2ae3bab-96d3-4da8-99e5-3a199598c4bb
+            userCondition: null
+            warning: null
+            width: 100
         name: Content
         uid: f738c44c-369c-424e-b286-ec843238c27c
         userCondition: null

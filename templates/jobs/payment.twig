@@ -96,8 +96,9 @@
           <!-- Payment Form -->
           <form method="post" id="paymentForm">
             {{ csrfInput() }}
-            {{ actionInput('entries/activate-job-posting') }}
+            {{ actionInput('job-posting/activate-job-posting') }}
             {{ hiddenInput('jobId', jobEntry.id) }}
+            {{ redirectInput('profile') }}
 
             <!-- Posting Duration -->
             <div class="card mb-4">
@@ -262,6 +263,19 @@
 
     // Initialize pricing
     updatePricing();
+
+    // Debug form submission
+    const form = document.getElementById('paymentForm');
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        console.log('Form submitting...');
+        const formData = new FormData(form);
+        console.log('Form data:');
+        for (let [key, value] of formData.entries()) {
+          console.log(`  ${key}: ${value}`);
+        }
+      });
+    }
   });
   </script>
 

@@ -1057,18 +1057,49 @@
           formData.append('fields[school][]', schoolField.value);
         }
 
-        // Submit and redirect to payment (using exact same logic as edit.twig)
+        // Submit and redirect to payment
         const form = document.querySelector('form');
-        fetch(form.action, {
-          method: 'POST',
-          body: formData
-        }).then(response => {
-          console.log('Entry saved, redirecting to payment');
-          window.location.href = '{{ url("jobs/payment") }}';
-        }).catch(error => {
-          console.error('Save error:', error);
-          alert('There was an error saving your job posting. Please try again.');
-        });
+
+        // Check if we're editing an existing entry
+        const entryIdField = document.querySelector('input[name="entryId"]');
+        const existingEntryId = entryIdField ? entryIdField.value : null;
+
+        if (existingEntryId) {
+          // Editing existing entry - we know the ID
+          fetch(form.action, {
+            method: 'POST',
+            body: formData
+          }).then(response => {
+            console.log('Entry saved, redirecting to payment');
+            window.location.href = '{{ url("jobs/payment") }}?jobId=' + existingEntryId;
+          }).catch(error => {
+            console.error('Save error:', error);
+            alert('There was an error saving your job posting. Please try again.');
+          });
+        } else {
+          // Creating new entry - need to get ID from response
+          fetch(form.action, {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json'
+            },
+            body: formData
+          }).then(response => response.json())
+            .then(data => {
+              console.log('Entry created:', data);
+              // Extract entry ID from Craft's response
+              const entryId = data.id || (data.entry && data.entry.id);
+              if (entryId) {
+                window.location.href = '{{ url("jobs/payment") }}?jobId=' + entryId;
+              } else {
+                // Fallback: redirect without ID (payment page will find most recent)
+                window.location.href = '{{ url("jobs/payment") }}';
+              }
+            }).catch(error => {
+              console.error('Save error:', error);
+              alert('There was an error saving your job posting. Please try again.');
+            });
+        }
       });
     }
 
