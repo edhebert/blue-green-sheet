@@ -10,6 +10,23 @@
   {# Get job ID from URL parameter #}
   {% set jobId = craft.app.request.getParam('jobId') %}
 
+  {# Query Stripe products - find by duration metadata or title #}
+  {% set stripeProducts = craft.stripeProducts.all() %}
+  {% set price6Months = null %}
+  {% set price12Months = null %}
+
+  {# Find the 6-month and 12-month prices #}
+  {% for product in stripeProducts %}
+    {% for price in product.prices %}
+      {# Match by amount: 30000 cents = $300, 40000 cents = $400 #}
+      {% if price.data.unit_amount == 30000 %}
+        {% set price6Months = price %}
+      {% elseif price.data.unit_amount == 40000 %}
+        {% set price12Months = price %}
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+
   {# Load the job entry #}
   {% if jobId %}
     {% set jobEntry = craft.entries().section('jobs').id(jobId).status(null).authorId(currentUser.id).one() %}
@@ -96,9 +113,15 @@
           <!-- Payment Form -->
           <form method="post" id="paymentForm">
             {{ csrfInput() }}
-            {{ actionInput('job-posting/activate-job-posting') }}
+            <input type="hidden" name="action" id="formAction" value="job-posting/activate-job-posting">
             {{ hiddenInput('jobId', jobEntry.id) }}
-            {{ redirectInput('profile') }}
+            <input type="hidden" name="redirect" id="formRedirect" value="{{ 'profile'|hash }}">
+
+            {# Stripe Checkout fields - only used when credit card is selected #}
+            {{ hiddenInput('successUrl', (url('actions/job-posting/payment-success', {session_id: '{CHECKOUT_SESSION_ID}', jobId: jobEntry.id}))|hash) }}
+            {{ hiddenInput('cancelUrl', (url('jobs/payment', {jobId: jobEntry.id}))|hash) }}
+            <input type="hidden" name="lineItems[0][price]" id="stripePriceId" value="{{ price6Months ? price6Months.stripeId : '' }}">
+            <input type="hidden" name="lineItems[0][quantity]" value="1">
 
             <!-- Posting Duration -->
             <div class="card mb-4">
@@ -238,19 +261,30 @@
 
   <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Update pricing based on duration selection
+    // Stripe Price IDs from the queried products
+    const STRIPE_PRICE_6_MONTHS = '{{ price6Months ? price6Months.stripeId : '' }}';
+    const STRIPE_PRICE_12_MONTHS = '{{ price12Months ? price12Months.stripeId : '' }}';
+
+    // Get form elements
     const duration6mo = document.getElementById('duration6mo');
     const duration12mo = document.getElementById('duration12mo');
     const durationText = document.getElementById('durationText');
     const totalAmount = document.getElementById('totalAmount');
+    const paymentCredit = document.getElementById('paymentCredit');
+    const paymentInvoice = document.getElementById('paymentInvoice');
+    const form = document.getElementById('paymentForm');
+    const formAction = document.getElementById('formAction');
+    const stripePriceId = document.getElementById('stripePriceId');
 
     function updatePricing() {
       if (duration6mo && duration6mo.checked) {
         durationText.textContent = '6 months duration';
         totalAmount.textContent = '$300';
+        stripePriceId.value = STRIPE_PRICE_6_MONTHS;
       } else if (duration12mo && duration12mo.checked) {
         durationText.textContent = '12 months duration';
         totalAmount.textContent = '$400';
+        stripePriceId.value = STRIPE_PRICE_12_MONTHS;
       }
     }
 
@@ -264,15 +298,17 @@
     // Initialize pricing
     updatePricing();
 
-    // Debug form submission
-    const form = document.getElementById('paymentForm');
+    // Handle form submission - switch action based on payment method
     if (form) {
       form.addEventListener('submit', function(e) {
-        console.log('Form submitting...');
-        const formData = new FormData(form);
-        console.log('Form data:');
-        for (let [key, value] of formData.entries()) {
-          console.log(`  ${key}: ${value}`);
+        if (paymentCredit && paymentCredit.checked) {
+          // Stripe Checkout - redirect to Stripe hosted page
+          formAction.value = 'stripe/checkout';
+          console.log('Redirecting to Stripe Checkout with price:', stripePriceId.value);
+        } else if (paymentInvoice && paymentInvoice.checked) {
+          // Invoice - use our custom controller
+          formAction.value = 'job-posting/activate-job-posting';
+          console.log('Processing invoice payment');
         }
       });
     }

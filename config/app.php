@@ -387,6 +387,135 @@ return [
                     }
 
                     /**
+                     * Handle successful Stripe Checkout - activate job after payment
+                     */
+                    public function actionPaymentSuccess()
+                    {
+                        $this->requireLogin();
+
+                        $request = Craft::$app->getRequest();
+                        $session = Craft::$app->getSession();
+
+                        try {
+                            // Get job ID from URL parameters
+                            $jobId = $request->getParam('jobId');
+
+                            Craft::info("Stripe payment success callback - JobID: {$jobId}", __METHOD__);
+
+                            if (!$jobId) {
+                                throw new \Exception('Missing job ID.');
+                            }
+
+                            // Load the job entry (including disabled/draft entries)
+                            $job = \craft\elements\Entry::find()
+                                ->id($jobId)
+                                ->status(null)
+                                ->one();
+
+                            if (!$job) {
+                                Craft::error("Job not found with ID: {$jobId}", __METHOD__);
+                                throw new \Exception('Job posting not found.');
+                            }
+
+                            // Verify the current user owns this job
+                            $currentUser = Craft::$app->getUser()->getIdentity();
+                            if ($job->authorId != $currentUser->id && !$currentUser->admin) {
+                                throw new \Exception('You do not have permission to modify this job posting.');
+                            }
+
+                            // Check if job is already paid (prevent double processing)
+                            if ($job->paid) {
+                                Craft::info("Job {$jobId} already marked as paid", __METHOD__);
+                                $session->setNotice('This job posting has already been activated.');
+                                return $this->redirect('profile');
+                            }
+
+                            // Determine duration and amount - we need to get this from the Stripe checkout session
+                            // For now, check which price was used by looking at the session_id parameter
+                            $sessionId = $request->getParam('session_id');
+                            $duration = 6; // Default
+                            $amount = 300; // Default
+
+                            if ($sessionId) {
+                                try {
+                                    // Retrieve checkout session from Stripe to get the price details
+                                    \Stripe\Stripe::setApiKey(\craft\helpers\App::env('STRIPE_SECRET_KEY'));
+                                    $checkoutSession = \Stripe\Checkout\Session::retrieve([
+                                        'id' => $sessionId,
+                                        'expand' => ['line_items'],
+                                    ]);
+
+                                    if ($checkoutSession->payment_status === 'paid') {
+                                        // Get the price from line items
+                                        if (!empty($checkoutSession->line_items->data)) {
+                                            $priceId = $checkoutSession->line_items->data[0]->price->id;
+                                            $amountInCents = $checkoutSession->line_items->data[0]->amount_total;
+                                            $amount = $amountInCents / 100;
+
+                                            // Determine duration based on amount
+                                            if ($amount == 400) {
+                                                $duration = 12;
+                                            } else {
+                                                $duration = 6;
+                                            }
+
+                                            Craft::info("Payment verified via Stripe - Amount: \${$amount}, Duration: {$duration} months", __METHOD__);
+                                        }
+                                    } else {
+                                        throw new \Exception('Payment was not completed.');
+                                    }
+                                } catch (\Stripe\Exception\ApiErrorException $e) {
+                                    Craft::error('Stripe API error retrieving session: ' . $e->getMessage(), __METHOD__);
+                                    // Continue with defaults if we can't verify
+                                }
+                            }
+
+                            // Activate the job (set enabled = true)
+                            $job->enabled = true;
+
+                            // Mark as paid
+                            $job->setFieldValue('paid', true);
+
+                            // Set payment type to 'stripe'
+                            $job->setFieldValue('paymentType', 'stripe');
+
+                            // Save Stripe session ID for transaction tracking
+                            if ($sessionId) {
+                                $job->setFieldValue('stripeSessionId', $sessionId);
+                            }
+
+                            // Set expiration date based on duration
+                            $expiryDate = new DateTime();
+                            $expiryDate->add(new DateInterval('P' . $duration . 'M')); // Add months
+                            $job->expiryDate = $expiryDate;
+
+                            // Save the job
+                            if (Craft::$app->getElements()->saveElement($job)) {
+                                // Send notifications
+                                $this->sendJobPostingNotifications($job, $amount, $duration, 'stripe');
+
+                                Craft::info("Stripe payment successful - Job {$jobId} activated", __METHOD__);
+                                $session->setNotice('Payment successful! Your job posting has been published.');
+                                return $this->redirect('profile');
+                            } else {
+                                $errors = $job->getErrors();
+                                $errorMessage = 'Failed to publish your job posting.';
+                                if (!empty($errors)) {
+                                    $errorMessage .= ' Errors: ' . implode(', ', array_map(function($err) {
+                                        return is_array($err) ? implode(', ', $err) : $err;
+                                    }, $errors));
+                                }
+                                throw new \Exception($errorMessage);
+                            }
+
+                        } catch (\Exception $e) {
+                            Craft::error('Stripe payment success error: ' . $e->getMessage(), __METHOD__);
+                            $session->setError('An error occurred verifying your payment: ' . $e->getMessage());
+                            return $this->redirect('profile');
+                        }
+                    }
+
+                    /**
                      * Handle Stripe payment processing
                      */
                     public function actionProcessStripePayment()
