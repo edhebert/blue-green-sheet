@@ -1,4 +1,4 @@
-dateModified: 1760973608
+dateModified: 1760988567
 elementSources:
   craft\elements\Entry:
     -
@@ -129,7 +129,7 @@ email:
   fromEmail: ed+bgs@theblueocean.com
   fromName: 'Blue Green Sheet'
   replyToEmail: null
-  template: ''
+  template: _emails/email-layout
   transportSettings:
     host: $SERVD_SMTP_HOSTNAME
     password: $SERVD_SMTP_PASSWORD
