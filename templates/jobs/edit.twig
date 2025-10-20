@@ -823,8 +823,10 @@
       if (isPaid) {
         // For paid jobs, preserve existing enabled status
         const currentEnabled = document.querySelector('input[name="enabled"]');
-        if (currentEnabled && currentEnabled.value) {
-          formData.append('enabled', currentEnabled.value);
+        if (currentEnabled && currentEnabled.checked) {
+          formData.append('enabled', '1');
+        } else {
+          formData.append('enabled', '0');
         }
         formData.append('fields[paid]', '1'); // Keep paid status
       } else {
