@@ -16,4 +16,7 @@ return [
     // Job editing routes
     'jobs/edit/<entryId:\d+>' => ['template' => 'jobs/edit'],
     'jobs/edit' => ['template' => 'jobs/edit-invalid'],
+
+    // Job preview route for unpublished jobs
+    'jobs/preview/<entryId:\d+>' => ['template' => 'jobs/preview'],
 ];

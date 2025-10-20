@@ -6,16 +6,6 @@
 
 {% do craft.app.session.removeFlash('error') %}
 
-{# Add this right after the opening <div class="login-container"> #}
-{% if craft.app.request.isPost %}
-    <div style="background: yellow; padding: 1rem; margin: 1rem 0;">
-        <strong>DEBUG - Form was submitted:</strong><br>
-        loginName: {{ craft.app.request.getBodyParam('loginName') }}<br>
-        Password provided: {{ craft.app.request.getBodyParam('password') ? 'YES' : 'NO' }}<br>
-        CSRF Token: {{ craft.app.request.getBodyParam(craft.app.config.general.csrfTokenName) ? 'YES' : 'NO' }}
-    </div>
-{% endif %}
-
 {% if craft.app.session.hasFlash('notice') %}
     <div class="alert alert-success">{{ craft.app.session.getFlash('notice') }}</div>
 {% endif %}

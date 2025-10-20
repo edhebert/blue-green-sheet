@@ -1,11 +1,44 @@
+{# templates/jobs/preview.twig #}
+{% requireLogin %}
+
+{# Get the entry ID from the URL segment #}
+{% set entryId = craft.app.request.getSegment(3) %}
+
+{# Get the entry by ID, including disabled entries #}
+{% if currentUser.admin %}
+  {% set entry = craft.entries().section('jobs').id(entryId).status(null).one() %}
+{% else %}
+  {% set entry = craft.entries().section('jobs').id(entryId).status(null).authorId(currentUser.id).one() %}
+{% endif %}
+
+{# Check if entry exists (authorization already handled in query above) #}
+{% if not entry %}
+    {% redirect 'profile' %}
+{% endif %}
+
+{# Use the same template structure as the public job page #}
 {% extends "_layout.twig" %}
 
-{% block title %}{{ entry.title }} · {{ siteName }}{% endblock %}
+{% block title %}{{ entry.title }} (Preview) · {{ siteName }}{% endblock %}
 
 {% block content %}
+
+
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-lg-10">
+
+        {# Display preview notice banner #}
+        <div class="row">
+            <div style="background-color: #fff3cd; border: 2px solid #ffc107; padding: 1rem; margin-bottom: 1.5rem; text-align: center; border-radius: 0.375rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <strong><i class="bi bi-eye me-2"></i>PREVIEW MODE</strong> - This is how your job posting will appear once published. This preview is only visible to you.
+                {% if not entry.enabled %}
+                    <br><em>Note: This job is currently disabled and not visible to the public.</em>
+                {% endif %}
+            </div>
+        </div>
+
+
             <!-- Job Header -->
             <div class="row align-items-start mb-5">
                 <div class="col-md-8">
@@ -16,7 +49,8 @@
                         {% set organization = entry.school.one() %}
                         <div class="align-items-center mb-3">
                             {% if organization.logo.one() %}
-                                <a href="{{ organization.url }}"><img src="{{ organization.logo.one().getUrl('height100') }}"
+                            <a href="{{ organization.url }}"> 
+                                <img src="{{ organization.logo.one().getUrl('height100') }}"
                                      alt="{{ organization.title }}"
                                      class="me-3"
                                      style="max-height: 60px;"></a>
@@ -84,7 +118,9 @@
 
                 <!-- Job Actions -->
                 <div class="col-md-4 text-md-end">
-
+                    <a href="{{ url('jobs/edit/' ~ entry.id) }}" class="button rounded-pill">
+                        <i class="bi bi-pencil me-2"></i>Edit Job
+                    </a>
                 </div>
             </div>
 
@@ -274,10 +310,10 @@
                 </div>
             </div>
 
-            <!-- Back to Jobs -->
+            <!-- Back to Profile -->
             <div class="text-center mt-5">
-                <a href="{{ url('jobs') }}" class="button rounded-pill">
-                    <i class="bi bi-arrow-left me-2"></i>Back to All Jobs
+                <a href="{{ url('profile') }}" class="button rounded-pill">
+                    <i class="bi bi-arrow-left me-2"></i>Back to My Profile
                 </a>
             </div>
         </div>

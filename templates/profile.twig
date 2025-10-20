@@ -155,11 +155,56 @@
                                 <div class="job-card-actions">
                                     {% if job.status == 'live' and job.enabled %}
                                         <a href="{{ job.url }}" class="button button-small rounded-pill">View</a>
+                                    {% else %}
+                                        {# Show preview button for unpublished or disabled jobs #}
+                                        <a href="{{ url('jobs/preview/' ~ job.id) }}" class="button button-small rounded-pill">Preview</a>
                                     {% endif %}
                                     {% if job.authorId == currentUser.id or currentUser.admin %}
                                         <a href="{{ url('jobs/edit/' ~ job.id) }}" class="button button-small button-border rounded-pill">Edit</a>
                                     {% endif %}
                                 </div>
+
+                                {# Publish/Unpublish Toggle (only for paid jobs) #}
+                                {% if job.paid %}
+                                    {% set isExpired = job.expiryDate and job.expiryDate < now %}
+                                    <div class="job-card-toggle mt-3 pt-3" style="border-top: 1px solid #e0e0e0;">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div>
+                                                <label class="form-label mb-0 fw-semibold" style="font-size: 0.875rem;">
+                                                    {% if isExpired %}
+                                                        Publish Status (Expired)
+                                                    {% else %}
+                                                        Publish Status
+                                                    {% endif %}
+                                                </label>
+                                                <div class="form-text" style="font-size: 0.75rem; margin-top: 0.25rem;">
+                                                    {% if job.enabled %}
+                                                        Currently visible to job seekers
+                                                    {% else %}
+                                                        Currently hidden from job seekers
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div class="form-check form-switch" style="font-size: 1.5rem;">
+                                                <input
+                                                    class="form-check-input job-toggle"
+                                                    type="checkbox"
+                                                    role="switch"
+                                                    id="jobToggle{{ job.id }}"
+                                                    data-job-id="{{ job.id }}"
+                                                    {% if job.enabled %}checked{% endif %}
+                                                    {% if isExpired %}disabled{% endif %}
+                                                    style="cursor: {% if isExpired %}not-allowed{% else %}pointer{% endif %};"
+                                                >
+                                            </div>
+                                        </div>
+                                        {% if isExpired %}
+                                            <div class="alert alert-warning mt-2 mb-0 py-2 px-2" style="font-size: 0.75rem;">
+                                                <i class="bi bi-exclamation-triangle me-1"></i>This job has expired and cannot be republished.
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
                             </div>
                         {% endfor %}
                     </div>
@@ -622,6 +667,98 @@ document.addEventListener('DOMContentLoaded', function() {
     if (newPassword && confirmPassword) {
         newPassword.addEventListener('change', validatePasswords);
         confirmPassword.addEventListener('keyup', validatePasswords);
+    }
+
+    // Job publish/unpublish toggle functionality
+    const jobToggles = document.querySelectorAll('.job-toggle');
+    jobToggles.forEach(toggle => {
+        toggle.addEventListener('change', function() {
+            const jobId = this.dataset.jobId;
+            const isEnabled = this.checked;
+            const toggleElement = this;
+            const card = this.closest('.job-posting-card');
+            const statusBadge = card.querySelector('.status-badge');
+            const statusText = card.querySelector('.form-text');
+            const viewButton = card.querySelector('.button-small.rounded-pill:not(.button-border)');
+
+            // Disable the toggle while processing
+            toggleElement.disabled = true;
+
+            // Prepare form data
+            const formData = new FormData();
+            formData.append('CRAFT_CSRF_TOKEN', '{{ craft.app.request.csrfToken }}');
+            formData.append('action', 'entries/save-entry');
+            formData.append('entryId', jobId);
+            formData.append('enabled', isEnabled ? '1' : '0');
+
+            // Submit via fetch
+            fetch(window.location.origin, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Update the status badge
+                    if (isEnabled) {
+                        statusBadge.textContent = 'Published';
+                        statusBadge.className = 'status-badge status-published';
+                        statusText.textContent = 'Currently visible to job seekers';
+
+                        // Change Preview button to View button
+                        if (viewButton) {
+                            viewButton.textContent = 'View';
+                            viewButton.href = viewButton.href.replace('/jobs/preview/', '/jobs/');
+                        }
+                    } else {
+                        statusBadge.textContent = 'Unpublished';
+                        statusBadge.className = 'status-badge status-unpublished';
+                        statusText.textContent = 'Currently hidden from job seekers';
+
+                        // Change View button to Preview button
+                        if (viewButton) {
+                            viewButton.textContent = 'Preview';
+                            viewButton.href = viewButton.href.replace('/jobs/', '/jobs/preview/');
+                        }
+                    }
+
+                    // Show success message (optional)
+                    const message = isEnabled ? 'Job published successfully!' : 'Job unpublished successfully!';
+                    showNotification(message, 'success');
+                } else {
+                    // Revert toggle on error
+                    toggleElement.checked = !isEnabled;
+                    showNotification('Failed to update job status. Please try again.', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error toggling job status:', error);
+                // Revert toggle on error
+                toggleElement.checked = !isEnabled;
+                showNotification('Failed to update job status. Please try again.', 'error');
+            })
+            .finally(() => {
+                // Re-enable the toggle
+                toggleElement.disabled = false;
+            });
+        });
+    });
+
+    // Helper function to show notifications
+    function showNotification(message, type) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show`;
+        alertDiv.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        document.body.appendChild(alertDiv);
+
+        // Auto-dismiss after 3 seconds
+        setTimeout(() => {
+            alertDiv.classList.remove('show');
+            setTimeout(() => alertDiv.remove(), 150);
+        }, 3000);
     }
 });
 </script>
