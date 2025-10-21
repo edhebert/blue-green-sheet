@@ -279,6 +279,11 @@
                 <a href="{{ url('jobs') }}" class="button rounded-pill">
                     <i class="bi bi-arrow-left me-2"></i>Back to All Jobs
                 </a>
+                {% if currentUser %}
+                    <a href="{{ url('profile') }}" class="button rounded-pill button-border ms-2">
+                        <i class="bi bi-person me-2"></i>Back to Your Profile
+                    </a>
+                {% endif %}
             </div>
         </div>
     </div>

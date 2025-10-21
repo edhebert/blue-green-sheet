@@ -490,7 +490,7 @@
           <div class="mb-4">
             <h5 class="fw-bold mb-3">Job Status</h5>
             {% if jobEntry.status == 'live' and jobEntry.enabled %}
-              <div class="alert alert-success">
+              <div class="alert alert-info">
                 <strong>Published:</strong> This job posting is currently live and visible to candidates.
               </div>
             {% else %}
@@ -507,15 +507,6 @@
                   <div class="form-text">Check to publish this job posting</div>
                 </label>
               </div>
-            {% else %}
-              <div class="alert alert-info">
-                <i class="bi bi-info-circle me-2"></i>
-                <strong>Payment Required</strong><br>
-                This job posting cannot be published until payment is completed.
-                <a href="{{ url('jobs/payment') }}?jobId={{ jobEntry.id }}" class="btn btn-sm btn-primary ms-2">
-                  Complete Payment
-                </a>
-              </div>
             {% endif %}
           </div>
 
@@ -530,15 +521,23 @@
             {% if not jobEntry.paid %}
               {# For unpaid/incomplete jobs, show option to complete and pay #}
               <button type="button" class="btn btn-primary btn-lg" id="saveChanges">
-                Save Changes
+                <i class="bi bi-check-circle me-2"></i>Save Changes
               </button>
-              <button type="button" class="btn btn-success btn-lg" id="completeAndPay">
-                <i class="bi bi-credit-card me-2"></i>Complete & Continue to Payment
-              </button>
+
+              {# Add visual spacing before payment section #}
+              <div class="d-grid" style="margin: 2rem 0; border-top: 2px solid #e0e0e0; padding-top: 2rem;">
+                <div class="alert alert-success mb-3">
+                  <i class="bi bi-info-circle me-2"></i>
+                  Please complete payment to finish your transaction.
+                </div>
+                <button type="button" class="btn btn-success btn-lg" id="completeAndPay">
+                  <i class="bi bi-credit-card me-2"></i>Complete & Continue to Payment
+                </button>
+              </div>
             {% else %}
               {# For paid jobs, just allow editing #}
               <button type="button" class="btn btn-primary btn-lg" id="saveChangesPaid">
-                Save Changes
+                <i class="bi bi-check-circle me-2"></i>Save Changes
               </button>
             {% endif %}
             <a href="{{ url('profile') }}" class="btn btn-outline-secondary">
