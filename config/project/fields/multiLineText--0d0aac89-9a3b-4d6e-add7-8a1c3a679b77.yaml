@@ -7,7 +7,7 @@ settings:
   byteLimit: null
   charLimit: null
   code: false
-  initialRows: 8
+  initialRows: 4
   multiline: true
   placeholder: null
   uiMode: normal

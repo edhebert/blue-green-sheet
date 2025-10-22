@@ -37,7 +37,7 @@ class Plugin extends BasePlugin
         $entry = $event->sender;
 
         // Only process entries in the 'jobs' section
-        if ($entry->section->handle !== 'jobs') {
+        if (!$entry->section || $entry->section->handle !== 'jobs') {
             return;
         }
 

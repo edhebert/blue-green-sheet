@@ -1,0 +1,56 @@
+columnSuffix: null
+handle: faqs
+instructions: null
+name: FAQs
+searchable: false
+settings:
+  addRowLabel: 'Add a new FAQ'
+  columns:
+    __assoc__:
+      -
+        - col1
+        -
+          __assoc__:
+            -
+              - heading
+              - Question
+            -
+              - handle
+              - question
+            -
+              - width
+              - ''
+            -
+              - type
+              - singleline
+      -
+        - col2
+        -
+          __assoc__:
+            -
+              - heading
+              - Answer
+            -
+              - handle
+              - answer
+            -
+              - width
+              - ''
+            -
+              - type
+              - singleline
+  defaults:
+    -
+      __assoc__:
+        -
+          - col1
+          - ''
+        -
+          - col2
+          - ''
+  maxRows: null
+  minRows: null
+  staticRows: false
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\Table

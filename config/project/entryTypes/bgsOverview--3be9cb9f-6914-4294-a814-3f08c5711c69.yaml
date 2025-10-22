@@ -1,0 +1,150 @@
+color: null
+description: 'The text content for the BGS Overview page'
+fieldLayouts:
+  79d1c59e-2f34-43a2-b6ae-4fb4c0de456c:
+    cardThumbAlignment: end
+    tabs:
+      -
+        elementCondition: null
+        elements:
+          -
+            autocapitalize: true
+            autocomplete: false
+            autocorrect: true
+            class: null
+            dateAdded: '2025-10-22T14:51:32+00:00'
+            disabled: false
+            elementCondition: null
+            id: null
+            includeInCards: false
+            inputType: null
+            instructions: 'Title of the page'
+            label: null
+            max: null
+            min: null
+            name: null
+            orientation: null
+            placeholder: null
+            providesThumbs: false
+            readonly: false
+            required: true
+            size: null
+            step: null
+            tip: null
+            title: null
+            type: craft\fieldlayoutelements\entries\EntryTitleField
+            uid: 0f831f6e-03d2-4bf2-9b9d-5554be3747a0
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-10-22T14:55:18+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: 7a6fec95-2ed4-4d18-b669-9108357adc40 # Single Line Text
+            handle: subheading
+            includeInCards: false
+            instructions: 'The subtitle that appears beneath the page title.'
+            label: 'Sub Heading'
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 09343fc2-9ad1-409d-ae1b-15d4883ea313
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-10-22T14:55:18+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: db17bc24-8930-4e0e-ab38-c2565b80dae6 # Rich Text
+            handle: body
+            includeInCards: false
+            instructions: null
+            label: Body
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 4738738a-1ab9-488a-aca9-3d8ed889d286
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-10-22T21:42:15+00:00'
+            elementCondition: null
+            type: craft\fieldlayoutelements\HorizontalRule
+            uid: 7d86c21c-ec46-40a4-b4ae-a51fc91c6868
+            userCondition: null
+          -
+            dateAdded: '2025-10-22T20:43:30+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: e80d1597-d85d-4dee-b24f-9c30d9facfb2 # Benefits
+            handle: null
+            includeInCards: false
+            instructions: null
+            label: null
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: ccb34477-5a6d-4b33-a34e-fa46191a349b
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-10-22T21:42:15+00:00'
+            elementCondition: null
+            type: craft\fieldlayoutelements\HorizontalRule
+            uid: 7f77effe-2480-460b-8695-06bb112f221b
+            userCondition: null
+          -
+            dateAdded: '2025-10-22T19:29:49+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: cb2dfb4b-5663-4178-9832-16e186499c56 # FAQs
+            handle: null
+            includeInCards: false
+            instructions: null
+            label: null
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: b24e8df8-f6a0-413c-b356-f824d738e5df
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-10-22T19:54:05+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: eca037bb-0021-4aa7-b42a-2109d045a4dc
+            handle: null
+            includeInCards: false
+            instructions: null
+            label: null
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 267f8383-984a-4216-9726-e42fe810da1a
+            userCondition: null
+            warning: null
+            width: 100
+        name: Content
+        uid: 99975a2a-99a9-4411-8aee-6c7f98c3d373
+        userCondition: null
+handle: bgsOverview
+hasTitleField: true
+icon: list-check
+name: 'BGS Overview'
+showSlugField: true
+showStatusField: true
+slugTranslationKeyFormat: null
+slugTranslationMethod: site
+titleFormat: null
+titleTranslationKeyFormat: null
+titleTranslationMethod: site

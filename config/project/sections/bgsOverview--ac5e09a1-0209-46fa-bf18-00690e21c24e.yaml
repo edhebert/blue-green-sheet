@@ -1,0 +1,21 @@
+defaultPlacement: end
+enableVersioning: true
+entryTypes:
+  -
+    uid: 3be9cb9f-6914-4294-a814-3f08c5711c69 # BGS Overview
+handle: bgsOverview
+maxAuthors: 1
+name: 'BGS Overview'
+previewTargets:
+  -
+    label: 'Primary entry page'
+    refresh: '1'
+    urlFormat: '{url}'
+propagationMethod: all
+siteSettings:
+  62b64a73-e162-4b39-97d4-ac8246ccc3e5: # Blue Green Sheet
+    enabledByDefault: true
+    hasUrls: true
+    template: overview/index.twig
+    uriFormat: overview
+type: single

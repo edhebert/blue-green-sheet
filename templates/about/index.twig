@@ -8,41 +8,16 @@
     <div class="col-lg-8">
       <!-- Header Section -->
       <div class="text-center mb-5">
-        <h1 class="display-4 fw-bold mb-3">About Blue Green Sheet</h1>
+        <h1 class="display-4 fw-bold mb-3">{{ entry.title }}</h1>
         <p class="lead text-muted">
-          Connecting independent school professionals with exceptional opportunities since 1990
+          {{ entry.subheading }}
         </p>
       </div>
 
       <!-- Main Content -->
       <div class="row g-5">
         <div class="col-12">
-          <!-- Mission Section -->
-          <div class="mb-5">
-            <h2 class="h3 fw-bold mb-4">Our Mission</h2>
-            <p class="lead mb-4">
-              BlueGreen Sheet LLC (BGS) is an independent company dedicated to connecting independent school job seekers with independent schools and their representatives.
-            </p>
-            <p class="mb-4">
-              We do not conduct searches nor do we evaluate candidates. We do not compete with search consultants in any way. We simply strive to be an efficient means for individuals looking to work at an independent school to connect with Schools and Consultants who are looking to fill positions.
-            </p>
-          </div>
-
-          <!-- Heritage Section -->
-          <div class="mb-5">
-            <h2 class="h3 fw-bold mb-4">Our Heritage</h2>
-            <p class="mb-4">
-              BGS is the successor platform to The Blue Sheet and The Green Sheet, previously owned by and founded by Educational Directions in 1990. The Blue Sheet and The Green Sheet grew to become the leading service for individuals to learn about independent school jobs and for schools and consultants to connect with exceptional candidates.
-            </p>
-          </div>
-
-          <!-- Leadership Section -->
-          <div class="mb-5">
-            <h2 class="h3 fw-bold mb-4">Our Leadership</h2>
-            <p class="mb-4">
-              BGS is managed by Lisa Higgins Dow and owned by Chase and Nicole Arnold, who are committed to continuing the tradition of excellence established over three decades ago.
-            </p>
-          </div>
+        {{ entry.body }}
         </div>
       </div>
 

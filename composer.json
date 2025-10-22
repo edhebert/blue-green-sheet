@@ -10,6 +10,7 @@
     "doublesecretagency/craft-cpcss": "3.0.0",
     "putyourlightson/craft-dashboard-begone": "3.0.0",
     "servd/craft-asset-storage": "4.2.0",
+    "verbb/expanded-singles": "3.0.3",
     "verbb/formie": "3.1.4",
     "vlucas/phpdotenv": "^5.4.0"
   },

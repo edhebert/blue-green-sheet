@@ -1,6 +1,6 @@
 {% extends "_layout.twig" %}
 
-{% block title %}{{ entry.title }}{{ siteName }}{% endblock %}
+{% block title %}BGS Overview · {{ siteName }}{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -8,14 +8,13 @@
     <div class="col-lg-8">
       <!-- Header Section -->
       <div class="text-center mb-5">
-        <h1 class="display-4 fw-bold mb-3">{{ entry.title }}</h1>
+        <h1 class="display-4 fw-bold mb-3">BGS Overview</h1>
         <p class="lead text-muted">
-          {{ entry.subheading }}
+          Understanding Blue Green Sheet's mission, services, and pricing
         </p>
       </div>
 
-      {{ entry.body }}
-      {# <!-- What We Do Section -->
+      <!-- What We Do Section -->
       <div class="mb-5">
         <div class="card border-0 shadow-sm mb-4">
           <div class="card-body p-4">
@@ -152,49 +151,96 @@
           </div>
         </div>
       </div>
-#}
+
       <!-- Platform Benefits -->
       <div class="row g-4 mt-5">
-        {% for block in entry.benefits %}
-            <div class="col-md-4 text-center">
-            <div class="mb-3">
-                <i class="fa-solid fa-{{ block.iconClass }} text-primary" style="font-size: 2rem;"></i>
-            </div>
-            <h4 class="h6 fw-bold">{{ block.title }}</h4>
-            <p class="text-muted small">
-                {{ block.benefitDescription }}
-            </p>
-            </div>            
-        {% endfor %}
-
-
+        <div class="col-md-4 text-center">
+          <div class="mb-3">
+            <i class="bi bi-mortarboard-fill text-primary" style="font-size: 2rem;"></i>
+          </div>
+          <h4 class="h6 fw-bold">Education Focused</h4>
+          <p class="text-muted small">
+            Specialized exclusively for educational institutions and professionals - no generic job board clutter.
+          </p>
+        </div>
+        <div class="col-md-4 text-center">
+          <div class="mb-3">
+            <i class="bi bi-graph-up text-primary" style="font-size: 2rem;"></i>
+          </div>
+          <h4 class="h6 fw-bold">Simple & Effective</h4>
+          <p class="text-muted small">
+            Straightforward job posting process with transparent pricing - no hidden fees or complex packages.
+          </p>
+        </div>
+        <div class="col-md-4 text-center">
+          <div class="mb-3">
+            <i class="bi bi-heart-fill text-primary" style="font-size: 2rem;"></i>
+          </div>
+          <h4 class="h6 fw-bold">Candidate Friendly</h4>
+          <p class="text-muted small">
+            Free access for job seekers creates a larger, more engaged pool of educational professionals.
+          </p>
+        </div>
+      </div>
 
       <!-- FAQ Section -->
       <div class="mt-5">
         <h3 class="h4 text-center mb-4">Common Questions</h3>
         <div class="accordion" id="overviewFAQ">
 
-          {% for item in entry.faqs %}
-            <div class="accordion-item border-0 mb-3">
-                <h4 class="accordion-header">
-                <button class="accordion-button collapsed bg-light border-0 rounded" type="button" data-bs-toggle="collapse" data-bs-target="#faq{{ loop.index }}">
-                    {{ item.question }}
-                </button>
-                </h4>
-                <div id="faq{{ loop.index }}" class="accordion-collapse collapse" data-bs-parent="#overviewFAQ">
-                    <div class="accordion-body">
-                        {{ item.answer }}
-                    </div>
-                </div>
-            </div>            
-          {% endfor %}
+          <div class="accordion-item border-0 mb-3">
+            <h4 class="accordion-header">
+              <button class="accordion-button collapsed bg-light border-0 rounded" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                Do you help with the hiring process?
+              </button>
+            </h4>
+            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#overviewFAQ">
+              <div class="accordion-body">
+                No, we are strictly a job board platform. We don't screen candidates, conduct interviews, or provide recruitment services. We simply connect employers with job seekers through our specialized platform.
+              </div>
+            </div>
+          </div>
 
+          <div class="accordion-item border-0 mb-3">
+            <h4 class="accordion-header">
+              <button class="accordion-button collapsed bg-light border-0 rounded" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                Why should candidates use Blue Green Sheet over other job boards?
+              </button>
+            </h4>
+            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#overviewFAQ">
+              <div class="accordion-body">
+                Blue Green Sheet specializes exclusively in educational leadership positions, so candidates find relevant opportunities without filtering through unrelated jobs. Plus, it's completely free for job seekers to search - no registration required.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item border-0 mb-3">
+            <h4 class="accordion-header">
+              <button class="accordion-button collapsed bg-light border-0 rounded" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                What makes your pricing different from other job boards?
+              </button>
+            </h4>
+            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#overviewFAQ">
+              <div class="accordion-body">
+                We offer simple, transparent pricing with just two options - no confusing packages or hidden fees. You pay once and your job stays active for the full duration. Most general job boards charge monthly fees or have complex pricing tiers.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item border-0 mb-3">
+            <h4 class="accordion-header">
+              <button class="accordion-button collapsed bg-light border-0 rounded" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                How do I get started as a school or recruiter?
+              </button>
+            </h4>
+            <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#overviewFAQ">
+              <div class="accordion-body">
+                Simply create a free account, post your job with all the details, and choose your posting duration (6 or 12 months). After payment, your job goes live and stays active for the full duration you selected.
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-
-
-
-      
     </div>
   </div>
 </div>

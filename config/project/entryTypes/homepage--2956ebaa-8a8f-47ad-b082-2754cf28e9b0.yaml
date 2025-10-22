@@ -1,0 +1,70 @@
+color: null
+description: null
+fieldLayouts:
+  7e67348e-322e-4b99-89e6-d24c1e3a2415:
+    cardThumbAlignment: end
+    tabs:
+      -
+        elementCondition: null
+        elements:
+          -
+            autocapitalize: true
+            autocomplete: false
+            autocorrect: true
+            class: null
+            dateAdded: '2025-10-22T13:30:02+00:00'
+            disabled: false
+            elementCondition: null
+            id: null
+            includeInCards: false
+            inputType: null
+            instructions: 'This is the main heading at the top of the homepage'
+            label: 'Main Heading'
+            max: null
+            min: null
+            name: null
+            orientation: null
+            placeholder: null
+            providesThumbs: false
+            readonly: false
+            required: true
+            size: null
+            step: null
+            tip: null
+            title: null
+            type: craft\fieldlayoutelements\entries\EntryTitleField
+            uid: f243700f-8757-4178-9698-2aac94f37d46
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-10-22T13:33:33+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: 7a6fec95-2ed4-4d18-b669-9108357adc40 # Single Line Text
+            handle: subheading
+            includeInCards: false
+            instructions: 'This is the subheading on the homepage, appearing just underneath the main heading.'
+            label: Subheading
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: ac498133-069a-4bc1-a798-1ab15e9c7e0e
+            userCondition: null
+            warning: null
+            width: 100
+        name: Content
+        uid: 3bbb9f8a-35ad-48ec-ba08-96afcad66a08
+        userCondition: null
+handle: homepage
+hasTitleField: true
+icon: house
+name: Homepage
+showSlugField: true
+showStatusField: true
+slugTranslationKeyFormat: null
+slugTranslationMethod: site
+titleFormat: null
+titleTranslationKeyFormat: null
+titleTranslationMethod: site

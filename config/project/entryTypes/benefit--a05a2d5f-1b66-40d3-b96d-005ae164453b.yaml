@@ -1,0 +1,87 @@
+color: null
+description: null
+fieldLayouts:
+  fdcd0983-ce3f-43f0-95d8-77583bef4bfc:
+    cardThumbAlignment: end
+    tabs:
+      -
+        elementCondition: null
+        elements:
+          -
+            dateAdded: '2025-10-22T19:49:12+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: 23728677-e935-45a9-be09-8db255d1d4cb # Icon
+            handle: null
+            includeInCards: false
+            instructions: null
+            label: null
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 168fc5ae-78c8-4ed6-80d5-b4733ae86819
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            autocapitalize: true
+            autocomplete: false
+            autocorrect: true
+            class: null
+            dateAdded: '2025-10-22T19:46:23+00:00'
+            disabled: false
+            elementCondition: null
+            id: null
+            includeInCards: false
+            inputType: null
+            instructions: null
+            label: Benefit
+            max: null
+            min: null
+            name: null
+            orientation: null
+            placeholder: null
+            providesThumbs: false
+            readonly: false
+            required: true
+            size: null
+            step: null
+            tip: null
+            title: null
+            type: craft\fieldlayoutelements\entries\EntryTitleField
+            uid: d0e44423-eafe-4233-bd61-f35c6ee9ae5e
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-10-22T21:44:38+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: 7a6fec95-2ed4-4d18-b669-9108357adc40 # Single Line Text
+            handle: benefitDescription
+            includeInCards: false
+            instructions: null
+            label: 'Benefit Description'
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: dc8bbbbf-4c26-4d02-9a2b-da6238244d5a
+            userCondition: null
+            warning: null
+            width: 100
+        name: Content
+        uid: 2e7fbfc5-f020-4f13-91d8-6488073de56b
+        userCondition: null
+handle: benefit
+hasTitleField: true
+icon: thumbs-up
+name: Benefit
+showSlugField: false
+showStatusField: false
+slugTranslationKeyFormat: null
+slugTranslationMethod: site
+titleFormat: null
+titleTranslationKeyFormat: null
+titleTranslationMethod: site
