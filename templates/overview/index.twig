@@ -20,11 +20,11 @@
 
       {% for block in entry.capability %}
         <div class="mb-5">
-            <div class="card border-0 shadow-sm mb-4" style="border-left: 4px solid {{ block.color }} !important;">
+            <div class="card border-0 shadow-sm mb-4" {% if block.color|length %} style="border-left: 4px solid {{ block.color }} !important;" {% endif %} >
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center mb-3">
                         <i class="fa-solid fa-{{ block.titleIcon }} me-3" style="font-size: 1.5rem; color: {{ block.color }}"></i>
-                        <h2 class="h4 fw-bold mb-0" style="color:{{ block.color }}">{{ block.title }}</h2>
+                        <h2 class="h3 fw-bold mb-0" style="color:{{ block.color }}">{{ block.title }}</h2>
                     </div>
                     <p class="mb-4">
                     {{ block.body }}
@@ -49,16 +49,20 @@
                         {% endfor %}
                     </div>
 
-                    {% if block.color.label == "Blue" %}
-                        {% set colorClasses = "alert alert-info border-start border-1 border-info" %}
-                    {% elseif  block.color.label == "Green" %}
-                        {% set colorClasses = "alert alert-success border-start border-1 border-success" %}   
-                    {% elseif  block.color.label == "Red" %}
-                        {% set colorClasses = "alert alert-danger border-start border-1 border-danger" %}           
+                    {% if block.color|length %}
+                    
+                        {% if block.color.label == "Blue" %}
+                            {% set colorClasses = "alert alert-info border-start border-1 border-info" %}
+                        {% elseif  block.color.label == "Green" %}
+                            {% set colorClasses = "alert alert-success border-start border-1 border-success" %}   
+                        {% elseif  block.color.label == "Red" %}
+                            {% set colorClasses = "alert alert-danger border-start border-1 border-danger" %}  
+                        {% endif %}
+
                     {% endif %}
                     
                     {% if block.banner|length %}               
-                        <div class="{{ colorClasses }} mt-4">
+                        <div class=" {% if block.color|length %} {{ colorClasses }} {% endif %} mt-4">
                             <p class="mb-0">
                                 {{ block.banner }}
                             </p>
@@ -71,65 +75,6 @@
 
       {% endfor %}
 
-
-  {#     <!-- What We Don't Do Section -->
-      <div class="mb-5">
-        <div class="card border-0 shadow-sm mb-4" style="border-left: 4px solid #dc3545 !important;">
-          <div class="card-body p-4">
-            <div class="d-flex align-items-center mb-3">
-              <i class="bi bi-x-circle-fill text-danger me-3" style="font-size: 1.5rem;"></i>
-              <h2 class="h4 fw-bold mb-0 text-danger">What We Don't Do</h2>
-            </div>
-            <p class="mb-3">
-              It's important to understand that Blue Green Sheet is <strong>not a recruitment agency</strong> or headhunting service.
-            </p>
-
-            <h3 class="h5 fw-bold mb-3">We Do NOT Provide:</h3>
-            <ul class="list-unstyled">
-              <li class="mb-2"><i class="bi bi-x text-danger me-2"></i><strong>Executive search services</strong> - We don't actively recruit candidates for you</li>
-              <li class="mb-2"><i class="bi bi-x text-danger me-2"></i><strong>Candidate screening</strong> - We don't pre-screen or interview candidates</li>
-              <li class="mb-2"><i class="bi bi-x text-danger me-2"></i><strong>Placement guarantees</strong> - We don't guarantee successful hires</li>
-              <li class="mb-2"><i class="bi bi-x text-danger me-2"></i><strong>Recruiting consultation</strong> - We don't provide hiring strategy advice</li>
-            </ul>
-
-            <div class="alert alert-light border-start border-4 border-warning mt-4">
-              <p class="mb-0">
-                <strong>Our role is simple:</strong> We provide the platform for you to showcase your opportunities to qualified educational professionals who are actively seeking new positions.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Free Search Section -->
-      <div class="mb-5">
-        <div class="card border-0 shadow-sm" style="border-left: 4px solid #198754 !important;">
-          <div class="card-body p-4">
-            <div class="d-flex align-items-center mb-3">
-              <i class="bi bi-search text-success me-3" style="font-size: 1.5rem;"></i>
-              <h2 class="h4 fw-bold mb-0 text-success">Free for Job Seekers</h2>
-            </div>
-            <p class="mb-3">
-              Educational professionals can search and browse all job opportunities on Blue Green Sheet completely free of charge.
-            </p>
-
-            <h3 class="h5 fw-bold mb-3">Candidates Can:</h3>
-            <ul class="list-unstyled">
-              <li class="mb-2"><i class="bi bi-check text-success me-2"></i><strong>Search unlimited job postings</strong> - No registration required to browse</li>
-              <li class="mb-2"><i class="bi bi-check text-success me-2"></i><strong>Filter by location, category, and keywords</strong> - Find exactly what they're looking for</li>
-              <li class="mb-2"><i class="bi bi-check text-success me-2"></i><strong>Access job details and contact information</strong> - Connect directly with employers</li>
-              <li class="mb-2"><i class="bi bi-check text-success me-2"></i><strong>View and download job attachments</strong> - Get complete application information</li>
-            </ul>
-
-            <div class="alert alert-info border-start border-4 border-info mt-4">
-              <p class="mb-0">
-                <strong>Our mission:</strong> Remove barriers for educational professionals seeking new opportunities while providing institutions with targeted access to qualified candidates.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-#}
       <!-- Action Section -->
       <div class="text-center">
         <div class="card border-0" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
@@ -166,7 +111,7 @@
         {% for block in entry.benefits %}
             <div class="col-md-4 text-center">
             <div class="mb-3">
-                <i class="fa-solid fa-{{ block.iconClass }} text-primary" style="font-size: 2rem;"></i>
+                <i class=" {% if block.iconClass|length %} fa-solid fa-{{ block.iconClass }} {% endif %} text-primary" style="font-size: 2rem;"></i>
             </div>
             <h4 class="h6 fw-bold">{{ block.title }}</h4>
             <p class="text-muted small">
