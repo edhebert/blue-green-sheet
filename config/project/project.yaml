@@ -1,4 +1,4 @@
-dateModified: 1761169535
+dateModified: 1761173241
 elementSources:
   craft\elements\Entry:
     -
@@ -247,6 +247,7 @@ meta:
     c8a0406a-b6dc-4a1e-a316-5a75ff4d23da: 'Job Categories' # Job Categories
     c35140bb-4530-44c6-be76-e4d189e69dd2: 'Stripe Session ID' # Stripe Session ID
     cb2dfb4b-5663-4178-9832-16e186499c56: FAQs # FAQs
+    cd9c11b3-1c0d-4a4b-ae79-0936f8f95647: Color # Color
     cdf1f46c-3d43-42f5-9d50-85377f321e61: 'Job Region' # Job Region
     d7dc833f-5a4c-4d69-b420-d981939487ea: 'BGS Staff' # BGS Staff
     db17bc24-8930-4e0e-ab38-c2565b80dae6: 'Rich Text' # Rich Text

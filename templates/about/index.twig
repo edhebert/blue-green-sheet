@@ -15,7 +15,7 @@
       </div>
 
       <!-- Main Content -->
-      <div class="row g-5">
+      <div class="row g-5 mb-5">
         <div class="col-12">
         {{ entry.body }}
         </div>
@@ -23,33 +23,20 @@
 
       <!-- Values Section -->
       <div class="row g-4 mb-5">
-        <div class="col-md-4 text-center">
-          <div class="mb-3">
-            <i class="bi bi-people-fill text-primary" style="font-size: 3rem;"></i>
-          </div>
-          <h3 class="h5 fw-bold mb-3">Connection</h3>
-          <p class="text-muted">
-            We facilitate meaningful connections between talented educators and outstanding independent schools.
-          </p>
+      {% for block in entry.benefits %}
+            <div class="col-md-4 text-center">
+            <div class="mb-3">
+                <i class="fa-solid fa-{{ block.iconClass }} text-primary" style="font-size: 3rem;"></i>
+            </div>
+            <h3 class="h5 fw-bold mb-3">{{ block.title }}</h3>
+            <p class="text-muted">
+                {{ block.benefitDescription }}
+            </p>
         </div>
-        <div class="col-md-4 text-center">
-          <div class="mb-3">
-            <i class="bi bi-award text-primary" style="font-size: 3rem;"></i>
-          </div>
-          <h3 class="h5 fw-bold mb-3">Excellence</h3>
-          <p class="text-muted">
-            Building on 30+ years of experience serving the independent school community with distinction.
-          </p>
-        </div>
-        <div class="col-md-4 text-center">
-          <div class="mb-3">
-            <i class="bi bi-compass text-primary" style="font-size: 3rem;"></i>
-          </div>
-          <h3 class="h5 fw-bold mb-3">Focus</h3>
-          <p class="text-muted">
-            We specialize exclusively in independent school positions, ensuring targeted and relevant matches.
-          </p>
-        </div>
+
+
+      {% endfor %}
+
       </div>
 
       {# <!-- Stats Section -->
@@ -83,11 +70,11 @@
             <p class="text-muted mb-4">
               Browse our current job openings and find your next career opportunity.
             </p>
-            <a href="{{ url('jobs') }}" class="button button-xlarge button-rounded px-4 me-3">
+            <a href="{{ url('jobs') }}" class="button button-xlarge rounded-pill px-4 me-3">
               <i class="bi bi-search me-2"></i>Browse Jobs
             </a>
             {% if currentUser.can('postJobs') %}
-              <a href="{{ url('jobs/post') }}" class="button button-xlarge button-rounded button-border px-4">
+              <a href="{{ url('jobs/post') }}" class="button button-xlarge rounded-pill button-border px-4">
                 <i class="bi bi-plus-circle me-2"></i>Post a Job
               </a>
             {% endif %}
@@ -100,10 +87,10 @@
               Whether you're seeking your next opportunity or looking to hire exceptional talent, we're here to help.
             </p>
             <div class="d-flex gap-3 justify-content-center flex-wrap">
-              <a href="{{ url('login') }}" class="button button-xlarge button-rounded px-4">
+              <a href="{{ url('login') }}" class="button button-xlarge rounded-pill px-4">
                 <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
               </a>
-              <a href="{{ url('register') }}" class="button button-xlarge button-rounded button-border px-4">
+              <a href="{{ url('register') }}" class="button button-xlarge rounded-pill button-border px-4">
                 <i class="bi bi-person-plus me-2"></i>Create Account
               </a>
             </div>

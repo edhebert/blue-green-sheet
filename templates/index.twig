@@ -119,10 +119,29 @@
 
                 {# Recruiter Attribution (if posted by recruiter) #}
                 {% if isRecruiterPosted %}
-                  <p class="text-muted small fst-italic mb-3 text-center" style="position: relative; z-index: 2;">
-                    <a href="{{ listingOrg.url }}" style="display:block; margin: 0 auto;" class="mt-5 mb-3"><img src="{{ listingOrg.logo.one().url('height50') }}" alt="{{ listingOrg.title }}"></a>
-                    Search being conducted by<br> <a href="{{ listingOrg.url }}" class="text-decoration-none" style="position: relative;">{{ listingOrg.title }}</a>
-                  </p>
+                  {% if listingOrg.logo|length %}
+                    <p class="text-muted small fst-italic mb-3 text-center" style="position: relative; z-index: 2;">
+                      <a href="{{ listingOrg.url }}" style="display:block; margin: 0 auto;" class="mt-5 mb-3"><img src="{{ listingOrg.logo.one().url('height50') }}" alt="{{ listingOrg.title }}" style="max-height: 50px; max-width: 100%;"></a>
+                      Search being conducted by<br> <a href="{{ listingOrg.url }}" class="text-decoration-none" style="position: relative;">{{ listingOrg.title }}</a>
+                    </p>
+                  {% else %}
+                    {# Show initials if no logo #}
+                    {% set words = listingOrg.title|split(' ') %}
+                    {% set initials = '' %}
+                    {% for word in words %}
+                      {% if word|length > 0 and loop.index <= 3 %}
+                        {% set initials = initials ~ word|slice(0, 1)|upper %}
+                      {% endif %}
+                    {% endfor %}
+                    <div class="text-center" style="position: relative; z-index: 2;">
+                      <a href="{{ listingOrg.url }}" style="display:block; margin: 0 auto;" class="mt-5 mb-3"><div class="org-initials mb-3" style="width: 50px; height: 50px; background-color: #e3f2fd; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin: 0 auto; margin-top: 1.25rem; margin-bottom: 1rem;">
+                        <span style="font-size: 0.875rem; font-weight: 600; color: #1976d2;">{{ initials }}</span>
+                      </div></a>
+                      <p class="text-muted small fst-italic mb-3" style="position: relative;">
+                        Search being conducted by<br> <a href="{{ listingOrg.url }}" class="text-decoration-none">{{ listingOrg.title }}</a>
+                      </p>
+                    </div>
+                  {% endif %}
                 {% endif %}
               </div>
             </div>

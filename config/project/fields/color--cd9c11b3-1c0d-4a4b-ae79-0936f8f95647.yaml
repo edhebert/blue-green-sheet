@@ -1,0 +1,44 @@
+columnSuffix: null
+handle: color
+instructions: 'Choose a highlight color. Leave blank to keep the content with default page style'
+name: Color
+searchable: false
+settings:
+  allowCustomColors: false
+  palette:
+    -
+      __assoc__:
+        -
+          - color
+          - '#198754'
+        -
+          - label
+          - Green
+        -
+          - default
+          - ''
+    -
+      __assoc__:
+        -
+          - color
+          - '#dc3545'
+        -
+          - label
+          - Red
+        -
+          - default
+          - ''
+    -
+      __assoc__:
+        -
+          - color
+          - '#004bad'
+        -
+          - label
+          - Blue
+        -
+          - default
+          - ''
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\Color
