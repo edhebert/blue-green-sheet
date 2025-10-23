@@ -1,24 +1,41 @@
 color: null
-description: 'The text content for the BGS Overview page'
+description: null
 fieldLayouts:
-  79d1c59e-2f34-43a2-b6ae-4fb4c0de456c:
+  fc8506af-71d1-44b6-9110-8680d299a9ba:
     cardThumbAlignment: end
     tabs:
       -
         elementCondition: null
         elements:
           -
+            dateAdded: '2025-10-23T18:21:12+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: cd9c11b3-1c0d-4a4b-ae79-0936f8f95647 # Color
+            handle: null
+            includeInCards: false
+            instructions: null
+            label: null
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 1933dd2a-2f26-48ef-9e6c-e50876e932d3
+            userCondition: null
+            warning: null
+            width: 100
+          -
             autocapitalize: true
             autocomplete: false
             autocorrect: true
             class: null
-            dateAdded: '2025-10-22T14:51:32+00:00'
+            dateAdded: '2025-10-23T18:08:10+00:00'
             disabled: false
             elementCondition: null
             id: null
             includeInCards: false
             inputType: null
-            instructions: 'Title of the page'
+            instructions: null
             label: null
             max: null
             min: null
@@ -33,120 +50,85 @@ fieldLayouts:
             tip: null
             title: null
             type: craft\fieldlayoutelements\entries\EntryTitleField
-            uid: 0f831f6e-03d2-4bf2-9b9d-5554be3747a0
+            uid: 6e8faed9-e787-40bf-ad22-f989d41fbb1e
             userCondition: null
             warning: null
             width: 100
           -
-            dateAdded: '2025-10-22T14:55:18+00:00'
+            dateAdded: '2025-10-23T18:21:12+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: 23728677-e935-45a9-be09-8db255d1d4cb # Icon
+            handle: titleIcon
+            includeInCards: false
+            instructions: null
+            label: 'Title Icon'
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 3fb6dd2e-6aa2-46f7-977a-48040bd47fd9
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-10-23T18:56:21+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: db17bc24-8930-4e0e-ab38-c2565b80dae6 # Rich Text
+            handle: body
+            includeInCards: false
+            instructions: null
+            label: Body
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: bb5476af-672f-4691-95c0-7e811e12ee11
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-10-23T18:33:02+00:00'
+            editCondition: null
+            elementCondition: null
+            fieldUid: 942ebfb2-eed8-462b-a9fe-651fba4a252f # List
+            handle: null
+            includeInCards: false
+            instructions: null
+            label: null
+            providesThumbs: false
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 311c8659-ba67-445a-8138-690adc40610e
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2025-10-23T18:42:45+00:00'
             editCondition: null
             elementCondition: null
             fieldUid: 7a6fec95-2ed4-4d18-b669-9108357adc40 # Single Line Text
-            handle: subheading
-            includeInCards: false
-            instructions: 'The subtitle that appears beneath the page title.'
-            label: 'Sub Heading'
-            providesThumbs: false
-            required: false
-            tip: null
-            type: craft\fieldlayoutelements\CustomField
-            uid: 09343fc2-9ad1-409d-ae1b-15d4883ea313
-            userCondition: null
-            warning: null
-            width: 100
-          -
-            dateAdded: '2025-10-23T18:23:38+00:00'
-            elementCondition: null
-            type: craft\fieldlayoutelements\HorizontalRule
-            uid: ba42bad4-04a7-4d08-ba75-b7e934ed26da
-            userCondition: null
-          -
-            dateAdded: '2025-10-23T18:23:38+00:00'
-            editCondition: null
-            elementCondition: null
-            fieldUid: 715d5fae-b704-4b01-8261-112b66dbd693 # Capability
-            handle: null
+            handle: banner
             includeInCards: false
             instructions: null
-            label: null
+            label: Banner
             providesThumbs: false
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
-            uid: 621312f8-2e52-484f-8936-ca49afefe7b6
-            userCondition: null
-            warning: null
-            width: 100
-          -
-            dateAdded: '2025-10-22T21:42:15+00:00'
-            elementCondition: null
-            type: craft\fieldlayoutelements\HorizontalRule
-            uid: 7d86c21c-ec46-40a4-b4ae-a51fc91c6868
-            userCondition: null
-          -
-            dateAdded: '2025-10-22T20:43:30+00:00'
-            editCondition: null
-            elementCondition: null
-            fieldUid: e80d1597-d85d-4dee-b24f-9c30d9facfb2 # Benefits
-            handle: null
-            includeInCards: false
-            instructions: null
-            label: null
-            providesThumbs: false
-            required: false
-            tip: null
-            type: craft\fieldlayoutelements\CustomField
-            uid: ccb34477-5a6d-4b33-a34e-fa46191a349b
-            userCondition: null
-            warning: null
-            width: 100
-          -
-            dateAdded: '2025-10-22T21:42:15+00:00'
-            elementCondition: null
-            type: craft\fieldlayoutelements\HorizontalRule
-            uid: 7f77effe-2480-460b-8695-06bb112f221b
-            userCondition: null
-          -
-            dateAdded: '2025-10-22T19:29:49+00:00'
-            editCondition: null
-            elementCondition: null
-            fieldUid: cb2dfb4b-5663-4178-9832-16e186499c56 # FAQs
-            handle: null
-            includeInCards: false
-            instructions: null
-            label: null
-            providesThumbs: false
-            required: false
-            tip: null
-            type: craft\fieldlayoutelements\CustomField
-            uid: b24e8df8-f6a0-413c-b356-f824d738e5df
-            userCondition: null
-            warning: null
-            width: 100
-          -
-            dateAdded: '2025-10-22T19:54:05+00:00'
-            editCondition: null
-            elementCondition: null
-            fieldUid: eca037bb-0021-4aa7-b42a-2109d045a4dc
-            handle: null
-            includeInCards: false
-            instructions: null
-            label: null
-            providesThumbs: false
-            required: false
-            tip: null
-            type: craft\fieldlayoutelements\CustomField
-            uid: 267f8383-984a-4216-9726-e42fe810da1a
+            uid: 50374d72-3cc0-4346-b52d-b629e8c04435
             userCondition: null
             warning: null
             width: 100
         name: Content
-        uid: 99975a2a-99a9-4411-8aee-6c7f98c3d373
+        uid: 85fa2848-d454-4b79-8330-34b0a8d40d68
         userCondition: null
-handle: bgsOverview
+handle: capability
 hasTitleField: true
-icon: list-check
-name: 'BGS Overview'
+icon: check
+name: Capability
 showSlugField: true
 showStatusField: true
 slugTranslationKeyFormat: null

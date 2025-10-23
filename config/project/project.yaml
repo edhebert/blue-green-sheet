@@ -1,4 +1,4 @@
-dateModified: 1761173241
+dateModified: 1761246603
 elementSources:
   craft\elements\Entry:
     -
@@ -94,10 +94,7 @@ elementSources:
       disabled: false
       key: '*'
       tableAttributes:
-        - status
         - fullName
-        - email
-        - 'field:a026cacb-2f40-4011-b87d-a1beb7552037' # Organization
       type: native
     -
       defaultSort:
@@ -160,6 +157,9 @@ elementSources:
         - username
         - 'field:a026cacb-2f40-4011-b87d-a1beb7552037' # Organization
       type: native
+    -
+      key: 'group:d7dc833f-5a4c-4d69-b420-d981939487ea' # BGS Staff
+      type: native
 email:
   fromEmail: ed+bgs@theblueocean.com
   fromName: 'Blue Green Sheet'
@@ -207,6 +207,7 @@ meta:
     1a3f5855-170a-4899-beb8-07ee6d556899: TBO # TBO
     1ccad001-55ba-4d90-83b5-00addcccf854: 'Job Posters' # Job Posters
     1f0b0042-74ac-4177-b1cf-513c884f116a: 'Paid?' # Paid?
+    2a6c91f1-6aa5-4888-bb82-6991538006cb: 'List Items' # List Items
     2d59f6f9-f9d0-47fa-9e56-3a6ca495d7b7: height100 # height100
     2fcab9d0-3904-4d93-95d0-870fccb5c2cc: About # About
     3be9cb9f-6914-4294-a814-3f08c5711c69: 'BGS Overview' # BGS Overview
@@ -229,6 +230,8 @@ meta:
     0279dfbc-1019-4d0b-83dc-034b6e185d12: 'Contact Form' # Contact Form
     314e8ab4-95e5-49d8-82e0-08c98192bb23: Jobs # Jobs
     714bebd8-ef6b-4ca1-9139-6f662b0071dd: Simple # Simple
+    715d5fae-b704-4b01-8261-112b66dbd693: Capability # Capability
+    942ebfb2-eed8-462b-a9fe-651fba4a252f: List # List
     2956ebaa-8a8f-47ad-b082-2754cf28e9b0: Homepage # Homepage
     6407ff57-cf24-424a-8a4f-34c0137e2feb: Country # Country
     23728677-e935-45a9-be09-8db255d1d4cb: Icon # Icon
@@ -236,6 +239,7 @@ meta:
     a05a2d5f-1b66-40d3-b96d-005ae164453b: Benefit # Benefit
     a7ace354-3f52-4d0a-87b1-96da5efcc457: 'Job Attachments' # Job Attachments
     a7f14968-b153-4b66-9ebf-cf75f8135561: About # About
+    a614cd34-b5bb-4da6-84ca-e87cdf407ee9: List # List
     abe08477-7396-48a3-b1cb-3e492e201e56: Organizations # Organizations
     ac5e09a1-0209-46fa-bf18-00690e21c24e: 'BGS Overview' # BGS Overview
     afc27a98-498b-4fda-8c1e-c5eda8fcc52e: 'Job Region' # Job Region
@@ -251,6 +255,7 @@ meta:
     cdf1f46c-3d43-42f5-9d50-85377f321e61: 'Job Region' # Job Region
     d7dc833f-5a4c-4d69-b420-d981939487ea: 'BGS Staff' # BGS Staff
     db17bc24-8930-4e0e-ab38-c2565b80dae6: 'Rich Text' # Rich Text
+    dc90060e-fe9a-4e46-85b1-80079ba69b68: Capability # Capability
     e80d1597-d85d-4dee-b24f-9c30d9facfb2: Benefits # Benefits
     f4e9368b-2d36-4ac5-b087-d0b8a3e8079f: State # State
 plugins:

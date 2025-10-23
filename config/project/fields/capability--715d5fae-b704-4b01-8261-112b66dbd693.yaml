@@ -1,0 +1,29 @@
+columnSuffix: null
+handle: capability
+instructions: null
+name: Capability
+searchable: false
+settings:
+  createButtonLabel: 'Add a Capability'
+  defaultIndexViewMode: cards
+  enableVersioning: false
+  entryTypes:
+    -
+      __assoc__:
+        -
+          - uid
+          - dc90060e-fe9a-4e46-85b1-80079ba69b68 # Capability
+        -
+          - group
+          - General
+  includeTableView: false
+  maxEntries: null
+  minEntries: null
+  pageSize: null
+  propagationKeyFormat: null
+  propagationMethod: all
+  showCardsInGrid: false
+  viewMode: blocks
+translationKeyFormat: null
+translationMethod: site
+type: craft\fields\Matrix

@@ -15,56 +15,64 @@
       </div>
 
       {{ entry.body }}
-      {# <!-- What We Do Section -->
-      <div class="mb-5">
-        <div class="card border-0 shadow-sm mb-4">
-          <div class="card-body p-4">
-            <div class="d-flex align-items-center mb-3">
-              <i class="bi bi-check-circle-fill text-success me-3" style="font-size: 1.5rem;"></i>
-              <h2 class="h4 fw-bold mb-0 text-success">What We Do</h2>
-            </div>
-            <p class="mb-4">
-              Blue Green Sheet is a specialized job board platform designed exclusively for independent educational institutions and admininistrative professionals. We provide a streamlined way for independent schools to connect with qualified candidates.
-            </p>
+      
+      <!-- What We Do Section -->
 
-            <h3 class="h5 fw-bold mb-3">Job Advertisement Services</h3>
-            <p class="mb-3">
-              We offer premium job posting services with two flexible options to meet your hiring needs:
-            </p>
+      {% for block in entry.capability %}
+        <div class="mb-5">
+            <div class="card border-0 shadow-sm mb-4" style="border-left: 4px solid {{ block.color }} !important;">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fa-solid fa-{{ block.titleIcon }} me-3" style="font-size: 1.5rem; color: {{ block.color }}"></i>
+                        <h2 class="h4 fw-bold mb-0" style="color:{{ block.color }}">{{ block.title }}</h2>
+                    </div>
+                    <p class="mb-4">
+                    {{ block.body }}
+                    </p>
 
-            <div class="row g-3 mb-4">
-              <div class="col-md-6">
-                <div class="border rounded p-3 h-100">
-                  <h4 class="fw-bold text-primary mb-2">6-Month Posting - $300</h4>
-                  <ul class="list-unstyled small">
-                    <li class="mb-1"><i class="bi bi-check text-success me-2"></i>6 months of visibility</li>
-                    <li class="mb-1"><i class="bi bi-check text-success me-2"></i>Featured in search results</li>
-                    <li class="mb-1"><i class="bi bi-check text-success me-2"></i>Upload job attachments</li>
-                    <li class="mb-1"><i class="bi bi-check text-success me-2"></i>Perfect for most positions</li>
-                  </ul>
+                    <div class="row g-3 mb-4">
+                        {% set totalCount = block.list|length %}
+                        {% for item in block.list %} 
+                            {# set the number of colums based on the loop length  #}
+                            <div class="col-md-{{ 12 / totalCount }}">
+                                <div class="border rounded p-3 h-100">
+                                    <h4 class="fw-bold mb-2" style="color:{{ block.color }}">{{  item.title }}</h4>
+                                    <ul class="list-unstyled small">
+                                        {% for myList in item.listItems %}
+                                            
+                                        <li class="mb-1"><i class="fa-solid fa-{{ item.listIcon }} me-2" style="color:{{ block.color }} "></i>{{myList.listItem}}</li>
+
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    {% if block.color.label == "Blue" %}
+                        {% set colorClasses = "alert alert-info border-start border-1 border-info" %}
+                    {% elseif  block.color.label == "Green" %}
+                        {% set colorClasses = "alert alert-success border-start border-1 border-success" %}   
+                    {% elseif  block.color.label == "Red" %}
+                        {% set colorClasses = "alert alert-danger border-start border-1 border-danger" %}           
+                    {% endif %}
+                    
+                    {% if block.banner|length %}               
+                        <div class="{{ colorClasses }} mt-4">
+                            <p class="mb-0">
+                                {{ block.banner }}
+                            </p>
+                        </div>
+                    {% endif %}
                 </div>
-              </div>
-              <div class="col-md-6">
-                <div class="border rounded p-3 h-100">
-                  <h4 class="fw-bold text-primary mb-2">12-Month Posting - $400</h4>
-                  <ul class="list-unstyled small">
-                    <li class="mb-1"><i class="bi bi-check text-success me-2"></i>12 months of visibility</li>
-                    <li class="mb-1"><i class="bi bi-check text-success me-2"></i>Extended reach & exposure</li>
-                    <li class="mb-1"><i class="bi bi-check text-success me-2"></i>Upload job attachments</li>
-                    <li class="mb-1"><i class="bi bi-check text-success me-2"></i>Ideal for hard-to-fill positions</li>
-                  </ul>
-                </div>
-              </div>
             </div>
-
-            <p class="text-muted">
-              All job postings include professional formatting, categorized listings, and access to our qualified candidate network.
-            </p>
-          </div>
         </div>
-      </div>
 
-      <!-- What We Don't Do Section -->
+
+      {% endfor %}
+
+
+  {#     <!-- What We Don't Do Section -->
       <div class="mb-5">
         <div class="card border-0 shadow-sm mb-4" style="border-left: 4px solid #dc3545 !important;">
           <div class="card-body p-4">
@@ -121,7 +129,7 @@
           </div>
         </div>
       </div>
-
+#}
       <!-- Action Section -->
       <div class="text-center">
         <div class="card border-0" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
@@ -132,7 +140,7 @@
               <p class="text-muted mb-4">
                 Welcome back, {{ currentUser.firstName }}! Start reaching qualified candidates with your next job posting.
               </p>
-              <a href="{{ url('jobs/post') }}" class="btn btn-primary btn-lg px-5">
+              <a href="{{ url('jobs/post') }}" class="button button-xlarge rounded-pill px-5">
                 <i class="bi bi-plus-circle me-2"></i>Post a Job Opportunity
               </a>
             {% else %}
@@ -152,7 +160,7 @@
           </div>
         </div>
       </div>
-#}
+
       <!-- Platform Benefits -->
       <div class="row g-4 mt-5">
         {% for block in entry.benefits %}
