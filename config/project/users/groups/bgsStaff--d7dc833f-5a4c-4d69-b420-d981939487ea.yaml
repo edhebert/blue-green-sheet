@@ -52,6 +52,7 @@ permissions:
   - 'formie-resendsentnotifications:d8a2940a-0056-4adc-8a80-f9eb5549944b'
   - formie-savesubmissions
   - 'formie-savesubmissions:d8a2940a-0056-4adc-8a80-f9eb5549944b'
+  - formie-shownotifications
   - formie-viewsentnotifications
   - 'formie-viewsentnotifications:d8a2940a-0056-4adc-8a80-f9eb5549944b'
   - formie-viewsubmissions
