@@ -1,4 +1,4 @@
-dateModified: 1761246603
+dateModified: 1761309409
 elementSources:
   craft\elements\Entry:
     -
@@ -292,6 +292,10 @@ plugins:
     edition: standard
     enabled: true
     schemaVersion: 1.0.2
+  seomatic:
+    edition: standard
+    enabled: true
+    schemaVersion: 3.0.13
   servd-asset-storage:
     edition: standard
     enabled: true

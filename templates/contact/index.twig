@@ -13,7 +13,7 @@
           We're here to help with any questions about Blue Green Sheet
         </p>
       </div>
-
+{# 
       <!-- Important Notice -->
       <div class="alert alert-info border-0 mb-5" role="alert">
         <div class="d-flex">
@@ -70,18 +70,18 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> #}
 
       <!-- Contact Form -->
       <div class="row">
         <div class="col-12">
           <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white border-0 py-4">
+            {# <div class="card-header bg-white border-0 py-4">
               <h3 class="h4 mb-2">Send Us a Message</h3>
               <p class="text-muted mb-0">
                 Use the form below for general inquiries about Blue Green Sheet, our services, or technical support.
               </p>
-            </div>
+            </div> #}
             <div class="card-body p-4">
               {% set form = craft.formie.forms.handle('contact').one() %}
               {% if form %}
@@ -106,7 +106,7 @@
           <a href="{{ url('about') }}" class="button button-border rounded-pill">
             <i class="bi bi-info-circle me-2"></i>Learn About Us
           </a>
-          <a href="{{ url('pricing') }}" class="button button-border rounded-pill">
+          <a href="{{ url('overview') }}" class="button button-border rounded-pill">
             <i class="bi bi-currency-dollar me-2"></i>View Pricing
           </a>
           <a href="{{ url('jobs') }}" class="button button-border rounded-pill">
