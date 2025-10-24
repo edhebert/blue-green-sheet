@@ -658,65 +658,112 @@ return [
                         $school = $job->school->one() ?? null;
 
                         if ($paymentMethod === 'invoice') {
-                            $subject = 'Invoice Request - New Job Posting: ' . $job->title;
+                            $adminSubject = 'Invoice Request - New Job Posting: ' . $job->title;
                         } else {
-                            $subject = 'New Job Posting: ' . $job->title;
+                            $adminSubject = 'New Job Posting: ' . $job->title;
                         }
 
-                        // Build HTML email body
-                        $htmlBody = '<html><body style="font-family: Arial, sans-serif; line-height: 1.6;">';
+                        // Build admin notification email body
+                        $adminHtmlBody = '<html><body style="font-family: Arial, sans-serif; line-height: 1.6;">';
 
                         if ($paymentMethod === 'invoice') {
-                            $htmlBody .= '<h2 style="color: #d9534f;">Invoice Request - New Job Posting</h2>';
-                            $htmlBody .= '<p>A new job posting has been submitted with invoice payment:</p>';
+                            $adminHtmlBody .= '<h2 style="color: #d9534f;">Invoice Request - New Job Posting</h2>';
+                            $adminHtmlBody .= '<p>A new job posting has been submitted with invoice payment:</p>';
                         } else {
-                            $htmlBody .= '<h2 style="color: #5cb85c;">New Job Posting</h2>';
-                            $htmlBody .= '<p>A new job posting has been created and paid:</p>';
+                            $adminHtmlBody .= '<h2 style="color: #5cb85c;">New Job Posting</h2>';
+                            $adminHtmlBody .= '<p>A new job posting has been created and paid:</p>';
                         }
 
-                        $htmlBody .= '<table style="border-collapse: collapse; width: 100%; margin: 20px 0;">';
-                        $htmlBody .= '<tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Job Title:</strong></td><td style="padding: 8px; border-bottom: 1px solid #ddd;">' . htmlspecialchars($job->title) . '</td></tr>';
-                        $htmlBody .= '<tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>School:</strong></td><td style="padding: 8px; border-bottom: 1px solid #ddd;">' . ($school ? htmlspecialchars($school->title) : 'Not specified') . '</td></tr>';
-                        $htmlBody .= '<tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Posted by Organization:</strong></td><td style="padding: 8px; border-bottom: 1px solid #ddd;">' . ($organization ? htmlspecialchars($organization->title) : 'Unknown') . '</td></tr>';
-                        $htmlBody .= '<tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Posted by User:</strong></td><td style="padding: 8px; border-bottom: 1px solid #ddd;">' . htmlspecialchars($user->fullName) . ' (' . htmlspecialchars($user->email) . ')</td></tr>';
-                        $htmlBody .= '<tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Duration:</strong></td><td style="padding: 8px; border-bottom: 1px solid #ddd;">' . $duration . ' month(s)</td></tr>';
-                        $htmlBody .= '<tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Amount:</strong></td><td style="padding: 8px; border-bottom: 1px solid #ddd;">$' . $amount . '</td></tr>';
-                        $htmlBody .= '<tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Payment Method:</strong></td><td style="padding: 8px; border-bottom: 1px solid #ddd;">' . ucfirst($paymentMethod) . '</td></tr>';
-                        $htmlBody .= '</table>';
+                        $adminHtmlBody .= '<table style="border-collapse: collapse; width: 100%; margin: 20px 0;">';
+                        $adminHtmlBody .= '<tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Job Title:</strong></td><td style="padding: 8px; border-bottom: 1px solid #ddd;">' . htmlspecialchars($job->title) . '</td></tr>';
+                        $adminHtmlBody .= '<tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>School:</strong></td><td style="padding: 8px; border-bottom: 1px solid #ddd;">' . ($school ? htmlspecialchars($school->title) : 'Not specified') . '</td></tr>';
+                        $adminHtmlBody .= '<tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Posted by Organization:</strong></td><td style="padding: 8px; border-bottom: 1px solid #ddd;">' . ($organization ? htmlspecialchars($organization->title) : 'Unknown') . '</td></tr>';
+                        $adminHtmlBody .= '<tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Posted by User:</strong></td><td style="padding: 8px; border-bottom: 1px solid #ddd;">' . htmlspecialchars($user->fullName) . ' (' . htmlspecialchars($user->email) . ')</td></tr>';
+                        $adminHtmlBody .= '<tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Duration:</strong></td><td style="padding: 8px; border-bottom: 1px solid #ddd;">' . $duration . ' month(s)</td></tr>';
+                        $adminHtmlBody .= '<tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Amount:</strong></td><td style="padding: 8px; border-bottom: 1px solid #ddd;">$' . $amount . '</td></tr>';
+                        $adminHtmlBody .= '<tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Payment Method:</strong></td><td style="padding: 8px; border-bottom: 1px solid #ddd;">' . ucfirst($paymentMethod) . '</td></tr>';
+                        $adminHtmlBody .= '</table>';
 
-                        // Add action links
+                        // Add action links for admin
                         $jobUrl = $job->getUrl() ?? '';
                         $editUrl = \craft\helpers\UrlHelper::cpUrl('entries/jobs/' . $job->id);
 
-                        $htmlBody .= '<p style="margin: 20px 0;">';
+                        $adminHtmlBody .= '<p style="margin: 20px 0;">';
                         if ($jobUrl) {
-                            $htmlBody .= '<a href="' . htmlspecialchars($jobUrl) . '" style="display: inline-block; padding: 10px 20px; margin-right: 10px; background-color: #5cb85c; color: white; text-decoration: none; border-radius: 4px;">Visit public-facing job URL</a>';
+                            $adminHtmlBody .= '<a href="' . htmlspecialchars($jobUrl) . '" style="display: inline-block; padding: 10px 20px; margin-right: 10px; background-color: #5cb85c; color: white; text-decoration: none; border-radius: 4px;">Visit public-facing job URL</a>';
                         }
-                        $htmlBody .= '<a href="' . htmlspecialchars($editUrl) . '" style="display: inline-block; padding: 10px 20px; background-color: #337ab7; color: white; text-decoration: none; border-radius: 4px;">Edit this job in the BGS Control Panel</a>';
-                        $htmlBody .= '</p>';
+                        $adminHtmlBody .= '<a href="' . htmlspecialchars($editUrl) . '" style="display: inline-block; padding: 10px 20px; background-color: #337ab7; color: white; text-decoration: none; border-radius: 4px;">Edit this job in the BGS Control Panel</a>';
+                        $adminHtmlBody .= '</p>';
 
                         if ($paymentMethod === 'invoice') {
-                            $htmlBody .= '<div style="background-color: #fcf8e3; border: 2px solid #d9534f; padding: 15px; margin: 20px 0; border-radius: 4px;">';
-                            $htmlBody .= '<h3 style="color: #d9534f; margin-top: 0;">ACTION REQUIRED</h3>';
-                            $htmlBody .= '<p><strong>Please send an invoice for $' . $amount . ' to ' . htmlspecialchars($user->email) . '</strong></p>';
-                            $htmlBody .= '</div>';
-                            $htmlBody .= '<p>The job posting is now live and will expire in ' . $duration . ' month(s).</p>';
+                            $adminHtmlBody .= '<div style="background-color: #fcf8e3; border: 2px solid #d9534f; padding: 15px; margin: 20px 0; border-radius: 4px;">';
+                            $adminHtmlBody .= '<h3 style="color: #d9534f; margin-top: 0;">ACTION REQUIRED</h3>';
+                            $adminHtmlBody .= '<p><strong>Please send an invoice for $' . $amount . ' to ' . htmlspecialchars($user->email) . '</strong></p>';
+                            $adminHtmlBody .= '</div>';
+                            $adminHtmlBody .= '<p>The job posting is now live and will expire in ' . $duration . ' month(s).</p>';
                         } elseif ($paymentMethod === 'credit' && $paymentIntent) {
-                            $htmlBody .= '<p><strong>Payment processed via Stripe</strong><br>';
-                            $htmlBody .= 'Payment Intent ID: ' . htmlspecialchars($paymentIntent->id) . '</p>';
+                            $adminHtmlBody .= '<p><strong>Payment processed via Stripe</strong><br>';
+                            $adminHtmlBody .= 'Payment Intent ID: ' . htmlspecialchars($paymentIntent->id) . '</p>';
                         }
 
-                        $htmlBody .= '</body></html>';
+                        $adminHtmlBody .= '</body></html>';
 
-                        $message = new \craft\mail\Message();
-                        $message->setTo($adminEmails)
-                               ->setSubject($subject)
-                               ->setHtmlBody($htmlBody);
+                        // Send admin notification
+                        $adminMessage = new \craft\mail\Message();
+                        $adminMessage->setTo($adminEmails)
+                                    ->setSubject($adminSubject)
+                                    ->setHtmlBody($adminHtmlBody);
 
                         try {
-                            Craft::$app->getMailer()->send($message);
+                            Craft::$app->getMailer()->send($adminMessage);
                         } catch (\Exception $e) {
-                            Craft::error('Failed to send job posting notification: ' . $e->getMessage(), __METHOD__);
+                            Craft::error('Failed to send admin job posting notification: ' . $e->getMessage(), __METHOD__);
+                        }
+
+                        // Send jobPoster confirmation email
+                        if ($user && $user->email) {
+                            $posterSubject = 'Your Job Posting is Now Live: ' . $job->title;
+
+                            $posterHtmlBody = '<html><body style="font-family: Arial, sans-serif; line-height: 1.6;">';
+                            $posterHtmlBody .= '<h2 style="color: #5cb85c;">Your Job Posting is Now Live!</h2>';
+                            $posterHtmlBody .= '<p>Dear ' . htmlspecialchars($user->firstName) . ',</p>';
+                            $posterHtmlBody .= '<p>Thank you for posting your job listing to the Blue Green Sheet job board! We are excited to help you find the perfect candidate for your school.</p>';
+
+                            $posterHtmlBody .= '<p><strong>Job Posting Details:</strong></p>';
+                            $posterHtmlBody .= '<table style="border-collapse: collapse; width: 100%; margin: 20px 0;">';
+                            $posterHtmlBody .= '<tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Job Title:</strong></td><td style="padding: 8px; border-bottom: 1px solid #ddd;">' . htmlspecialchars($job->title) . '</td></tr>';
+                            $posterHtmlBody .= '<tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>School:</strong></td><td style="padding: 8px; border-bottom: 1px solid #ddd;">' . ($school ? htmlspecialchars($school->title) : 'Not specified') . '</td></tr>';
+                            $posterHtmlBody .= '<tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Duration:</strong></td><td style="padding: 8px; border-bottom: 1px solid #ddd;">' . $duration . ' month(s)</td></tr>';
+                            $posterHtmlBody .= '<tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Posting Cost:</strong></td><td style="padding: 8px; border-bottom: 1px solid #ddd;">$' . $amount . '</td></tr>';
+                            $posterHtmlBody .= '</table>';
+
+                            // Add public-facing job URL button
+                            if ($jobUrl) {
+                                $posterHtmlBody .= '<p style="margin: 20px 0; text-align: center;">';
+                                $posterHtmlBody .= '<a href="' . htmlspecialchars($jobUrl) . '" style="display: inline-block; padding: 12px 30px; background-color: #5cb85c; color: white; text-decoration: none; border-radius: 4px; font-weight: bold;">View Your Job Posting</a>';
+                                $posterHtmlBody .= '</p>';
+                            }
+
+                            $posterHtmlBody .= '<p>Your job posting will remain active for ' . $duration . ' month(s) from the date of posting. Candidates can view your job and apply directly through the Blue Green Sheet platform.</p>';
+
+                            if ($paymentMethod === 'invoice') {
+                                $posterHtmlBody .= '<p>You selected invoice payment. An invoice for $' . $amount . ' will be sent to you shortly from our billing team.</p>';
+                            }
+
+                            $posterHtmlBody .= '<p>If you have any questions or need assistance, please do not hesitate to reach out to our support team.</p>';
+                            $posterHtmlBody .= '<p>Best regards,<br><strong>The Blue Green Sheet Team</strong></p>';
+                            $posterHtmlBody .= '</body></html>';
+
+                            $posterMessage = new \craft\mail\Message();
+                            $posterMessage->setTo($user->email)
+                                         ->setSubject($posterSubject)
+                                         ->setHtmlBody($posterHtmlBody);
+
+                            try {
+                                Craft::$app->getMailer()->send($posterMessage);
+                            } catch (\Exception $e) {
+                                Craft::error('Failed to send job poster confirmation email: ' . $e->getMessage(), __METHOD__);
+                            }
                         }
                     }
                 }

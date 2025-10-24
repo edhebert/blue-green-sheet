@@ -1,0 +1,21 @@
+defaultPlacement: end
+enableVersioning: true
+entryTypes:
+  -
+    uid: b58343ab-5175-491a-a696-c3a2254d510a # Subscribe
+handle: subscribe
+maxAuthors: 1
+name: Subscribe
+previewTargets:
+  -
+    label: 'Primary entry page'
+    refresh: '1'
+    urlFormat: '{url}'
+propagationMethod: all
+siteSettings:
+  62b64a73-e162-4b39-97d4-ac8246ccc3e5: # Blue Green Sheet
+    enabledByDefault: true
+    hasUrls: true
+    template: subscribe/_entry.twig
+    uriFormat: subscribe
+type: single
