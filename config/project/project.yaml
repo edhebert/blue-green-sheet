@@ -1,4 +1,4 @@
-dateModified: 1761325810
+dateModified: 1761674832
 elementSources:
   craft\elements\Entry:
     -
@@ -300,6 +300,7 @@ plugins:
   seomatic:
     edition: standard
     enabled: true
+    licenseKey: ZMQFBSH3HUF6WI5OS8ZKRG40
     schemaVersion: 3.0.13
   servd-asset-storage:
     edition: standard
