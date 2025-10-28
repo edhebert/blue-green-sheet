@@ -9,6 +9,7 @@
     "craftcms/stripe": "1.6.0",
     "doublesecretagency/craft-cpcss": "3.0.0",
     "nystudio107/craft-seomatic": "5.1.19",
+    "ostark/craft-async-queue": "4.0.0",
     "putyourlightson/craft-dashboard-begone": "3.0.0",
     "servd/craft-asset-storage": "4.2.0",
     "verbb/expanded-singles": "3.0.3",

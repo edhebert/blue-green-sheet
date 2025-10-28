@@ -1,4 +1,4 @@
-dateModified: 1761682650
+dateModified: 1761687423
 elementSources:
   craft\elements\Entry:
     -
@@ -265,6 +265,10 @@ meta:
     e80d1597-d85d-4dee-b24f-9c30d9facfb2: Benefits # Benefits
     f4e9368b-2d36-4ac5-b087-d0b8a3e8079f: State # State
 plugins:
+  async-queue:
+    edition: standard
+    enabled: true
+    schemaVersion: 1.0.0
   ckeditor:
     edition: standard
     enabled: true
