@@ -4,8 +4,6 @@
 {% block content %}
 <div class="login-container">
 
-{% do craft.app.session.removeFlash('error') %}
-
 {% if craft.app.session.hasFlash('notice') %}
     <div class="alert alert-success">{{ craft.app.session.getFlash('notice') }}</div>
 {% endif %}
