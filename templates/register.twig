@@ -73,7 +73,7 @@
               </li>
             </ul>
             <div class="d-grid">
-              <a href="#" class="button rounded-pill">
+              <a href="{{ siteUrl }}subscribe" class="button rounded-pill button-small">
                 <i class="bi bi-envelope-plus me-2"></i>Subscribe to Monthly Recap
               </a>
             </div>
@@ -90,12 +90,14 @@
 
     {% if user and user.getErrors() %}
       <div class="alert alert-danger">
-        <strong>We couldn’t create your account.</strong>
+        <strong>We couldn't create your account.</strong>
         <ul class="mb-0">
           {% for attr, errs in user.getErrors() %}
-            {% for err in errs %}
-              <li>{{ err }}</li>
-            {% endfor %}
+            {% if attr != 'unverifiedEmail' %}
+              {% for err in errs %}
+                <li>{{ err }}</li>
+              {% endfor %}
+            {% endif %}
           {% endfor %}
         </ul>
       </div>

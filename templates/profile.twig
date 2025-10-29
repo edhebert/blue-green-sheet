@@ -12,7 +12,7 @@
         {% set noticeMessage = allFlashes.notice ?? '' %}
 
         {# Only show and consume if it's not a default Craft message #}
-        {% if noticeMessage and 'User saved' not in noticeMessage and 'User  saved' not in noticeMessage and 'User registered' not in noticeMessage and 'User  registered' not in noticeMessage %}
+        {% if noticeMessage and 'User saved' not in noticeMessage and 'User  saved' not in noticeMessage and 'User registered' not in noticeMessage and 'User  registered' not in noticeMessage and 'Password reset' not in noticeMessage %}
             <div class="alert alert-success">
                 {{ craft.app.session.getFlash('notice') }}
             </div>
@@ -28,7 +28,7 @@
         {% set successMessage = allFlashes.success ?? '' %}
 
         {# Only show and consume if it's not a default Craft message #}
-        {% if successMessage and 'User saved' not in successMessage and 'User  saved' not in successMessage and 'User registered' not in successMessage and 'User  registered' not in successMessage %}
+        {% if successMessage and 'User saved' not in successMessage and 'User  saved' not in successMessage and 'User registered' not in successMessage and 'User  registered' not in successMessage and 'Password reset' not in successMessage %}
             <div class="alert alert-success">
                 {{ craft.app.session.getFlash('success') }}
             </div>

@@ -66,7 +66,7 @@
                 <option value="{{ org.id }}" {% if currentOrg and currentOrg.id == org.id %}selected{% endif %}>{{ org.title }}</option>
               {% endfor %}
             </select>
-            <div class="form-text">Saving will replace any previously selected organization.</div>
+            {# <div class="form-text">Saving will replace any previously selected organization.</div> #}
           </div>
           <button type="submit" class="button rounded-pill">Save and continue</button>
         </form>
@@ -74,9 +74,9 @@
         <hr class="my-4">
 
         {# Revealable "Add new organization" section #}
-        <div class="d-flex align-items-center justify-content-between">
-          <h2 class="h6 mb-0">Don’t see your organization?</h2>
-          <button class="button rounded-pill button-border" type="button"
+        <div class="align-items-center justify-content-between">
+          <h2 class="h6 mb-0 mt-4">If your organization is not listed in the dropdown menu above, you can add your organization here.</h2>
+          <button class="button rounded-pill mt-4" type="button"
                   data-bs-toggle="collapse" data-bs-target="#addOrgCollapse"
                   aria-expanded="false" aria-controls="addOrgCollapse">
             Add your organization

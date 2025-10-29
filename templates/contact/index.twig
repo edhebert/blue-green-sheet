@@ -10,78 +10,16 @@
       <div class="text-center mb-5">
         <h1 class="display-4 fw-bold mb-3">Contact Us</h1>
         <p class="lead text-muted">
-          We're here to help with any questions about Blue Green Sheet
+          We're here to help with any questions about BlueGreen Sheet
         </p>
       </div>
-{# 
-      <!-- Important Notice -->
-      <div class="alert alert-info border-0 mb-5" role="alert">
-        <div class="d-flex">
-          <div class="me-3">
-            <i class="bi bi-info-circle-fill text-primary" style="font-size: 1.5rem;"></i>
-          </div>
-          <div>
-            <h5 class="alert-heading mb-2">Before You Contact Us</h5>
-            <p class="mb-2">
-              Feel free to contact BGS with any questions about our organization, platform, or services.
-            </p>
-            <p class="mb-3">
-              <strong>For Schools & Consultants:</strong> If you're looking to post job opportunities,
-              please <a href="{{ url('register') }}" class="alert-link">register for an account</a>
-              rather than using this contact form.
-            </p>
-            <div class="d-flex gap-2 flex-wrap">
-              <a href="{{ url('register') }}" class="btn btn-primary btn-sm">
-                <i class="bi bi-person-plus me-2"></i>Register to Post Jobs
-              </a>
-              <a href="{{ url('pricing') }}" class="btn btn-outline-primary btn-sm">
-                <i class="bi bi-tag me-2"></i>View Pricing
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- Contact Information -->
-      <div class="row g-4 mb-5">
-        <div class="col-md-6">
-          <div class="card h-100 border-0 bg-light">
-            <div class="card-body text-center p-4">
-              <i class="bi bi-envelope-fill text-primary mb-3" style="font-size: 2.5rem;"></i>
-              <h5 class="card-title">Email Us</h5>
-              <p class="card-text text-muted mb-3">
-                Send us a message and we'll respond as soon as possible.
-              </p>
-              <a href="mailto:info@bluegreensheet.com" class="btn btn-outline-primary">
-                info@bluegreensheet.com
-              </a>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="card h-100 border-0 bg-light">
-            <div class="card-body text-center p-4">
-              <i class="bi bi-clock-fill text-primary mb-3" style="font-size: 2.5rem;"></i>
-              <h5 class="card-title">Platform Access</h5>
-              <p class="card-text text-muted mb-3">
-                Our job posting platform is available around the clock.
-              </p>
-              <span class="badge bg-success px-3 py-2">24/7 Available</span>
-            </div>
-          </div>
-        </div>
-      </div> #}
 
       <!-- Contact Form -->
       <div class="row">
         <div class="col-12">
           <div class="card border-0 shadow-sm">
-            {# <div class="card-header bg-white border-0 py-4">
-              <h3 class="h4 mb-2">Send Us a Message</h3>
-              <p class="text-muted mb-0">
-                Use the form below for general inquiries about Blue Green Sheet, our services, or technical support.
-              </p>
-            </div> #}
+
             <div class="card-body p-4">
               {% set form = craft.formie.forms.handle('contact').one() %}
               {% if form %}
@@ -90,7 +28,7 @@
                 <div class="alert alert-warning" role="alert">
                   <i class="bi bi-exclamation-triangle me-2"></i>
                   Contact form is temporarily unavailable. Please email us directly at
-                  <a href="mailto:info@bluegreensheet.com" class="alert-link">info@bluegreensheet.com</a>
+                  <a href="mailto:support@bluegreensheet.com" class="alert-link">support@bluegreensheet.com</a>
                 </div>
               {% endif %}
             </div>

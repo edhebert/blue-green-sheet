@@ -43,4 +43,14 @@
 
 .card-body.tombstone {
     text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-body.tombstone p:last-child {
+    margin-top: auto;
+}
+
+.shadow-sm, .h-shadow-sm:hover {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.5) !important;
 }

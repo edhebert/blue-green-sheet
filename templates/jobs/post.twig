@@ -362,7 +362,7 @@
           <!-- Opportunity Statement (Rich Text) -->
           <div class="mb-4">
             <label for="jobOpportunityStatement" class="form-label fw-bold">Opportunity Statement</label>
-            <div class="form-text mb-2">Optional: Highlight what makes this opportunity special</div>
+            <div class="form-text mb-2">Include your Opportunity Statement of a link to your Opportunity Statement.<br>If you wish to include a file, you may do so below.</div>
             <div id="jobOpportunityStatement-editor" style="min-height: 200px; border: 1px solid #ced4da; border-radius: 0.375rem;"></div>
             <textarea
               id="jobOpportunityStatement"
@@ -383,7 +383,6 @@
                   name="fields[jobSalaryLow]"
                   class="form-control"
                   value="{{ entry ? entry.jobSalaryLow : '' }}"
-                  placeholder="75000"
                   min="0"
                   step="1000"
                 >
@@ -399,7 +398,6 @@
                   name="fields[jobSalaryHigh]"
                   class="form-control"
                   value="{{ entry ? entry.jobSalaryHigh : '' }}"
-                  placeholder="125000"
                   min="0"
                   step="1000"
                 >
