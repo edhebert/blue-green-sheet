@@ -103,40 +103,6 @@
 
                     {# Filter Accordion #}
                     <div class="accordion accordion-flush" id="filterAccordion">
-                        {# Regions Filter #}
-                        <div class="accordion-item border-0 mb-3">
-                            <h4 class="accordion-header">
-                                <button class="accordion-button collapsed bg-transparent border-0 p-0 shadow-none h6 mb-0"
-                                        type="button"
-                                        data-bs-toggle="collapse"
-                                        data-bs-target="#regionsCollapse"
-                                        aria-expanded="false"
-                                        aria-controls="regionsCollapse">
-                                    <span class="me-auto">Regions</span>
-                                    {% if currentFilters.region|length %}
-                                        <span class="badge bg-primary me-2">{{ currentFilters.region|length }}</span>
-                                    {% endif %}
-                                </button>
-                            </h4>
-                            <div id="regionsCollapse" class="accordion-collapse collapse" data-bs-parent="#filterAccordion">
-                                <div class="accordion-body p-0 pt-2">
-                                    {% for region in craft.categories().group('jobRegion').all() %}
-                                        {% set isActive = region.id in currentFilters.region %}
-                                        <div class="form-check mb-2">
-                                            <input type="checkbox"
-                                                   class="form-check-input filter-checkbox"
-                                                   id="region-{{ region.id }}"
-                                                   data-filter-type="region"
-                                                   data-filter-value="{{ region.id }}"
-                                                   {{ isActive ? 'checked' : '' }}>
-                                            <label class="form-check-label small" for="region-{{ region.id }}">
-                                                {{ region.title }}
-                                            </label>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
 
                         {# Job Categories Filter #}
                         <div class="accordion-item border-0 mb-3">
@@ -172,6 +138,43 @@
                                 </div>
                             </div>
                         </div>
+
+
+                        {# Regions Filter #}
+                        <div class="accordion-item border-0 mb-3">
+                            <h4 class="accordion-header">
+                                <button class="accordion-button collapsed bg-transparent border-0 p-0 shadow-none h6 mb-0"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#regionsCollapse"
+                                        aria-expanded="false"
+                                        aria-controls="regionsCollapse">
+                                    <span class="me-auto">Regions</span>
+                                    {% if currentFilters.region|length %}
+                                        <span class="badge bg-primary me-2">{{ currentFilters.region|length }}</span>
+                                    {% endif %}
+                                </button>
+                            </h4>
+                            <div id="regionsCollapse" class="accordion-collapse collapse" data-bs-parent="#filterAccordion">
+                                <div class="accordion-body p-0 pt-2">
+                                    {% for region in craft.categories().group('jobRegion').all() %}
+                                        {% set isActive = region.id in currentFilters.region %}
+                                        <div class="form-check mb-2">
+                                            <input type="checkbox"
+                                                   class="form-check-input filter-checkbox"
+                                                   id="region-{{ region.id }}"
+                                                   data-filter-type="region"
+                                                   data-filter-value="{{ region.id }}"
+                                                   {{ isActive ? 'checked' : '' }}>
+                                            <label class="form-check-label small" for="region-{{ region.id }}">
+                                                {{ region.title }}
+                                            </label>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
 
                         {# States Filter #}
                         {% set availableStates = craft.entries().section('jobs').jobState(':notempty:').orderBy('jobState').all()|group('jobState') %}
