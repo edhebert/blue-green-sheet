@@ -54,8 +54,15 @@
             function handleUmamiLoad() {
                 if (window.umami) {
                     umami.identify('{{ currentUser.email }}', {
-                        name: '{{ currentUser.fullName }}',
-                        organization: '{{ currentUser.organization.one() }}'
+                        {% if currentUser.fullName %}
+                            name: '{{ currentUser.fullName }}',
+                        {% endif %}
+                        {% if currentUser.email %}
+                            email: '{{ currentUser.email }}', 
+                        {% endif %}
+                        {% if currentUser.organization %} 
+                            organization: '{{ currentUser.organization.one() }}', 
+                        {% endif %}
                     });
                 }
             }
