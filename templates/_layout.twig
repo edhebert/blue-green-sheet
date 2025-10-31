@@ -43,22 +43,24 @@
   {% block styles %}{% endblock %}
   {{ head() }}
   {# Umami Tracking #}
-  <script defer src="https://cloud.umami.is/script.js" data-website-id="7d29f167-6b87-4078-b931-9e37d49b25a7"></script>
+  <script defer 
+    src="https://cloud.umami.is/script.js" data-website-id="7d29f167-6b87-4078-b931-9e37d49b25a7"
+    onload="handleUmamiLoad()"></script>
 
      {% if currentUser %}
         {# Call umami.identify() after the script loads #}
+
         <script>
-            window.addEventListener('load', function() {
-                // Wait for umami to be available
+            function handleUmamiLoad() {
                 if (window.umami) {
-                    // Set session data with a distinct ID (string) and optional data object
                     umami.identify('{{ currentUser.email }}', {
                         name: '{{ currentUser.fullName }}',
                         organization: '{{ currentUser.organization.one() }}'
                     });
                 }
-            });
+            }
         </script>
+
     {% endif %}
 
 
