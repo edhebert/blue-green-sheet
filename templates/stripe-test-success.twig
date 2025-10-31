@@ -1,0 +1,37 @@
+{% extends "_layout.twig" %}
+{% requireLogin %}
+
+{% block title %}Test Payment Success · {{ siteName }}{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px;">
+  <div class="card mt-5">
+    <div class="card-body p-4 text-center">
+      <div class="mb-4">
+        <i class="bi bi-check-circle text-success" style="font-size: 4rem;"></i>
+      </div>
+      <h2 class="h4 mb-3 text-success">Payment Test Successful!</h2>
+      <p class="text-muted mb-4">
+        The Stripe integration is working correctly. The $1.00 test payment was processed successfully with your live Stripe keys.
+      </p>
+
+      <div class="alert alert-success mb-4">
+        <strong>Next Steps:</strong>
+        <ol class="mb-0 mt-2 text-start">
+          <li>Verify transaction in Stripe Dashboard → Payments</li>
+          <li>Refund the $1.00 test payment</li>
+          <li>Switch production job posting to live Stripe keys</li>
+          <li>Delete these test template files when done</li>
+        </ol>
+      </div>
+
+      <p class="small text-muted mb-4">
+        <strong>Test completed by:</strong> {{ currentUser.email }}<br>
+        <strong>Date:</strong> {{ now|date('F j, Y \\a\\t g:i A') }}
+      </p>
+
+      <a href="/profile" class="button rounded-pill">Back to Profile</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
