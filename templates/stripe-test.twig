@@ -16,8 +16,8 @@
       {% set testPrice = null %}
       {% for product in craft.stripeProducts.all() %}
         {% for price in product.prices %}
-          {# Match by amount: 100 cents = $1.00 #}
-          {% if price.data.unit_amount == 100 %}
+          {# Match by amount AND product title starting with "BGS" #}
+          {% if price.data.unit_amount == 100 and product.title starts with 'BGS' %}
             {% set testPrice = price %}
           {% endif %}
         {% endfor %}

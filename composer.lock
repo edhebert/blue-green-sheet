@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "73f27dbee3ec8afc34bd88982c59e47d",
+    "content-hash": "03f6e64a5a8c34d2b67d5f66df197453",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -855,11 +855,11 @@
         },
         {
             "name": "craftcms/feed-me",
-            "version": "6.10.2",
+            "version": "6.11.0",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/craftcms/feed-me/zipball/57186b149daffb1e818164747af8085ab44dddeb",
-                "reference": "57186b149daffb1e818164747af8085ab44dddeb",
+                "url": "https://api.github.com/repos/craftcms/feed-me/zipball/46cbf5aeb3c6ddabb9ab248c0e6742444533f1bb",
+                "reference": "46cbf5aeb3c6ddabb9ab248c0e6742444533f1bb",
                 "shasum": ""
             },
             "require": {
@@ -909,7 +909,7 @@
                 "docs": "https://docs.craftcms.com/feed-me/v6/",
                 "rss": "https://github.com/craftcms/feed-me/commits/master.atom"
             },
-            "time": "2025-10-23T23:48:12+00:00"
+            "time": "2025-10-31T00:53:51+00:00"
         },
         {
             "name": "craftcms/flysystem",
@@ -10292,16 +10292,16 @@
         },
         {
             "name": "webmozart/assert",
-            "version": "1.12.0",
+            "version": "1.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webmozarts/assert.git",
-                "reference": "541057574806f942c94662b817a50f63f7345360"
+                "reference": "9be6926d8b485f55b9229203f962b51ed377ba68"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozarts/assert/zipball/541057574806f942c94662b817a50f63f7345360",
-                "reference": "541057574806f942c94662b817a50f63f7345360",
+                "url": "https://api.github.com/repos/webmozarts/assert/zipball/9be6926d8b485f55b9229203f962b51ed377ba68",
+                "reference": "9be6926d8b485f55b9229203f962b51ed377ba68",
                 "shasum": ""
             },
             "require": {
@@ -10344,9 +10344,9 @@
             ],
             "support": {
                 "issues": "https://github.com/webmozarts/assert/issues",
-                "source": "https://github.com/webmozarts/assert/tree/1.12.0"
+                "source": "https://github.com/webmozarts/assert/tree/1.12.1"
             },
-            "time": "2025-10-20T12:43:39+00:00"
+            "time": "2025-10-29T15:56:20+00:00"
         },
         {
             "name": "webonyx/graphql-php",

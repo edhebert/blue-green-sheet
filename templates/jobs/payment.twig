@@ -18,10 +18,10 @@
   {# Find the 6-month and 12-month prices #}
   {% for product in stripeProducts %}
     {% for price in product.prices %}
-      {# Match by amount: 30000 cents = $300, 40000 cents = $400 #}
-      {% if price.data.unit_amount == 30000 %}
+      {# Match by amount AND product title starting with "BGS" #}
+      {% if price.data.unit_amount == 30000 and product.title starts with 'BGS' %}
         {% set price6Months = price %}
-      {% elseif price.data.unit_amount == 40000 %}
+      {% elseif price.data.unit_amount == 40000 and product.title starts with 'BGS' %}
         {% set price12Months = price %}
       {% endif %}
     {% endfor %}

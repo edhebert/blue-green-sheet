@@ -590,6 +590,33 @@ STRIPE_SECRET_KEY=sk_test_xxxxx       # or sk_live_xxxxx
 - Uses `stripe/checkout` action for Stripe-hosted checkout
 - Success callback: `actions/job-posting/payment-success`
 
+**Price Matching Pattern** (applies to all payment forms):
+```twig
+{% for product in craft.stripeProducts.all() %}
+  {% for price in product.prices %}
+    {# Match by BOTH price AND product title prefix #}
+    {% if price.data.unit_amount == 100 and product.title starts with 'BGS' %}     {# $1.00 test #}
+    {% if price.unit_amount == 30000 and product.title starts with 'BGS' %}       {# $300 6-month #}
+    {% if price.unit_amount == 40000 and product.title starts with 'BGS' %}       {# $400 12-month #}
+  {% endfor %}
+{% endfor %}
+```
+
+**IMPORTANT: Product Naming Convention**
+- All Blue Green Sheet products in Stripe MUST have titles starting with "BGS"
+- This prevents conflicts with other products in the client's Stripe account (from other websites)
+- Example product names: "BGS - 6 Month Job Listing", "BGS - Test Product", etc.
+
+**Switching Between Test/Live Mode**:
+- **No code changes required** - all forms match by price amount + "BGS" prefix
+- When switching to live mode, create products in live Stripe Dashboard with these criteria:
+  - $1.00 with title starting with "BGS" (for testing)
+  - $300.00 with title starting with "BGS" (6-month job listing)
+  - $400.00 with title starting with "BGS" (12-month job listing)
+- Sync in Craft CP (Settings → Stripe → Sync)
+- Forms automatically find correct products by matching both `unit_amount` and title prefix
+- Product IDs and full names can differ between test/live - only price and "BGS" prefix matter
+
 ---
 
 ## Future Considerations
