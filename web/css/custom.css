@@ -19,6 +19,10 @@ a {
     font-weight: bold;
 }
 
+#footer a {
+    font-weight: normal;
+}
+
 dl, dt, dd, ol, ul, li {
     margin-left: 15px;
 }
