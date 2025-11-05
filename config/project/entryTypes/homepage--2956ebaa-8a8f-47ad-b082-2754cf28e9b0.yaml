@@ -61,7 +61,7 @@ fieldLayouts:
             fieldUid: 9d8645b3-7788-49d7-92ef-e3c2e0aca352 # Logo
             handle: hero
             includeInCards: false
-            instructions: "Upload an image for the home page's background."
+            instructions: "Upload an image for the home page's background. This image should be high resolution, with a minimum resolution of 1500px in either direction."
             label: 'Hero Image'
             providesThumbs: false
             required: false
