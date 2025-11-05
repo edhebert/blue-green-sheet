@@ -1,4 +1,4 @@
-dateModified: 1762356038
+dateModified: 1762361301
 elementSources:
   craft\elements\Entry:
     -
@@ -72,6 +72,9 @@ elementSources:
         - link
       type: native
     -
+      key: 'single:64e2d70d-bf2d-4df4-9df4-be6545a2afc0' # Footer
+      type: native
+    -
       defaultSort:
         - id
         - asc
@@ -86,8 +89,19 @@ elementSources:
         - link
       type: native
     -
+      key: 'single:9b7203f7-538c-4b6c-8119-9c33c258f2bc' # Privacy & Terms
+      type: native
+    -
       key: 'single:56d41606-0de2-4906-9d56-7a4b768399be' # Subscribe
       type: native
+    -
+      heading: ''
+      key: 'heading:4bde67e5-7843-4723-8d24-805c7534d3fe'
+      type: heading
+    -
+      heading: ''
+      key: 'heading:c9af1b5a-92ed-406c-858f-601266c3ae56'
+      type: heading
   craft\elements\User:
     -
       defaultSort:
@@ -232,6 +246,7 @@ meta:
     52fe2c65-e3d8-4977-bb85-532fd2435450: 'Organization Name' # Organization Name
     56d41606-0de2-4906-9d56-7a4b768399be: Subscribe # Subscribe
     62b64a73-e162-4b39-97d4-ac8246ccc3e5: 'BlueGreen Sheet' # BlueGreen Sheet
+    64e2d70d-bf2d-4df4-9df4-be6545a2afc0: Footer # Footer
     192d4098-f32f-441e-901a-202b4a587a5d: Organization # Organization
     0279dfbc-1019-4d0b-83dc-034b6e185d12: 'Contact Form' # Contact Form
     314e8ab4-95e5-49d8-82e0-08c98192bb23: Jobs # Jobs
@@ -248,6 +263,7 @@ meta:
     a7ace354-3f52-4d0a-87b1-96da5efcc457: 'Job Attachments' # Job Attachments
     a7f14968-b153-4b66-9ebf-cf75f8135561: About # About
     a614cd34-b5bb-4da6-84ca-e87cdf407ee9: List # List
+    abb1d0cc-1e7a-4776-8838-04118e81575a: Hero # Hero
     abe08477-7396-48a3-b1cb-3e492e201e56: Organizations # Organizations
     ac5e09a1-0209-46fa-bf18-00690e21c24e: 'BGS Overview' # BGS Overview
     afc27a98-498b-4fda-8c1e-c5eda8fcc52e: 'Job Region' # Job Region
@@ -267,6 +283,7 @@ meta:
     dc90060e-fe9a-4e46-85b1-80079ba69b68: Capability # Capability
     e80d1597-d85d-4dee-b24f-9c30d9facfb2: Benefits # Benefits
     f4e9368b-2d36-4ac5-b087-d0b8a3e8079f: State # State
+    f83dc3e4-1815-4b37-abb9-664ad01c8f0b: Footer # Footer
 plugins:
   async-queue:
     edition: standard

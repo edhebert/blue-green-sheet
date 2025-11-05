@@ -35,7 +35,13 @@
                                 
                             </div>
                         </div>
-                        <div class="swiper-slide-bg" style="background-image: url('{{ siteUrl }}images/sanborn-desat.jpg'); opacity:0.4"></div>
+                        {% if entry.hero.one() %}
+                            <div class="swiper-slide-bg" style="background-image: url('{{ entry.hero.one.url('hero') }}')"></div> 
+                        {% else %}
+                            <div class="swiper-slide-bg" style="background-image: url('{{ siteUrl }}images/sanborn-desat.jpg')"></div>          
+                        {% endif %}
+                        <div class="video-overlay" style="background-color: rgba(0, 0, 0, 0.5);"></div>
+                        
                     </div>
                 </div>
             </div>

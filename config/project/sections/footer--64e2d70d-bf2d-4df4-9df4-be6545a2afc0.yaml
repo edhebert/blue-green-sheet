@@ -2,10 +2,10 @@ defaultPlacement: end
 enableVersioning: true
 entryTypes:
   -
-    uid: 2956ebaa-8a8f-47ad-b082-2754cf28e9b0 # Homepage
-handle: homepage
+    uid: f83dc3e4-1815-4b37-abb9-664ad01c8f0b # Footer
+handle: footer
 maxAuthors: 1
-name: Homepage
+name: Footer
 previewTargets:
   -
     label: 'Primary entry page'
@@ -16,6 +16,6 @@ siteSettings:
   62b64a73-e162-4b39-97d4-ac8246ccc3e5: # BlueGreen Sheet
     enabledByDefault: true
     hasUrls: true
-    template: index.twig
-    uriFormat: __home__
+    template: footer/_entry.twig
+    uriFormat: footer
 type: single

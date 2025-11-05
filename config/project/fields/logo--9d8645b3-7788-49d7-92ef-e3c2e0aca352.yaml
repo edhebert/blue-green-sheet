@@ -21,7 +21,7 @@ settings:
   restrictedDefaultUploadSubpath: null
   restrictedLocationSource: 'volume:5de740b2-aa13-48eb-b460-549297b24e7d' # Logos
   restrictedLocationSubpath: '{slug}'
-  selectionLabel: 'Add a logo'
+  selectionLabel: 'Add an image'
   showCardsInGrid: false
   showSearchInput: true
   showSiteMenu: true

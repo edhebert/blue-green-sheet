@@ -42,7 +42,7 @@ fieldLayouts:
 handle: jobCategories
 name: 'Job Categories'
 siteSettings:
-  62b64a73-e162-4b39-97d4-ac8246ccc3e5: # Blue Green Sheet
+  62b64a73-e162-4b39-97d4-ac8246ccc3e5: # BlueGreen Sheet
     hasUrls: true
     template: job-categories/_category.twig
     uriFormat: 'job-categories/{slug}'

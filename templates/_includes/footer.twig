@@ -6,8 +6,12 @@
             <div class="col-lg-3 col-md-6 mb-4">
                 <h5 class="text-white mb-3">BlueGreen Sheet</h5>
                 <p class="text-light mb-3">
-                    Connecting independent school professionals with exceptional opportunities since 1990.
-                    We facilitate meaningful connections between talented educational leaders and outstanding independent schools.
+                    {% for entry in craft.entries
+                        .section("footer")
+                        .all()
+                    %}
+                        {{ entry.body }}
+                    {% endfor %}
                 </p>
                 <div class="d-flex gap-2">
                     {# <a href="#" class="text-light" aria-label="Follow us on Facebook">

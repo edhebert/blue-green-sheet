@@ -20,7 +20,7 @@ previewTargets:
         - '1'
 propagationMethod: all
 siteSettings:
-  62b64a73-e162-4b39-97d4-ac8246ccc3e5: # Blue Green Sheet
+  62b64a73-e162-4b39-97d4-ac8246ccc3e5: # BlueGreen Sheet
     enabledByDefault: true
     hasUrls: true
     template: jobs/_entry.twig
