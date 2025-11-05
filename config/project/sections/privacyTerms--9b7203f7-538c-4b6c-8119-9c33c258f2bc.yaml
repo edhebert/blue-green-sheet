@@ -1,0 +1,21 @@
+defaultPlacement: end
+enableVersioning: true
+entryTypes:
+  -
+    uid: 31faae40-a08f-430a-aa56-f21a169f7a4b # Privacy
+handle: privacyTerms
+maxAuthors: 1
+name: 'Privacy & Terms'
+previewTargets:
+  -
+    label: 'Primary entry page'
+    refresh: '1'
+    urlFormat: '{url}'
+propagationMethod: all
+siteSettings:
+  62b64a73-e162-4b39-97d4-ac8246ccc3e5: # Blue Green Sheet
+    enabledByDefault: true
+    hasUrls: true
+    template: privacy/_entry.twig
+    uriFormat: privacy
+type: single

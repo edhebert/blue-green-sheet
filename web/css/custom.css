@@ -3,7 +3,8 @@
 :root {
 	 --cnvs-themecolor: #338a61;
 	 --cnvs-themecolor-rgb: 51, 138, 97;
-     
+     --cnvs-secondarycolor: #004bad;
+     --cnvs-link-color: #0d6efd;
 	--cnvs-header-height: 100px;
 	--cnvs-header-height-sm: 60px;
 	--cnvs-header-height-md: 80px;
@@ -14,6 +15,13 @@
      --bs-primary-rgb: 0, 75, 173;
 }
 
+a {
+    font-weight: bold;
+}
+
+dl, dt, dd, ol, ul, li {
+    margin-left: 15px;
+}
 
 .button:hover {
     background-color: #5da483ff;

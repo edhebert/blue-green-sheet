@@ -187,7 +187,7 @@ return [
                     Craft::$app->getMailer()->send($msg);
 
                     // Set welcome message for the user
-                    Craft::$app->getSession()->setNotice('Welcome to Blue Green Sheet! Your account is now active. Please login below to complete your profile.');
+                    Craft::$app->getSession()->setNotice('Welcome to BlueGreen Sheet! Your account is now active. Please login below to complete your profile.');
                 }
             );
 
@@ -365,7 +365,7 @@ return [
                                 $this->sendJobPostingNotifications($job, $amount, $duration, $paymentMethod);
 
                                 Craft::info("Invoice payment successful - Job {$jobId} activated", __METHOD__);
-                                $session->setNotice('Your job posting has been published! An invoice for $' . $amount . ' will soon be sent to your email from a member of the Blue Green Sheet staff.');
+                                $session->setNotice('Your job posting has been published! An invoice for $' . $amount . ' will soon be sent to your email from a member of the BlueGreen Sheet staff.');
                                 return $this->redirectToPostedUrl();
                             } else {
                                 $errors = $job->getErrors();
@@ -727,7 +727,7 @@ return [
                             $posterHtmlBody = '<html><body style="font-family: Arial, sans-serif; line-height: 1.6;">';
                             $posterHtmlBody .= '<h2 style="color: #5cb85c;">Your Job Posting is Now Live!</h2>';
                             $posterHtmlBody .= '<p>Dear ' . htmlspecialchars($user->firstName) . ',</p>';
-                            $posterHtmlBody .= '<p>Thank you for posting your job listing to the Blue Green Sheet job board! We are excited to help you find the perfect candidate for your school.</p>';
+                            $posterHtmlBody .= '<p>Thank you for posting your job listing to the BlueGreen Sheet job board! We are excited to help you find the perfect candidate for your school.</p>';
 
                             $posterHtmlBody .= '<p><strong>Job Posting Details:</strong></p>';
                             $posterHtmlBody .= '<table style="border-collapse: collapse; width: 100%; margin: 20px 0;">';
@@ -744,14 +744,14 @@ return [
                                 $posterHtmlBody .= '</p>';
                             }
 
-                            $posterHtmlBody .= '<p>Your job posting will remain active for ' . $duration . ' month(s) from the date of posting. Candidates can view your job and apply directly through the Blue Green Sheet platform.</p>';
+                            $posterHtmlBody .= '<p>Your job posting will remain active for ' . $duration . ' month(s) from the date of posting. Candidates can view your job and apply directly through the BlueGreen Sheet platform.</p>';
 
                             if ($paymentMethod === 'invoice') {
                                 $posterHtmlBody .= '<p>You selected invoice payment. An invoice for $' . $amount . ' will be sent to you shortly from our billing team.</p>';
                             }
 
                             $posterHtmlBody .= '<p>If you have any questions or need assistance, please do not hesitate to reach out to our support team.</p>';
-                            $posterHtmlBody .= '<p>Best regards,<br><strong>The Blue Green Sheet Team</strong></p>';
+                            $posterHtmlBody .= '<p>Best regards,<br><strong>The BlueGreen Sheet Team</strong></p>';
                             $posterHtmlBody .= '</body></html>';
 
                             $posterMessage = new \craft\mail\Message();

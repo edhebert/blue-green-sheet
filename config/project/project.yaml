@@ -1,4 +1,4 @@
-dateModified: 1761935909
+dateModified: 1762356038
 elementSources:
   craft\elements\Entry:
     -
@@ -165,7 +165,7 @@ elementSources:
       type: native
 email:
   fromEmail: ed+bgs@theblueocean.com
-  fromName: 'Blue Green Sheet'
+  fromName: 'BlueGreen Sheet'
   replyToEmail: null
   template: _emails/email-layout
   transportSettings:
@@ -214,7 +214,7 @@ meta:
     2d59f6f9-f9d0-47fa-9e56-3a6ca495d7b7: height100 # height100
     2fcab9d0-3904-4d93-95d0-870fccb5c2cc: About # About
     3be9cb9f-6914-4294-a814-3f08c5711c69: 'BGS Overview' # BGS Overview
-    3f4d4956-32f9-4440-8020-d01946127d8e: 'Blue Green Sheet' # Blue Green Sheet
+    3f4d4956-32f9-4440-8020-d01946127d8e: 'BlueGreen Sheet' # BlueGreen Sheet
     5de740b2-aa13-48eb-b460-549297b24e7d: Logos # Logos
     6c8238d6-303b-4cb8-8e3d-dc9cba292c2a: New # New
     6dc842a5-5701-43dd-aefc-62d5112cd1d9: 'Public Schema' # Public Schema
@@ -224,12 +224,14 @@ meta:
     7a817dcb-10af-437f-a253-60a5a0e348e3: height50 # height50
     08ba6143-f9a0-4d77-bc74-910ce8990214: 'Job Poster' # Job Poster
     8d320b8b-673d-44d8-9299-bdb93b2c4381: wide250 # wide250
+    9b7203f7-538c-4b6c-8119-9c33c258f2bc: 'Privacy & Terms' # Privacy & Terms
     9d8645b3-7788-49d7-92ef-e3c2e0aca352: Logo # Logo
     12d880c0-a281-4f27-a40b-135b2f5b4654: 'Type of Organization' # Type of Organization
     21bd4595-df6f-4876-9708-5bfadad51b42: Website # Website
+    31faae40-a08f-430a-aa56-f21a169f7a4b: Privacy # Privacy
     52fe2c65-e3d8-4977-bb85-532fd2435450: 'Organization Name' # Organization Name
     56d41606-0de2-4906-9d56-7a4b768399be: Subscribe # Subscribe
-    62b64a73-e162-4b39-97d4-ac8246ccc3e5: 'Blue Green Sheet' # Blue Green Sheet
+    62b64a73-e162-4b39-97d4-ac8246ccc3e5: 'BlueGreen Sheet' # BlueGreen Sheet
     192d4098-f32f-441e-901a-202b4a587a5d: Organization # Organization
     0279dfbc-1019-4d0b-83dc-034b6e185d12: 'Contact Form' # Contact Form
     314e8ab4-95e5-49d8-82e0-08c98192bb23: Jobs # Jobs
@@ -238,6 +240,7 @@ meta:
     942ebfb2-eed8-462b-a9fe-651fba4a252f: List # List
     2956ebaa-8a8f-47ad-b082-2754cf28e9b0: Homepage # Homepage
     6407ff57-cf24-424a-8a4f-34c0137e2feb: Country # Country
+    676358a4-ad9c-4121-9012-85bcd77506f0: 'Height 400' # Height 400
     7763024f-14a9-49de-8c23-95060f41b140: Facebook # Facebook
     23728677-e935-45a9-be09-8db255d1d4cb: Icon # Icon
     a026cacb-2f40-4011-b87d-a1beb7552037: Organization # Organization

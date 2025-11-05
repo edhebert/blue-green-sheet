@@ -1,0 +1,20 @@
+{% extends "_layout.twig" %}
+
+{% block title %}{{ entry.title }} - {{ siteName }}{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <!-- Header Section -->
+      <div class="text-center mb-5">
+        <h1 class="h2 fw-bold mb-3">{{ entry.title }}</h1>
+      </div>
+
+      {{ entry.body }}
+      
+      
+    </div>
+  </div>
+</div>
+{% endblock %}

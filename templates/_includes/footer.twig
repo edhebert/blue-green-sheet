@@ -16,7 +16,7 @@
                     <a href="#" class="text-light" aria-label="Follow us on Twitter">
                         <i class="bi bi-twitter" style="font-size: 1.2rem;"></i>
                     </a> #}
-                    <a href="#" class="text-light" aria-label="Connect on LinkedIn">
+                    <a href="https://www.linkedin.com/company/bluegreensheet/" class="text-light" aria-label="Connect on LinkedIn">
                         <i class="bi bi-linkedin" style="font-size: 1.2rem;"></i>
                     </a>
                 </div>
@@ -34,11 +34,6 @@
                     <li class="mb-2">
                         <a href="{{ url('jobs') }}" class="text-light text-decoration-none">
                             <i class="bi bi-search me-2"></i>Browse Jobs
-                        </a>
-                    </li>
-                    <li class="mb-2">
-                        <a href="{{ url('subscribe') }}" class="text-light text-decoration-none">
-                            <i class="bi bi-tag me-2"></i>Subscribe for Alerts
                         </a>
                     </li>
                 </ul>
@@ -66,11 +61,6 @@
                             </a>
                         </li>                        
                     {% endif %}
-                    <li class="mb-2">
-                        <a href="{{ url('overview') }}" class="text-light text-decoration-none">
-                            <i class="bi bi-currency-dollar me-2"></i>View Pricing
-                        </a>
-                    </li>
                 </ul>
             </div>
 
@@ -89,52 +79,16 @@
                 <!-- Newsletter Signup -->
                 <div class="mt-4">
                     <h6 class="text-white mb-2">Stay Updated</h6>
-                    <p class="text-light small mb-2">Get notified about new opportunities</p>
-                    <form action="https://bluegreensheet.us9.list-manage.com/subscribe/post-json?u=4df298beef9630e5c726af09f&amp;id=7981660f13&amp;f_id=009c57e1f0" method="post" id="mc-footer-subscribe-form" name="mc-footer-subscribe-form" class="validate">
-                        <div class="input-group input-group-sm">
-                            <input type="email" name="EMAIL" id="footer-email" class="form-control required email" placeholder="Your email" aria-label="Email" required>
-                            <button class="btn btn-primary" type="submit" style="background-color: var(--cnvs-themecolor); border: 0">
-                                <i class="bi bi-envelope"></i>
-                            </button>
+                    <div class="text-light">
+                        <div class="mb-3">
+                            <i class="bi bi-bell me-2"></i>
+                            <a href="{{ siteUrl }}subscribe" class="text-light text-decoration-none">
+                                Subscribe for Job Alerts
+                            </a>
                         </div>
-                        <div aria-hidden="true" style="position: absolute; left: -5000px;">
-                            <input type="text" name="b_4df298beef9630e5c726af09f_7981660f13" tabindex="-1" value="">
-                        </div>
-                        <div id="footer-subscribe-message" style="margin-top: 0.5rem; display: none;">
-                            <small class="text-success">✓ Thanks for subscribing!</small>
-                        </div>
-                    </form>
+                    </div>                    
                 </div>
 
-                <script>
-                document.getElementById('mc-footer-subscribe-form').addEventListener('submit', function(e) {
-                    e.preventDefault();
-
-                    const form = this;
-                    const email = document.getElementById('footer-email').value;
-
-                    // Define callback function first
-                    const callbackName = 'mcCallback' + Date.now();
-                    window[callbackName] = function(data) {
-                        if (data.result === 'success') {
-                            document.getElementById('footer-subscribe-message').style.display = 'block';
-                            form.reset();
-                            setTimeout(function() {
-                                document.getElementById('footer-subscribe-message').style.display = 'none';
-                            }, 5000);
-                        }
-                        // Cleanup
-                        delete window[callbackName];
-                        document.body.removeChild(script);
-                    };
-
-                    // Create script element for JSONP with callback
-                    const url = form.action + '&EMAIL=' + encodeURIComponent(email) + '&c=' + callbackName;
-                    const script = document.createElement('script');
-                    script.src = url;
-                    document.body.appendChild(script);
-                });
-                </script>
             </div>
         </div>
 
@@ -150,17 +104,8 @@
                     </div>
                 </div>
                 <div class="col-md-6 text-center text-md-end">
-                    {# <div class="d-flex justify-content-center justify-content-md-end gap-3 flex-wrap">
-                        <a href="#" class="text-light text-decoration-none small">Privacy Policy</a>
-                        <a href="#" class="text-light text-decoration-none small">Terms of Service</a>
-                        <a href="#" class="text-light text-decoration-none small">Support</a>
-                    </div> #}
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12 text-center">
-                    <div class="text-light small opacity-75">
-                        Successor to The Blue Sheet and The Green Sheet
+                    <div class="d-flex justify-content-center justify-content-md-end gap-3 flex-wrap">
+                        <a href="{{ siteUrl }}privacy" class="text-light text-decoration-none small">Privacy Policy & Terms of Use</a>
                     </div>
                 </div>
             </div>
