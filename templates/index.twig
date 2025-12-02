@@ -71,7 +71,7 @@
 
           <div class="col-md-4">
             <div class="card h-100 border-0 shadow-sm">
-              <div class="card-body">
+              <div class="card-body tombstone">
                 {# School Logo or Initials #}
                 {% if school %}
                   {% if school.logo|length %}
@@ -126,7 +126,7 @@
                 {# Recruiter Attribution (if posted by recruiter) #}
                 {% if isRecruiterPosted %}
                   {% if listingOrg.logo|length %}
-                    <p class="text-muted small fst-italic mb-3 text-center" style="position: relative; z-index: 2;">
+                    <p class="text-muted small fst-italic mb-3" style="position: relative; z-index: 2;">
                       <a href="{{ listingOrg.url }}" style="display:block; margin: 0 auto;" class="mt-5 mb-3"><img src="{{ listingOrg.logo.one().url('height50') }}" alt="{{ listingOrg.title }}" style="max-height: 50px; max-width: 100%;"></a>
                       Search being conducted by<br> <a href="{{ listingOrg.url }}" class="text-decoration-none" style="position: relative;">{{ listingOrg.title }}</a>
                     </p>
@@ -148,6 +148,10 @@
                       </p>
                     </div>
                   {% endif %}
+                {% else %}
+                  <p class="text-muted small fst-italic mb-3" style="position: relative; z-index: 2;">
+                    Search being conducted by the school.
+                  </p>
                 {% endif %}
               </div>
             </div>

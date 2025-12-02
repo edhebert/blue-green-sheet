@@ -26,9 +26,9 @@
                                             {{ organization.title }}
                                         </a>
                                     </h2>
-                                    {% if organization.orgDescription %}
+                                    {# {% if organization.orgDescription %}
                                         <p class="text-muted small mb-0">{{ organization.orgDescription|striptags|truncate(200)|raw }}</p>
-                                    {% endif %}
+                                    {% endif %} #}
                                 </div>
 							{% endif %}
 
@@ -211,20 +211,25 @@
 								{% endif %}
 
 								<!-- Location Details -->
-								{% set hasLocationDetails = entry.jobCity|length or entry.jobState %}
+								{% set hasLocationDetails = entry.jobCity|length or entry.jobState or entry.jobLocation|length %}
 								{% if hasLocationDetails %}
 									<div class="mb-3">
 										<strong class="d-block text-muted small mb-1">Location</strong>
 										<div>
 											<i class="bi bi-geo-alt me-2"></i>
-											{% if entry.jobCity %}
-												{{ entry.jobCity }}
-											{% endif %}
-											{% if entry.jobCity and entry.jobState %},
-											{% endif %}
-											{% if entry.jobState %}
-												{{ entry.jobState.value }}
-											{% endif %}
+                                            {% if entry.jobLocation|length %}
+                                                {{ entry.jobLocation }}
+                                            {% else %}
+                                                {% if entry.jobCity %}
+                                                    {{ entry.jobCity }}
+                                                {% endif %}
+                                                {% if entry.jobCity and entry.jobState %},
+                                                {% endif %}
+                                                {% if entry.jobState %}
+                                                    {{ entry.jobState.value }}
+                                                {% endif %}                                                
+                                            {% endif %}
+                                            
 										</div>
 									</div>
 								{% endif %}
