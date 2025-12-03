@@ -3,17 +3,17 @@
   "prefer-stable": true,
   "require": {
     "bluegreensheet/job-region-populator": "@dev",
-    "craftcms/ckeditor": "4.10.1",
-    "craftcms/cms": "5.8.19",
+    "craftcms/ckeditor": "4.11.0",
+    "craftcms/cms": "5.8.20",
     "craftcms/feed-me": "6.11.0",
-    "craftcms/stripe": "1.6.0",
+    "craftcms/stripe": "1.6.1",
     "doublesecretagency/craft-cpcss": "3.0.0",
     "nystudio107/craft-seomatic": "5.1.19",
     "ostark/craft-async-queue": "4.0.0",
     "putyourlightson/craft-dashboard-begone": "3.0.0",
-    "servd/craft-asset-storage": "4.2.0",
+    "servd/craft-asset-storage": "4.2.2",
     "verbb/expanded-singles": "3.0.3",
-    "verbb/formie": "3.1.4",
+    "verbb/formie": "3.1.6",
     "vlucas/phpdotenv": "^5.4.0"
   },
   "require-dev": {

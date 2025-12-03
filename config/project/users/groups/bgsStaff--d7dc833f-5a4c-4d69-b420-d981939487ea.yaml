@@ -28,7 +28,9 @@ permissions:
   - 'deletepeerentries:bfd2eaee-0f5f-44f6-81f2-1f5e563a0e2e' # Jobs
   - 'deletepeerentrydrafts:2fcab9d0-3904-4d93-95d0-870fccb5c2cc' # About
   - 'deletepeerentrydrafts:56d41606-0de2-4906-9d56-7a4b768399be' # Subscribe
+  - 'deletepeerentrydrafts:64e2d70d-bf2d-4df4-9df4-be6545a2afc0' # Footer
   - 'deletepeerentrydrafts:7a30d7ad-a979-44b7-89f1-35059c005316' # Organizations
+  - 'deletepeerentrydrafts:9b7203f7-538c-4b6c-8119-9c33c258f2bc' # Privacy & Terms
   - 'deletepeerentrydrafts:ac5e09a1-0209-46fa-bf18-00690e21c24e' # BGS Overview
   - 'deletepeerentrydrafts:bfd2eaee-0f5f-44f6-81f2-1f5e563a0e2e' # Jobs
   - 'deletepeerentrydrafts:c7caf5a7-983c-4d28-9e27-1a7829f7a221' # Homepage
@@ -38,25 +40,6 @@ permissions:
   - 'editpeerimages:5de740b2-aa13-48eb-b460-549297b24e7d' # Logos
   - 'editpeerimages:bc2582f3-84c9-4698-8f75-10e1b877d0a8' # Attachments
   - editusers
-  - formie-accessforms
-  - formie-accesssentnotifications
-  - formie-accesssubmissions
-  - formie-createsubmissions
-  - 'formie-createsubmissions:d8a2940a-0056-4adc-8a80-f9eb5549944b'
-  - formie-deletesentnotifications
-  - 'formie-deletesentnotifications:d8a2940a-0056-4adc-8a80-f9eb5549944b'
-  - formie-deletesubmissions
-  - 'formie-deletesubmissions:d8a2940a-0056-4adc-8a80-f9eb5549944b'
-  - formie-manageforms
-  - formie-resendsentnotifications
-  - 'formie-resendsentnotifications:d8a2940a-0056-4adc-8a80-f9eb5549944b'
-  - formie-savesubmissions
-  - 'formie-savesubmissions:d8a2940a-0056-4adc-8a80-f9eb5549944b'
-  - formie-shownotifications
-  - formie-viewsentnotifications
-  - 'formie-viewsentnotifications:d8a2940a-0056-4adc-8a80-f9eb5549944b'
-  - formie-viewsubmissions
-  - 'formie-viewsubmissions:d8a2940a-0056-4adc-8a80-f9eb5549944b'
   - impersonateusers
   - moderateusers
   - registerusers
@@ -70,7 +53,9 @@ permissions:
   - 'savecategories:cdf1f46c-3d43-42f5-9d50-85377f321e61' # Job Region
   - 'saveentries:2fcab9d0-3904-4d93-95d0-870fccb5c2cc' # About
   - 'saveentries:56d41606-0de2-4906-9d56-7a4b768399be' # Subscribe
+  - 'saveentries:64e2d70d-bf2d-4df4-9df4-be6545a2afc0' # Footer
   - 'saveentries:7a30d7ad-a979-44b7-89f1-35059c005316' # Organizations
+  - 'saveentries:9b7203f7-538c-4b6c-8119-9c33c258f2bc' # Privacy & Terms
   - 'saveentries:ac5e09a1-0209-46fa-bf18-00690e21c24e' # BGS Overview
   - 'saveentries:bfd2eaee-0f5f-44f6-81f2-1f5e563a0e2e' # Jobs
   - 'saveentries:c7caf5a7-983c-4d28-9e27-1a7829f7a221' # Homepage
@@ -82,7 +67,9 @@ permissions:
   - 'savepeerentries:bfd2eaee-0f5f-44f6-81f2-1f5e563a0e2e' # Jobs
   - 'savepeerentrydrafts:2fcab9d0-3904-4d93-95d0-870fccb5c2cc' # About
   - 'savepeerentrydrafts:56d41606-0de2-4906-9d56-7a4b768399be' # Subscribe
+  - 'savepeerentrydrafts:64e2d70d-bf2d-4df4-9df4-be6545a2afc0' # Footer
   - 'savepeerentrydrafts:7a30d7ad-a979-44b7-89f1-35059c005316' # Organizations
+  - 'savepeerentrydrafts:9b7203f7-538c-4b6c-8119-9c33c258f2bc' # Privacy & Terms
   - 'savepeerentrydrafts:ac5e09a1-0209-46fa-bf18-00690e21c24e' # BGS Overview
   - 'savepeerentrydrafts:bfd2eaee-0f5f-44f6-81f2-1f5e563a0e2e' # Jobs
   - 'savepeerentrydrafts:c7caf5a7-983c-4d28-9e27-1a7829f7a221' # Homepage
@@ -92,7 +79,9 @@ permissions:
   - 'viewcategories:cdf1f46c-3d43-42f5-9d50-85377f321e61' # Job Region
   - 'viewentries:2fcab9d0-3904-4d93-95d0-870fccb5c2cc' # About
   - 'viewentries:56d41606-0de2-4906-9d56-7a4b768399be' # Subscribe
+  - 'viewentries:64e2d70d-bf2d-4df4-9df4-be6545a2afc0' # Footer
   - 'viewentries:7a30d7ad-a979-44b7-89f1-35059c005316' # Organizations
+  - 'viewentries:9b7203f7-538c-4b6c-8119-9c33c258f2bc' # Privacy & Terms
   - 'viewentries:ac5e09a1-0209-46fa-bf18-00690e21c24e' # BGS Overview
   - 'viewentries:bfd2eaee-0f5f-44f6-81f2-1f5e563a0e2e' # Jobs
   - 'viewentries:c7caf5a7-983c-4d28-9e27-1a7829f7a221' # Homepage
@@ -104,7 +93,9 @@ permissions:
   - 'viewpeerentries:bfd2eaee-0f5f-44f6-81f2-1f5e563a0e2e' # Jobs
   - 'viewpeerentrydrafts:2fcab9d0-3904-4d93-95d0-870fccb5c2cc' # About
   - 'viewpeerentrydrafts:56d41606-0de2-4906-9d56-7a4b768399be' # Subscribe
+  - 'viewpeerentrydrafts:64e2d70d-bf2d-4df4-9df4-be6545a2afc0' # Footer
   - 'viewpeerentrydrafts:7a30d7ad-a979-44b7-89f1-35059c005316' # Organizations
+  - 'viewpeerentrydrafts:9b7203f7-538c-4b6c-8119-9c33c258f2bc' # Privacy & Terms
   - 'viewpeerentrydrafts:ac5e09a1-0209-46fa-bf18-00690e21c24e' # BGS Overview
   - 'viewpeerentrydrafts:bfd2eaee-0f5f-44f6-81f2-1f5e563a0e2e' # Jobs
   - 'viewpeerentrydrafts:c7caf5a7-983c-4d28-9e27-1a7829f7a221' # Homepage

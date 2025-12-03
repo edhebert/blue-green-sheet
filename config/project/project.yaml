@@ -1,4 +1,4 @@
-dateModified: 1762362470
+dateModified: 1764785137
 elementSources:
   craft\elements\Entry:
     -
@@ -317,7 +317,7 @@ plugins:
     edition: standard
     enabled: true
     licenseKey: M5VU2U4U4XPKMV74PCOE7X7Q
-    schemaVersion: 3.4.10
+    schemaVersion: 3.4.12
   job-region-populator:
     edition: standard
     enabled: true
