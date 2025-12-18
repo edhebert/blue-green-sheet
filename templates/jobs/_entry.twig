@@ -78,11 +78,11 @@
 								<h3 class="h5 text-success fw-semibold">
 									{% if entry.jobSalaryLow and entry.jobSalaryHigh %}
 										${{ entry.jobSalaryLow|number_format }}
-										- ${{ entry.jobSalaryHigh|number_format }}K
+										- ${{ entry.jobSalaryHigh|number_format }}
 									{% elseif entry.jobSalaryLow %}
-										${{ entry.jobSalaryLow|number_format }}K+
+										${{ entry.jobSalaryLow|number_format }}
 									{% elseif entry.jobSalaryHigh %}
-										Up to ${{ entry.jobSalaryHigh|number_format }}K
+										Up to ${{ entry.jobSalaryHigh|number_format }}
 									{% endif %}
 								</h3>
 							</div>
@@ -241,11 +241,11 @@
 										<div class="text-success fw-semibold">
 											{% if entry.jobSalaryLow and entry.jobSalaryHigh %}
 												${{ entry.jobSalaryLow|number_format }}
-												- ${{ entry.jobSalaryHigh|number_format }}K
+												- ${{ entry.jobSalaryHigh|number_format }}
 											{% elseif entry.jobSalaryLow %}
-												${{ entry.jobSalaryLow|number_format }}K+
+												${{ entry.jobSalaryLow|number_format }}
 											{% elseif entry.jobSalaryHigh %}
-												Up to ${{ entry.jobSalaryHigh|number_format }}K
+												Up to ${{ entry.jobSalaryHigh|number_format }}
 											{% endif %}
 										</div>
 									</div>
