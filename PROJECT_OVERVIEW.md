@@ -56,7 +56,8 @@ Blue Green Sheet is a job board platform built on Craft CMS 5, specifically desi
 **Region Mappings**:
 - **Pacific**: CA, OR, WA, AK, HI
 - **Mid-Atlantic**: DC, DE, MD, VA, WV
-- **Southeast**: FL, GA, AL, NC, SC, KY, MS, TN
+- **Southeast**: FL, GA, NC, SC
+- **South Central East**: AL, KY, MS, TN
 - **South Central West**: AR, LA, OK, TX
 - **Great Lakes**: IL, IN, MI, OH, WI
 - **New England**: CT, ME, MA, NH, RI, VT

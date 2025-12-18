@@ -97,15 +97,17 @@ class Plugin extends BasePlugin
                 'VA' => 'mid-atlantic-dc-de-md-va-wv',
                 'WV' => 'mid-atlantic-dc-de-md-va-wv',
 
-                // Southeast: FL, GA, AL, NC, SC, KY, MS, TN
-                'FL' => 'southeast-fl-ga-al-nc-sc-ky-ms-tn',
-                'GA' => 'southeast-fl-ga-al-nc-sc-ky-ms-tn',
-                'AL' => 'southeast-fl-ga-al-nc-sc-ky-ms-tn',
-                'NC' => 'southeast-fl-ga-al-nc-sc-ky-ms-tn',
-                'SC' => 'southeast-fl-ga-al-nc-sc-ky-ms-tn',
-                'KY' => 'southeast-fl-ga-al-nc-sc-ky-ms-tn',
-                'MS' => 'southeast-fl-ga-al-nc-sc-ky-ms-tn',
-                'TN' => 'southeast-fl-ga-al-nc-sc-ky-ms-tn',
+                // Southeast: FL, GA, NC, SC
+                'FL' => 'southeast-fl-ga-nc-sc',
+                'GA' => 'southeast-fl-ga-nc-sc',
+                'NC' => 'southeast-fl-ga-nc-sc',
+                'SC' => 'southeast-fl-ga-nc-sc',
+
+                // South Central East: AL, KY, MS, TN
+                'AL' => 'south-central-east-al-ky-ms-tn',
+                'KY' => 'south-central-east-al-ky-ms-tn',
+                'MS' => 'south-central-east-al-ky-ms-tn',
+                'TN' => 'south-central-east-al-ky-ms-tn',
 
                 // South Central West: AR, LA, OK, TX
                 'AR' => 'south-central-west-ar-la-ok-tx',

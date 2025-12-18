@@ -58,7 +58,7 @@ This file contains instructions and context for AI assistants (like Claude) work
 **Why it's critical**: Auto-populates geographic regions for all jobs based on state/country.
 
 **What it does**:
-- Maps US states to 11 geographic regions
+- Maps US states to 12 geographic regions
 - Handles international jobs
 - Runs on `Entry::EVENT_BEFORE_SAVE` for jobs section
 

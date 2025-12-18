@@ -165,7 +165,15 @@ fieldLayouts:
             tip: null
             type: craft\fieldlayoutelements\CustomField
             uid: daabeaee-9ea3-45bb-a883-1f95daaa51cf
-            userCondition: null
+            userCondition:
+              class: craft\elements\conditions\users\UserCondition
+              conditionRules:
+                -
+                  class: craft\elements\conditions\users\AdminConditionRule
+                  uid: 89c490ee-4aa9-49e7-bace-353f65f123d9
+                  value: true
+              elementType: craft\elements\User
+              fieldContext: global
             warning: null
             width: 100
           -
