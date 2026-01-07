@@ -1,4 +1,4 @@
-dateModified: 1767809316
+dateModified: 1767819726
 elementSources:
   craft\elements\Entry:
     -
@@ -178,7 +178,7 @@ elementSources:
       key: 'group:d7dc833f-5a4c-4d69-b420-d981939487ea' # BGS Staff
       type: native
 email:
-  fromEmail: info@bluegreensheet.com
+  fromEmail: support@bluegreensheet.com
   fromName: 'BlueGreen Sheet'
   replyToEmail: null
   template: _emails/email-layout
