@@ -12,6 +12,7 @@
     "ostark/craft-async-queue": "4.0.0",
     "putyourlightson/craft-dashboard-begone": "3.0.0",
     "servd/craft-asset-storage": "4.2.2",
+    "studioespresso/craft-exporter": "5.1.1",
     "verbb/expanded-singles": "3.0.3",
     "verbb/formie": "3.1.6",
     "vlucas/phpdotenv": "^5.4.0"

@@ -1,4 +1,4 @@
-dateModified: 1768504322
+dateModified: 1768576463
 elementSources:
   craft\elements\Entry:
     -
@@ -308,6 +308,11 @@ plugins:
   expanded-singles:
     edition: standard
     enabled: true
+    schemaVersion: 1.0.0
+  exporter:
+    edition: standard
+    enabled: true
+    licenseKey: GAVPTMP2B0MBLHH2WX9L5F8A
     schemaVersion: 1.0.0
   feed-me:
     edition: standard
