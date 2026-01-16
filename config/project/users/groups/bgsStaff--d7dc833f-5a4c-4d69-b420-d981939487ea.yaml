@@ -38,6 +38,8 @@ permissions:
   - 'editpeerimages:5de740b2-aa13-48eb-b460-549297b24e7d' # Logos
   - 'editpeerimages:bc2582f3-84c9-4698-8f75-10e1b877d0a8' # Attachments
   - editusers
+  - exporter-createexports
+  - exporter-deleteexports
   - impersonateusers
   - moderateusers
   - registerusers
