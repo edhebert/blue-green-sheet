@@ -1,4 +1,4 @@
-dateModified: 1768580820
+dateModified: 1768845916
 elementSources:
   craft\elements\Entry:
     -
@@ -112,6 +112,7 @@ elementSources:
       key: '*'
       tableAttributes:
         - fullName
+        - 'field:a026cacb-2f40-4011-b87d-a1beb7552037' # Organization
       type: native
     -
       defaultSort:
@@ -139,11 +140,8 @@ elementSources:
       disabled: false
       key: credentialed
       tableAttributes:
-        - status
         - fullName
-        - email
-        - dateCreated
-        - lastLoginDate
+        - 'field:a026cacb-2f40-4011-b87d-a1beb7552037' # Organization
       type: native
     -
       defaultSort:
@@ -155,8 +153,6 @@ elementSources:
       tableAttributes:
         - status
         - fullName
-        - email
-        - dateCreated
         - lastLoginDate
       type: native
     -
@@ -171,11 +167,21 @@ elementSources:
       disabled: false
       key: 'group:1ccad001-55ba-4d90-83b5-00addcccf854' # Job Posters
       tableAttributes:
-        - username
+        - fullName
         - 'field:a026cacb-2f40-4011-b87d-a1beb7552037' # Organization
+        - lastLoginDate
       type: native
     -
+      defaultSort:
+        - id
+        - asc
+      defaultViewMode: ''
+      disabled: false
       key: 'group:d7dc833f-5a4c-4d69-b420-d981939487ea' # BGS Staff
+      tableAttributes:
+        - fullName
+        - 'field:a026cacb-2f40-4011-b87d-a1beb7552037' # Organization
+        - lastLoginDate
       type: native
 email:
   fromEmail: support@bluegreensheet.com
