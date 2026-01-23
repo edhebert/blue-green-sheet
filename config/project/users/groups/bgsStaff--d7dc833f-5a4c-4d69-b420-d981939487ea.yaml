@@ -4,7 +4,7 @@ name: 'BGS Staff'
 permissions:
   - accesscp
   - accesscpwhensystemisoff
-  - accessplugin-formie
+  - accessplugin-exporter
   - accesssitewhensystemisoff
   - administrateusers
   - 'assignusergroup:1ccad001-55ba-4d90-83b5-00addcccf854' # Job Posters

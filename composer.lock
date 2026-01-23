@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "13e7486c2aaf3db9d8e5041f1971d647",
+    "content-hash": "3e6b329bab59f48aa175d9ffab6941fd",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -48,16 +48,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.366.0",
+            "version": "3.369.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "612b0eb977e249ec8bf49e1bf87e966ad2db7c71"
+                "reference": "48d809eda94dd528ef539cff827e7542ac01cce6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/612b0eb977e249ec8bf49e1bf87e966ad2db7c71",
-                "reference": "612b0eb977e249ec8bf49e1bf87e966ad2db7c71",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/48d809eda94dd528ef539cff827e7542ac01cce6",
+                "reference": "48d809eda94dd528ef539cff827e7542ac01cce6",
                 "shasum": ""
             },
             "require": {
@@ -71,7 +71,7 @@
                 "mtdowling/jmespath.php": "^2.8.0",
                 "php": ">=8.1",
                 "psr/http-message": "^1.0 || ^2.0",
-                "symfony/filesystem": "^v6.4.3 || ^v7.1.0"
+                "symfony/filesystem": "^v5.4.45 || ^v6.4.3 || ^v7.1.0 || ^v8.0.0"
             },
             "require-dev": {
                 "andrewsville/php-token-reflection": "^1.4",
@@ -139,9 +139,9 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.366.0"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.369.18"
             },
-            "time": "2025-12-03T16:29:22+00:00"
+            "time": "2026-01-22T19:05:57+00:00"
         },
         {
             "name": "bacon/bacon-qr-code",
@@ -817,11 +817,11 @@
         },
         {
             "name": "craftcms/cms",
-            "version": "5.8.22",
+            "version": "5.8.23",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/craftcms/cms/zipball/8e23a7a14d50f169c10a487348c993384d479e06",
-                "reference": "8e23a7a14d50f169c10a487348c993384d479e06",
+                "url": "https://api.github.com/repos/craftcms/cms/zipball/daf0ed01c7d2c194ba4a405290e43934d020eef2",
+                "reference": "daf0ed01c7d2c194ba4a405290e43934d020eef2",
                 "shasum": ""
             },
             "require": {
@@ -918,7 +918,7 @@
                 "docs": "https://craftcms.com/docs/5.x/",
                 "rss": "https://github.com/craftcms/cms/releases.atom"
             },
-            "time": "2026-01-09T18:29:44+00:00"
+            "time": "2026-01-20T17:54:56+00:00"
         },
         {
             "name": "craftcms/feed-me",
@@ -1143,11 +1143,11 @@
         },
         {
             "name": "craftcms/stripe",
-            "version": "1.7.0",
+            "version": "1.7.1",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/craftcms/stripe/zipball/c7356cd0dd7801c7e21adde347a0134981829a40",
-                "reference": "c7356cd0dd7801c7e21adde347a0134981829a40",
+                "url": "https://api.github.com/repos/craftcms/stripe/zipball/78a9de87fd306d3312107ca70096b345c15fb430",
+                "reference": "78a9de87fd306d3312107ca70096b345c15fb430",
                 "shasum": ""
             },
             "require": {
@@ -1185,7 +1185,7 @@
                 "docs": "https://github.com/craftcms/stripe",
                 "rss": "https://github.com/craftcms/stripe/releases.atom"
             },
-            "time": "2025-12-11T14:18:36+00:00"
+            "time": "2026-01-19T08:18:57+00:00"
         },
         {
             "name": "creocoder/yii2-nested-sets",
@@ -4417,16 +4417,16 @@
         },
         {
             "name": "nystudio107/craft-code-editor",
-            "version": "1.0.26",
+            "version": "1.0.28",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nystudio107/craft-code-editor.git",
-                "reference": "13467e7710b76ec2c1065c6f55b376a3594fd95e"
+                "reference": "7ffd5e9291e2b42d6f9f859d1734eb6500d042ac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nystudio107/craft-code-editor/zipball/13467e7710b76ec2c1065c6f55b376a3594fd95e",
-                "reference": "13467e7710b76ec2c1065c6f55b376a3594fd95e",
+                "url": "https://api.github.com/repos/nystudio107/craft-code-editor/zipball/7ffd5e9291e2b42d6f9f859d1734eb6500d042ac",
+                "reference": "7ffd5e9291e2b42d6f9f859d1734eb6500d042ac",
                 "shasum": ""
             },
             "require": {
@@ -4481,7 +4481,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-07-28T21:50:37+00:00"
+            "time": "2025-12-17T22:43:40+00:00"
         },
         {
             "name": "nystudio107/craft-plugin-vite",
@@ -4524,11 +4524,11 @@
         },
         {
             "name": "nystudio107/craft-seomatic",
-            "version": "5.1.19",
+            "version": "5.1.20",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/527085a71a051be17dc72d31cb7ea96953992947",
-                "reference": "527085a71a051be17dc72d31cb7ea96953992947",
+                "url": "https://api.github.com/repos/nystudio107/craft-seomatic/zipball/c88261b04a6078c8caba9e57091833ab7dab2621",
+                "reference": "c88261b04a6078c8caba9e57091833ab7dab2621",
                 "shasum": ""
             },
             "require": {
@@ -4581,7 +4581,7 @@
                 "issues": "https://nystudio107.com/plugins/seomatic/support",
                 "source": "https://github.com/nystudio107/craft-seomatic"
             },
-            "time": "2025-10-23T20:41:21+00:00"
+            "time": "2026-01-20T22:33:38+00:00"
         },
         {
             "name": "nystudio107/craft-twig-sandbox",
@@ -5682,6 +5682,69 @@
             "time": "2021-08-15T12:26:51+00:00"
         },
         {
+            "name": "predis/predis",
+            "version": "v3.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/predis/predis.git",
+                "reference": "153097374b39a2f737fe700ebcd725642526cdec"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/predis/predis/zipball/153097374b39a2f737fe700ebcd725642526cdec",
+                "reference": "153097374b39a2f737fe700ebcd725642526cdec",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2 || ^8.0",
+                "psr/http-message": "^1.0|^2.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.3",
+                "phpstan/phpstan": "^1.9",
+                "phpunit/phpcov": "^6.0 || ^8.0",
+                "phpunit/phpunit": "^8.0 || ~9.4.4"
+            },
+            "suggest": {
+                "ext-relay": "Faster connection with in-memory caching (>=0.6.2)"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Predis\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Till Krüss",
+                    "homepage": "https://till.im",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "A flexible and feature-complete Redis/Valkey client for PHP.",
+            "homepage": "http://github.com/predis/predis",
+            "keywords": [
+                "nosql",
+                "predis",
+                "redis"
+            ],
+            "support": {
+                "issues": "https://github.com/predis/predis/issues",
+                "source": "https://github.com/predis/predis/tree/v3.3.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/tillkruss",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-11-24T17:48:50+00:00"
+        },
+        {
             "name": "psr/cache",
             "version": "3.0.0",
             "dist": {
@@ -6352,11 +6415,11 @@
         },
         {
             "name": "servd/craft-asset-storage",
-            "version": "4.2.2",
+            "version": "4.2.3",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/servdhost/craft-asset-storage/zipball/5defff2ffeff0857a74923bc9c50c20cbe893d7b",
-                "reference": "5defff2ffeff0857a74923bc9c50c20cbe893d7b",
+                "url": "https://api.github.com/repos/servdhost/craft-asset-storage/zipball/a0eda599073d2f3c4939948d27b6e6e02a386ed6",
+                "reference": "a0eda599073d2f3c4939948d27b6e6e02a386ed6",
                 "shasum": ""
             },
             "require": {
@@ -6399,7 +6462,7 @@
                 "source": "https://github.com/servdhost/craft-asset-storage",
                 "docs": "https://github.com/servdhost/craft-asset-storage"
             },
-            "time": "2025-11-28T12:12:41+00:00"
+            "time": "2026-01-20T14:51:40+00:00"
         },
         {
             "name": "spomky-labs/cbor-php",
@@ -11265,24 +11328,26 @@
         },
         {
             "name": "yiisoft/yii2-redis",
-            "version": "2.0.20",
+            "version": "2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-redis.git",
-                "reference": "d5b89cb4977b73bc813d3b85a1017337ac64267c"
+                "reference": "689c6492641c2dbe561924be4d8ca5da9ae33637"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-redis/zipball/d5b89cb4977b73bc813d3b85a1017337ac64267c",
-                "reference": "d5b89cb4977b73bc813d3b85a1017337ac64267c",
+                "url": "https://api.github.com/repos/yiisoft/yii2-redis/zipball/689c6492641c2dbe561924be4d8ca5da9ae33637",
+                "reference": "689c6492641c2dbe561924be4d8ca5da9ae33637",
                 "shasum": ""
             },
             "require": {
                 "ext-openssl": "*",
+                "php": "^7.3 || ^8.0",
+                "predis/predis": "^v2.3.0|^3.0",
                 "yiisoft/yii2": "~2.0.39"
             },
             "require-dev": {
-                "phpunit/phpunit": "<7",
+                "phpunit/phpunit": "9.*",
                 "yiisoft/yii2-dev": "~2.0.39"
             },
             "type": "yii2-extension",
@@ -11335,7 +11400,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-06-05T04:02:45+00:00"
+            "time": "2025-12-25T10:15:00+00:00"
         },
         {
             "name": "yiisoft/yii2-symfonymailer",
