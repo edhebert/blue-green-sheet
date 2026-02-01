@@ -378,13 +378,13 @@
               <div class="input-group">
                 <span class="input-group-text">$</span>
                 <input
-                  type="number"
+                  type="text"
+                  inputmode="numeric"
                   id="jobSalaryLow"
                   name="fields[jobSalaryLow]"
-                  class="form-control"
-                  value="{{ entry ? entry.jobSalaryLow : '' }}"
-                  min="0"
-                  step="1000"
+                  class="form-control salary-input"
+                  value="{{ entry and entry.jobSalaryLow ? entry.jobSalaryLow|number_format(0, '.', ',') : '' }}"
+                  placeholder="e.g., 100,000"
                 >
               </div>
             </div>
@@ -393,13 +393,13 @@
               <div class="input-group">
                 <span class="input-group-text">$</span>
                 <input
-                  type="number"
+                  type="text"
+                  inputmode="numeric"
                   id="jobSalaryHigh"
                   name="fields[jobSalaryHigh]"
-                  class="form-control"
-                  value="{{ entry ? entry.jobSalaryHigh : '' }}"
-                  min="0"
-                  step="1000"
+                  class="form-control salary-input"
+                  value="{{ entry and entry.jobSalaryHigh ? entry.jobSalaryHigh|number_format(0, '.', ',') : '' }}"
+                  placeholder="e.g., 150,000"
                 >
               </div>
             </div>
@@ -537,6 +537,51 @@
 
   <script>
   document.addEventListener('DOMContentLoaded', function() {
+    // Salary input formatting and sanitization
+    function formatSalaryInput(input) {
+      // Get cursor position before formatting
+      const cursorPos = input.selectionStart;
+      const oldLength = input.value.length;
+
+      // Strip all non-numeric characters (removes $, commas, spaces, letters, etc.)
+      let rawValue = input.value.replace(/[^0-9]/g, '');
+
+      // Format with commas for display
+      if (rawValue) {
+        input.value = parseInt(rawValue, 10).toLocaleString('en-US');
+      } else {
+        input.value = '';
+      }
+
+      // Adjust cursor position after formatting
+      const newLength = input.value.length;
+      const newCursorPos = cursorPos + (newLength - oldLength);
+      input.setSelectionRange(newCursorPos, newCursorPos);
+    }
+
+    function getSalaryRawValue(input) {
+      // Return only the numeric value (strip all non-digits)
+      return input.value.replace(/[^0-9]/g, '');
+    }
+
+    // Apply formatting to all salary inputs
+    document.querySelectorAll('.salary-input').forEach(function(input) {
+      // Format on input (as user types)
+      input.addEventListener('input', function() {
+        formatSalaryInput(this);
+      });
+
+      // Also format on blur (when leaving field)
+      input.addEventListener('blur', function() {
+        formatSalaryInput(this);
+      });
+
+      // Format existing values on page load
+      if (input.value) {
+        formatSalaryInput(input);
+      }
+    });
+
     // Initialize CKEditor for rich text fields FIRST
     let jobDescriptionEditor, opportunityStatementEditor;
 
@@ -835,10 +880,10 @@
       const opportunityStatement = document.getElementById('jobOpportunityStatement').value;
       if (opportunityStatement) formData.append('fields[jobOpportunityStatement]', opportunityStatement);
 
-      const salaryLow = document.getElementById('jobSalaryLow').value;
+      const salaryLow = getSalaryRawValue(document.getElementById('jobSalaryLow'));
       if (salaryLow) formData.append('fields[jobSalaryLow]', salaryLow);
 
-      const salaryHigh = document.getElementById('jobSalaryHigh').value;
+      const salaryHigh = getSalaryRawValue(document.getElementById('jobSalaryHigh'));
       if (salaryHigh) formData.append('fields[jobSalaryHigh]', salaryHigh);
 
       const country = document.getElementById('hiddenCountry').value;
@@ -1022,10 +1067,10 @@
         const opportunityStatement = document.getElementById('jobOpportunityStatement').value;
         if (opportunityStatement) formData.append('fields[jobOpportunityStatement]', opportunityStatement);
 
-        const salaryLow = document.getElementById('jobSalaryLow').value;
+        const salaryLow = getSalaryRawValue(document.getElementById('jobSalaryLow'));
         if (salaryLow) formData.append('fields[jobSalaryLow]', salaryLow);
 
-        const salaryHigh = document.getElementById('jobSalaryHigh').value;
+        const salaryHigh = getSalaryRawValue(document.getElementById('jobSalaryHigh'));
         if (salaryHigh) formData.append('fields[jobSalaryHigh]', salaryHigh);
 
         const country = document.getElementById('hiddenCountry').value;
