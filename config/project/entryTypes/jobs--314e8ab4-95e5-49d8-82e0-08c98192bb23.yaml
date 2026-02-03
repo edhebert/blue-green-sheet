@@ -241,7 +241,7 @@ fieldLayouts:
             fieldUid: 7a6fec95-2ed4-4d18-b669-9108357adc40 # Single Line Text
             handle: jobSalaryLow
             includeInCards: false
-            instructions: null
+            instructions: 'Please enter numerical values only, NO COMMAS OR CURRENCY SYMBOLS. The salary values will be formatted for display on the website automatically.'
             label: 'Salary Low'
             providesThumbs: false
             required: false
@@ -258,7 +258,7 @@ fieldLayouts:
             fieldUid: 7a6fec95-2ed4-4d18-b669-9108357adc40 # Single Line Text
             handle: jobSalaryHigh
             includeInCards: false
-            instructions: null
+            instructions: 'Please enter numerical values only, NO COMMAS OR CURRENCY SYMBOLS. The salary values will be formatted for display on the website automatically.'
             label: 'Salary High'
             providesThumbs: false
             required: false
