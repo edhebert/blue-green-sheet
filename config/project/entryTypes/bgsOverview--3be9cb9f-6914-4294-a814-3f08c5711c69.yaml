@@ -16,7 +16,6 @@ fieldLayouts:
             disabled: false
             elementCondition: null
             id: null
-            includeInCards: false
             inputType: null
             instructions: 'Title of the page'
             label: null
@@ -25,7 +24,6 @@ fieldLayouts:
             name: null
             orientation: null
             placeholder: null
-            providesThumbs: false
             readonly: false
             required: true
             size: null
@@ -43,10 +41,8 @@ fieldLayouts:
             elementCondition: null
             fieldUid: 7a6fec95-2ed4-4d18-b669-9108357adc40 # Single Line Text
             handle: subheading
-            includeInCards: false
             instructions: 'The subtitle that appears beneath the page title.'
             label: 'Sub Heading'
-            providesThumbs: false
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
@@ -66,10 +62,8 @@ fieldLayouts:
             elementCondition: null
             fieldUid: 715d5fae-b704-4b01-8261-112b66dbd693 # Capability
             handle: null
-            includeInCards: false
             instructions: null
             label: null
-            providesThumbs: false
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
@@ -89,10 +83,8 @@ fieldLayouts:
             elementCondition: null
             fieldUid: e80d1597-d85d-4dee-b24f-9c30d9facfb2 # Benefits
             handle: null
-            includeInCards: false
             instructions: null
             label: null
-            providesThumbs: false
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
@@ -112,10 +104,8 @@ fieldLayouts:
             elementCondition: null
             fieldUid: cb2dfb4b-5663-4178-9832-16e186499c56 # FAQs
             handle: null
-            includeInCards: false
             instructions: null
             label: null
-            providesThumbs: false
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
@@ -129,10 +119,8 @@ fieldLayouts:
             elementCondition: null
             fieldUid: eca037bb-0021-4aa7-b42a-2109d045a4dc
             handle: null
-            includeInCards: false
             instructions: null
             label: null
-            providesThumbs: false
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField

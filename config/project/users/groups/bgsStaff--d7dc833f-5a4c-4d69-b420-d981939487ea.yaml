@@ -96,3 +96,5 @@ permissions:
   - 'viewpeerentrydrafts:bfd2eaee-0f5f-44f6-81f2-1f5e563a0e2e' # Jobs
   - 'viewpeerentrydrafts:c7caf5a7-983c-4d28-9e27-1a7829f7a221' # Homepage
   - viewusers
+  - 'changeauthorforpeerentries:bfd2eaee-0f5f-44f6-81f2-1f5e563a0e2e' # Jobs
+  - 'changeauthorforpeerentries:7a30d7ad-a979-44b7-89f1-35059c005316' # Organizations

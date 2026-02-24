@@ -16,7 +16,6 @@ fieldLayouts:
             disabled: false
             elementCondition: null
             id: null
-            includeInCards: false
             inputType: null
             instructions: 'This is the main heading at the top of the homepage'
             label: 'Main Heading'
@@ -25,7 +24,6 @@ fieldLayouts:
             name: null
             orientation: null
             placeholder: null
-            providesThumbs: false
             readonly: false
             required: true
             size: null
@@ -43,10 +41,8 @@ fieldLayouts:
             elementCondition: null
             fieldUid: 7a6fec95-2ed4-4d18-b669-9108357adc40 # Single Line Text
             handle: subheading
-            includeInCards: false
             instructions: 'This is the subheading on the homepage, appearing just underneath the main heading.'
             label: Subheading
-            providesThumbs: false
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
@@ -60,10 +56,8 @@ fieldLayouts:
             elementCondition: null
             fieldUid: 9d8645b3-7788-49d7-92ef-e3c2e0aca352 # Logo
             handle: hero
-            includeInCards: false
             instructions: "Upload an image for the home page's background. This image should be high resolution, with a minimum resolution of 1500px in either direction."
             label: 'Hero Image'
-            providesThumbs: false
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField

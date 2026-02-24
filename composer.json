@@ -3,8 +3,8 @@
   "prefer-stable": true,
   "require": {
     "bluegreensheet/job-region-populator": "@dev",
-    "craftcms/ckeditor": "4.11.0",
-    "craftcms/cms": "5.8.23",
+    "craftcms/ckeditor": "4.11.1",
+    "craftcms/cms": "5.9.12",
     "craftcms/feed-me": "6.11.0",
     "craftcms/stripe": "1.7.1",
     "doublesecretagency/craft-cpcss": "3.0.0",
@@ -14,7 +14,7 @@
     "servd/craft-asset-storage": "4.2.3",
     "studioespresso/craft-exporter": "5.1.1",
     "verbb/expanded-singles": "3.0.3",
-    "verbb/formie": "3.1.8",
+    "verbb/formie": "3.1.15",
     "vlucas/phpdotenv": "^5.4.0"
   },
   "require-dev": {
