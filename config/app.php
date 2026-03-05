@@ -82,6 +82,16 @@ return [
                 }
             );
 
+            // --- BEGIN: Enable Stripe promo codes at checkout ---
+            Event::on(
+                \craft\stripe\services\Checkout::class,
+                \craft\stripe\services\Checkout::EVENT_BEFORE_START_CHECKOUT_SESSION,
+                static function ($event) {
+                    $event->params['allow_promotion_codes'] = true;
+                }
+            );
+            // --- END: Enable Stripe promo codes at checkout ---
+
             // --- BEGIN: expose craft.projectTools.options(handle) in Twig ---
             /**
              * Lightweight tools exposed to Twig as `craft.projectTools`.
