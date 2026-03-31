@@ -1,0 +1,215 @@
+{% extends "_layout.twig" %}
+
+{% block title %}Recent Appointments · {{ siteName }}{% endblock %}
+
+{% block content %}
+
+{# Fetch all appointments, newest first #}
+{% set appointments = craft.entries()
+    .section('appointments')
+    .orderBy('appointmentDate DESC')
+    .all() %}
+
+{# Group by year #}
+{% set appointmentsByYear = appointments|group(a => a.appointmentDate|date('Y')) %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-8 text-center">
+            <h1 class="display-5 fw-bold mb-3">Recent Appointments</h1>
+            <p class="text-muted">Leadership placements at independent schools</p>
+        </div>
+    </div>
+
+    {% if appointments|length %}
+
+        {% for year, yearAppointments in appointmentsByYear %}
+            <div class="appointment-year-group mb-5">
+
+                {# Year heading #}
+                <h2 class="appointment-year-heading mb-4">{{ year }}</h2>
+
+                {% for appointment in yearAppointments %}
+                    {% set school = appointment.appointmentSchool.one() %}
+                    {% set recruiter = appointment.appointmentRecruiter.one() %}
+                    {% set category = appointment.appointmentCategory.one() %}
+
+                    <div class="card border-0 shadow-sm appointment-card mb-3">
+                        <div class="card-body p-4">
+                            <div class="row align-items-center g-4">
+
+                                {# Left col: Recruiter logo + attribution #}
+                                <div class="col-md-2 text-center appointment-recruiter-col">
+                                    {% if recruiter %}
+                                        {% if recruiter.logo|length %}
+                                            <img src="{{ recruiter.logo.one().url('height100') }}"
+                                                 alt="{{ recruiter.title }}"
+                                                 style="max-height: 70px; max-width: 100%; margin-bottom: 0.5rem;">
+                                        {% else %}
+                                            {# Initials fallback #}
+                                            {% set words = recruiter.title|split(' ') %}
+                                            {% set initials = '' %}
+                                            {% for word in words %}
+                                                {% if word|length > 0 and loop.index <= 3 %}
+                                                    {% set initials = initials ~ word|slice(0, 1)|upper %}
+                                                {% endif %}
+                                            {% endfor %}
+                                            <div class="org-initials mx-auto mb-2"
+                                                 style="width: 60px; height: 60px; background-color: #e3f2fd; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                                <span style="font-size: 1rem; font-weight: 600; color: #1976d2;">{{ initials }}</span>
+                                            </div>
+                                        {% endif %}
+                                        <p class="text-muted small fst-italic mb-0">
+                                            {{ recruiter.title }}<br>
+                                            <span style="font-size: 0.75rem;">assisted with this search</span>
+                                        </p>
+                                    {% else %}
+                                        <p class="text-muted small fst-italic mb-0">Search conducted<br>by the school</p>
+                                    {% endif %}
+                                </div>
+
+                                {# Center col: School + blurb + link #}
+                                <div class="col-md-8">
+
+                                    {# Category badge #}
+                                    {% if category %}
+                                        <span class="badge bg-primary text-white mb-2">{{ category.title }}</span>
+                                    {% endif %}
+
+                                    {# School name + location #}
+                                    {% if school %}
+                                        <h3 class="h5 fw-bold mb-0">{{ school.title }}</h3>
+                                        <p class="text-muted fst-italic mb-2 small">
+                                            {% if school.jobCity is defined and school.jobCity|length %}{{ school.jobCity }}{% if school.jobState is defined and school.jobState|length %}, {% endif %}{% endif %}
+                                            {% if school.jobState is defined and school.jobState|length %}{{ school.jobState }}{% endif %}
+                                        </p>
+                                    {% endif %}
+
+                                    {# Expandable blurb #}
+                                    {% if appointment.appointmentBlurb|length %}
+                                        <div class="appointment-blurb-wrapper">
+                                            <div class="appointment-blurb-collapsed" id="blurb-{{ appointment.id }}">
+                                                {{ appointment.appointmentBlurb }}
+                                            </div>
+                                            <button class="btn btn-link btn-sm p-0 mt-1 appointment-blurb-toggle"
+                                                    data-target="blurb-{{ appointment.id }}"
+                                                    aria-expanded="false">
+                                                Read more
+                                            </button>
+                                        </div>
+                                    {% endif %}
+
+                                    {# Announcement link #}
+                                    {% if appointment.announcementUrl|length %}
+                                        <div class="mt-2">
+                                            <a href="{{ appointment.announcementUrl }}"
+                                               target="_blank"
+                                               rel="noopener noreferrer"
+                                               class="text-decoration-none small">
+                                                <i class="bi bi-box-arrow-up-right me-1"></i>Link to Announcement
+                                            </a>
+                                        </div>
+                                    {% endif %}
+
+                                </div>
+
+                                {# Right col: Month/year #}
+                                <div class="col-md-2 text-md-end text-muted small appointment-date-col">
+                                    <span class="badge bg-light text-muted border appointment-date-badge">
+                                        {{ appointment.appointmentDate|date('F Y') }}
+                                    </span>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+    {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-award display-1 text-muted"></i>
+            <h2 class="h4 mt-4 mb-2">No appointments yet</h2>
+            <p class="text-muted">Check back soon.</p>
+        </div>
+    {% endif %}
+
+</div>
+
+<style>
+    .appointment-year-heading {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--cnvs-secondarycolor);
+        border-bottom: 2px solid var(--cnvs-themecolor);
+        padding-bottom: 0.5rem;
+    }
+
+    .appointment-card {
+        transition: box-shadow 0.2s ease;
+    }
+
+    .appointment-card:hover {
+        box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.12) !important;
+    }
+
+    .appointment-blurb-collapsed {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+    }
+
+    .appointment-blurb-collapsed.expanded {
+        display: block;
+        -webkit-line-clamp: unset;
+    }
+
+    .appointment-blurb-toggle {
+        color: var(--cnvs-themecolor);
+        font-size: 0.8rem;
+        text-decoration: none;
+    }
+
+    .appointment-blurb-toggle:hover {
+        color: var(--cnvs-secondarycolor);
+    }
+
+    .appointment-date-badge {
+        font-size: 0.75rem;
+        white-space: nowrap;
+    }
+
+    .badge.bg-primary {
+        background-color: var(--cnvs-themecolor) !important;
+    }
+</style>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.appointment-blurb-toggle').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            const targetId = this.dataset.target;
+            const blurb = document.getElementById(targetId);
+            const expanded = this.getAttribute('aria-expanded') === 'true';
+
+            if (expanded) {
+                blurb.classList.remove('expanded');
+                this.setAttribute('aria-expanded', 'false');
+                this.textContent = 'Read more';
+            } else {
+                blurb.classList.add('expanded');
+                this.setAttribute('aria-expanded', 'true');
+                this.textContent = 'Read less';
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

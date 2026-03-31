@@ -1,0 +1,122 @@
+allowLineBreaksInTitles: false
+color: null
+description: null
+fieldLayouts:
+  a6ecaeba-4cdf-4197-8359-6def9bc60743:
+    cardThumbAlignment: end
+    tabs:
+      -
+        elementCondition: null
+        elements:
+          -
+            dateAdded: '2026-03-31T17:32:21+00:00'
+            editCondition: null
+            elementCondition: null
+            elementEditCondition: null
+            fieldUid: a026cacb-2f40-4011-b87d-a1beb7552037 # Organization
+            handle: appointmentSchool
+            instructions: null
+            label: 'Appointment School'
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 3943336b-ffbc-4968-a6a6-9188a703caa9
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2026-03-31T17:32:21+00:00'
+            editCondition: null
+            elementCondition: null
+            elementEditCondition: null
+            fieldUid: a026cacb-2f40-4011-b87d-a1beb7552037 # Organization
+            handle: appointmentRecruiter
+            instructions: null
+            label: 'Appointment Recruiter'
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: c91ff3e2-b5d6-465d-91af-0dcfa39847cf
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2026-03-31T17:32:21+00:00'
+            editCondition: null
+            elementCondition: null
+            elementEditCondition: null
+            fieldUid: bb81f5b9-0813-4e6d-b693-229f093ce3e4 # Job Category
+            handle: appointmentCategory
+            instructions: null
+            label: 'Appointment Category'
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: b7acee0d-0d7a-4dc3-ab96-7f0ec0f444ff
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2026-03-31T17:32:21+00:00'
+            editCondition: null
+            elementCondition: null
+            elementEditCondition: null
+            fieldUid: 0d0aac89-9a3b-4d6e-add7-8a1c3a679b77 # Multi Line Text
+            handle: appointmentBlurb
+            instructions: null
+            label: 'Appointment Blurb'
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 2384aefc-a704-4f89-9bdd-657c993f7083
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2026-03-31T17:32:21+00:00'
+            editCondition: null
+            elementCondition: null
+            elementEditCondition: null
+            fieldUid: 21bd4595-df6f-4876-9708-5bfadad51b42 # Website
+            handle: announcementUrl
+            instructions: null
+            label: 'Announcement URL'
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 86d766bf-8c84-46fc-b2c9-f4be90c62239
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            dateAdded: '2026-03-31T17:32:21+00:00'
+            editCondition: null
+            elementCondition: null
+            elementEditCondition: null
+            fieldUid: c566c99c-caf4-48c0-9191-6092aa35b315 # Date
+            handle: appointmentDate
+            instructions: null
+            label: 'Appointment Date'
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: add9abcc-a692-4cf3-b2a1-8f2b40ee668c
+            userCondition: null
+            warning: null
+            width: 100
+        name: Content
+        uid: 6d8ec086-9aa4-4f19-8887-f85efef6889f
+        userCondition: null
+    thumbFieldKey: null
+handle: appointments
+hasTitleField: false
+icon: null
+name: Appointments
+showSlugField: true
+showStatusField: true
+slugTranslationKeyFormat: null
+slugTranslationMethod: site
+titleFormat: "{appointmentCategory.one().title} -{appointmentSchool.one().title} - {appointmentDate|date('F Y')}"
+titleTranslationKeyFormat: null
+titleTranslationMethod: site
+uiLabelFormat: "{appointmentCategory.one().title} - {appointmentSchool.one().title} - {appointmentDate|date('F Y')}"
