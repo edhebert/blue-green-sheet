@@ -1,0 +1,101 @@
+{% extends "_layout.twig" %}
+
+{% block title %}{{ entry.title }} · {{ siteName }}{% endblock %}
+
+{% block content %}
+
+{% set school = entry.appointmentSchool.one() %}
+{% set recruiter = entry.appointmentRecruiter.one() %}
+{% set category = entry.appointmentCategory.one() %}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            {# Category badge #}
+            {% if category %}
+                <div class="mb-3">
+                    <span class="badge bg-primary text-white">{{ category.title }}</span>
+                </div>
+            {% endif %}
+
+            {# School name + location #}
+            {% if school %}
+                <h1 class="display-5 fw-bold mb-1">{{ school.title }}</h1>
+                <p class="text-muted fst-italic mb-4">
+                    {% if school.jobCity is defined and school.jobCity|length %}{{ school.jobCity }}{% if school.jobState is defined and school.jobState|length %}, {% endif %}{% endif %}
+                    {% if school.jobState is defined and school.jobState|length %}{{ school.jobState }}{% endif %}
+                </p>
+            {% endif %}
+
+            {# Date #}
+            {% if entry.appointmentDate %}
+                <p class="text-muted small mb-4">
+                    <i class="bi bi-calendar me-1"></i>{{ entry.appointmentDate|date('F Y') }}
+                </p>
+            {% endif %}
+
+            {# Blurb #}
+            {% if entry.appointmentBlurb|length %}
+                <div class="mb-4">
+                    {{ entry.appointmentBlurb|nl2br }}
+                </div>
+            {% endif %}
+
+            {# Announcement link #}
+            {% if entry.announcementUrl|length %}
+                <div class="mb-5">
+                    <a href="{{ entry.announcementUrl }}"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-box-arrow-up-right me-1"></i>Link to Announcement
+                    </a>
+                </div>
+            {% endif %}
+
+            {# Recruiter attribution #}
+            {% if recruiter %}
+                <div class="card border-0 shadow-sm p-4 text-center" style="max-width: 300px;">
+                    {% if recruiter.logo|length %}
+                        <img src="{{ recruiter.logo.one().url('height100') }}"
+                             alt="{{ recruiter.title }}"
+                             style="max-height: 70px; max-width: 100%; margin: 0 auto 1rem;">
+                    {% else %}
+                        {% set words = recruiter.title|split(' ') %}
+                        {% set initials = '' %}
+                        {% for word in words %}
+                            {% if word|length > 0 and loop.index <= 3 %}
+                                {% set initials = initials ~ word|slice(0, 1)|upper %}
+                            {% endif %}
+                        {% endfor %}
+                        <div class="org-initials mx-auto mb-3"
+                             style="width: 60px; height: 60px; background-color: #e3f2fd; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                            <span style="font-size: 1rem; font-weight: 600; color: #1976d2;">{{ initials }}</span>
+                        </div>
+                    {% endif %}
+                    <p class="text-muted small fst-italic mb-0">
+                        {{ recruiter.title }}<br>
+                        <span style="font-size: 0.75rem;">assisted with this search</span>
+                    </p>
+                </div>
+            {% endif %}
+
+            {# Back link #}
+            <div class="mt-5">
+                <a href="{{ url('appointments') }}" class="button rounded-pill">
+                    <i class="bi bi-arrow-left me-2"></i>Back to Recent Appointments
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    .badge.bg-primary {
+        background-color: var(--cnvs-themecolor) !important;
+    }
+</style>
+
+{% endblock %}
