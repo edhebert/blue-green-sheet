@@ -4,7 +4,7 @@
   "require": {
     "bluegreensheet/job-region-populator": "@dev",
     "craftcms/ckeditor": "^5.4.0",
-    "craftcms/cms": "^5.9.18",
+    "craftcms/cms": "^5.9.20",
     "craftcms/feed-me": "6.11.0",
     "craftcms/stripe": "1.7.1",
     "doublesecretagency/craft-cpcss": "3.0.0",
@@ -14,7 +14,7 @@
     "servd/craft-asset-storage": "^4.2.4.2",
     "studioespresso/craft-exporter": "^5.1.2",
     "verbb/expanded-singles": "3.0.3",
-    "verbb/formie": "^3.1.19",
+    "verbb/formie": "^3.1.20",
     "vlucas/phpdotenv": "^5.4.0"
   },
   "require-dev": {

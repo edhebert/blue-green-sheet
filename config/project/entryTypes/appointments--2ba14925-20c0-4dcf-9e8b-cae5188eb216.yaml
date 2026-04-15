@@ -57,22 +57,6 @@ fieldLayouts:
             warning: null
             width: 100
           -
-            dateAdded: '2026-03-31T17:32:21+00:00'
-            editCondition: null
-            elementCondition: null
-            elementEditCondition: null
-            fieldUid: 0d0aac89-9a3b-4d6e-add7-8a1c3a679b77 # Multi Line Text
-            handle: appointmentBlurb
-            instructions: null
-            label: 'Appointment Blurb'
-            required: false
-            tip: null
-            type: craft\fieldlayoutelements\CustomField
-            uid: 2384aefc-a704-4f89-9bdd-657c993f7083
-            userCondition: null
-            warning: null
-            width: 100
-          -
             dateAdded: '2026-04-15T14:40:17+00:00'
             editCondition: null
             elementCondition: null
@@ -80,7 +64,7 @@ fieldLayouts:
             fieldUid: db17bc24-8930-4e0e-ab38-c2565b80dae6 # Rich Text
             handle: appointmentBlurbRichText
             instructions: null
-            label: 'Appointment Blurb Rich Text'
+            label: 'Appointment Blurb'
             required: false
             tip: null
             type: craft\fieldlayoutelements\CustomField
