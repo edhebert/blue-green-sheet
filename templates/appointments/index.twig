@@ -39,9 +39,9 @@
                         <div class="card-body p-4">
                             <div class="row align-items-center g-4">
 
-                                {# Left col: Recruiter logo + attribution #}
+                                {# Left col: Recruiter logo + attribution — hidden if hideAppointments is enabled #}
                                 <div class="col-md-2 text-center appointment-recruiter-col">
-                                    {% if recruiter %}
+                                    {% if recruiter and not appointment.hideRecruiter %}
                                         {% if recruiter.logo|length %}
                                             <img src="{{ recruiter.logo.one().url('height100') }}"
                                                  alt="{{ recruiter.title }}"
@@ -64,7 +64,7 @@
                                             {{ recruiter.title }}<br>
                                             <span style="font-size: 0.75rem;">assisted with this search</span>
                                         </p>
-                                    {% else %}
+                                    {% elseif not recruiter and not appointment.hideRecruiter %}
                                         <p class="text-muted small fst-italic mb-0">Search conducted<br>by the school</p>
                                     {% endif %}
                                 </div>
@@ -87,7 +87,7 @@
                                     {% endif %}
 
                                     {# Expandable blurb #}
-                                    {% if appointment.appointmentBlurb|length %}
+                                    {% if appointment.appointmentBlurbRichText|length %}
                                         <div class="appointment-blurb-wrapper">
                                             <div class="appointment-blurb-collapsed" id="blurb-{{ appointment.id }}">
                                                 {{ appointment.appointmentBlurbRichText }}
