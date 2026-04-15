@@ -4,21 +4,50 @@
 
 {% block content %}
 
-{# Fetch all appointments, newest first #}
-{% set appointments = craft.entries()
-    .section('appointments')
-    .orderBy('appointmentDate DESC')
-    .all() %}
+{# Filter param #}
+{% set filterParam = craft.app.request.getParam('filter') %}
+
+{# Fetch all appointments, filter in Twig #}
+{% set appointments = craft.entries().section('appointments').orderBy('appointmentDate DESC').all() %}
+
+{% if filterParam == 'head-of-school' %}
+    {% set appointments = appointments|filter(a => a.appointmentCategory.one() and a.appointmentCategory.one().slug == 'head-of-school-president') %}
+{% elseif filterParam == 'senior-leadership' %}
+    {% set appointments = appointments|filter(a => a.appointmentCategory.one() is null or a.appointmentCategory.one().slug != 'head-of-school-president') %}
+{% endif %}
 
 {# Group by year #}
 {% set appointmentsByYear = appointments|group(a => a.appointmentDate|date('Y')) %}
 
+{# Base URL for filter links #}
+{% set baseUrl = craft.app.request.url|split('?')[0] %}
+
 <div class="container py-5">
 
-    <div class="row justify-content-center mb-5">
+    <div class="row justify-content-center mb-4">
         <div class="col-lg-8 text-center">
             <h1 class="display-5 fw-bold mb-3">Recent Appointments</h1>
             <p class="text-muted">Leadership placements at independent schools</p>
+        </div>
+    </div>
+
+    {# Filter buttons #}
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-8 text-center">
+            <div class="btn-group" role="group" aria-label="Filter appointments">
+                <a href="{{ baseUrl }}"
+                   class="btn btn-sm {{ not filterParam ? 'btn-primary' : 'btn-outline-secondary' }}">
+                    All
+                </a>
+                <a href="{{ baseUrl }}?filter=head-of-school"
+                   class="btn btn-sm {{ filterParam == 'head-of-school' ? 'btn-secondary' : 'btn-outline-secondary' }}">
+                    Head of School / President
+                </a>
+                <a href="{{ baseUrl }}?filter=senior-leadership"
+                   class="btn btn-sm {{ filterParam == 'senior-leadership' ? 'btn-primary' : 'btn-outline-secondary' }}">
+                    Senior Leadership
+                </a>
+            </div>
         </div>
     </div>
 
@@ -34,12 +63,13 @@
                     {% set school = appointment.appointmentSchool.one() %}
                     {% set recruiter = appointment.appointmentRecruiter.one() %}
                     {% set category = appointment.appointmentCategory.one() %}
+                    {% set isHeadOfSchool = category and category.slug == 'head-of-school-president' %}
 
                     <div class="card border-0 shadow-sm appointment-card mb-3">
                         <div class="card-body p-4">
                             <div class="row align-items-center g-4">
 
-                                {# Left col: Recruiter logo + attribution — hidden if hideAppointments is enabled #}
+                                {# Left col: Recruiter logo + attribution — hidden if hideRecruiter is enabled #}
                                 <div class="col-md-2 text-center appointment-recruiter-col">
                                     {% if recruiter and not appointment.hideRecruiter %}
                                         {% if recruiter.logo|length %}
@@ -72,9 +102,11 @@
                                 {# Center col: School + blurb + link #}
                                 <div class="col-md-8">
 
-                                    {# Category badge #}
+                                    {# Category badge — blue for Head of School, green for all others #}
                                     {% if category %}
-                                        <span class="badge bg-primary text-white mb-2">{{ category.title }}</span>
+                                        <span class="badge text-white mb-2 {{ isHeadOfSchool ? 'badge-head-of-school' : 'badge-senior-leadership' }}">
+                                            {{ category.title }}
+                                        </span>
                                     {% endif %}
 
                                     {# School name + location #}
@@ -132,8 +164,8 @@
     {% else %}
         <div class="text-center py-5">
             <i class="bi bi-award display-1 text-muted"></i>
-            <h2 class="h4 mt-4 mb-2">No appointments yet</h2>
-            <p class="text-muted">Check back soon.</p>
+            <h2 class="h4 mt-4 mb-2">No appointments found</h2>
+            <p class="text-muted">Try a different filter or check back soon.</p>
         </div>
     {% endif %}
 
@@ -183,8 +215,24 @@
         white-space: nowrap;
     }
 
-    .badge.bg-primary {
-        background-color: var(--cnvs-themecolor) !important;
+    .badge-head-of-school {
+        background-color: var(--cnvs-secondarycolor);
+    }
+
+    .badge-senior-leadership {
+        background-color: var(--cnvs-themecolor);
+    }
+
+    .btn-group .btn-primary {
+        background-color: var(--cnvs-themecolor);
+        border-color: var(--cnvs-themecolor);
+        color: white;
+    }
+
+    .btn-group .btn-secondary {
+        background-color: var(--cnvs-secondarycolor);
+        border-color: var(--cnvs-secondarycolor);
+        color: white;
     }
 </style>
 
