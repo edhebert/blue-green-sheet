@@ -90,7 +90,7 @@
                                     {% if appointment.appointmentBlurb|length %}
                                         <div class="appointment-blurb-wrapper">
                                             <div class="appointment-blurb-collapsed" id="blurb-{{ appointment.id }}">
-                                                {{ appointment.appointmentBlurb|nl2br }}
+                                                {{ appointment.appointmentBlurbRichText }}
                                             </div>
                                             <button class="btn btn-link btn-sm p-0 mt-1 appointment-blurb-toggle"
                                                     data-target="blurb-{{ appointment.id }}"

@@ -73,6 +73,22 @@ fieldLayouts:
             warning: null
             width: 100
           -
+            dateAdded: '2026-04-15T14:40:17+00:00'
+            editCondition: null
+            elementCondition: null
+            elementEditCondition: null
+            fieldUid: db17bc24-8930-4e0e-ab38-c2565b80dae6 # Rich Text
+            handle: appointmentBlurbRichText
+            instructions: null
+            label: 'Appointment Blurb Rich Text'
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: be89bce1-089d-48e0-b316-1cfc24ea1aca
+            userCondition: null
+            warning: null
+            width: 100
+          -
             dateAdded: '2026-03-31T17:32:21+00:00'
             editCondition: null
             elementCondition: null
