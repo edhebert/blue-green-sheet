@@ -458,12 +458,16 @@ return [
                                     if ($checkoutSession->payment_status === 'paid') {
                                         // Get the price from line items
                                         if (!empty($checkoutSession->line_items->data)) {
-                                            $priceId = $checkoutSession->line_items->data[0]->price->id;
-                                            $amountInCents = $checkoutSession->line_items->data[0]->amount_total;
-                                            $amount = $amountInCents / 100;
+                                            $lineItem = $checkoutSession->line_items->data[0];
+                                            $priceId = $lineItem->price->id;
+                                            // Use unit_amount (original price before discounts) to determine duration
+                                            // amount_total reflects post-discount price and would misidentify promo-code purchases
+                                            $unitAmountInCents = $lineItem->price->unit_amount;
+                                            $unitAmount = $unitAmountInCents / 100;
+                                            $amount = $lineItem->amount_total / 100;
 
-                                            // Determine duration based on amount
-                                            if ($amount == 400) {
+                                            // Determine duration based on ORIGINAL unit price (not discounted total)
+                                            if ($unitAmount == 400) {
                                                 $duration = 12;
                                             } else {
                                                 $duration = 6;
