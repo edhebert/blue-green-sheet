@@ -834,6 +834,18 @@ return [
                 }
             );
 
+            // Always create a Stripe Customer record on checkout, even for $0 orders.
+            // Without this, promo-code checkouts that reduce the price to $0 produce no
+            // Customer object, so coupon redemptions are invisible in the Stripe dashboard.
+            // See: stripe/checkout service EVENT_BEFORE_START_CHECKOUT_SESSION
+            Event::on(
+                \craft\stripe\services\Checkout::class,
+                \craft\stripe\services\Checkout::EVENT_BEFORE_START_CHECKOUT_SESSION,
+                static function(\craft\stripe\events\CheckoutSessionEvent $event) {
+                    $event->params['customer_creation'] = 'always';
+                }
+            );
+
             // Store job ID in session after job entry is created (for payment flow)
             Event::on(
                 Elements::class,

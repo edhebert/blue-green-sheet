@@ -34,18 +34,19 @@
     {# Filter buttons #}
     <div class="row justify-content-center mb-5">
         <div class="col-lg-8 text-center">
-            <div class="btn-group" role="group" aria-label="Filter appointments">
+            <p class="text-muted small mb-3">Filter Results</p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
                 <a href="{{ baseUrl }}"
-                   class="btn btn-sm {{ not filterParam ? 'btn-primary' : 'btn-outline-secondary' }}">
-                    All
+                   class="button rounded-pill button-mini filter-btn-all {{ not filterParam ? '' : 'filter-inactive' }}">
+                    <div>All</div>
                 </a>
                 <a href="{{ baseUrl }}?filter=head-of-school"
-                   class="btn btn-sm {{ filterParam == 'head-of-school' ? 'btn-secondary' : 'btn-outline-secondary' }}">
-                    Head of School / President
+                   class="button rounded-pill button-mini filter-btn-hos {{ filterParam == 'head-of-school' ? '' : 'filter-inactive' }}">
+                    <div>Head of School / President</div>
                 </a>
                 <a href="{{ baseUrl }}?filter=senior-leadership"
-                   class="btn btn-sm {{ filterParam == 'senior-leadership' ? 'btn-primary' : 'btn-outline-secondary' }}">
-                    Senior Leadership
+                   class="button rounded-pill button-mini filter-btn-sl {{ filterParam == 'senior-leadership' ? '' : 'filter-inactive' }}">
+                    <div>Senior Leadership</div>
                 </a>
             </div>
         </div>
@@ -72,10 +73,13 @@
                                 {# Left col: Recruiter logo + attribution — hidden if hideRecruiter is enabled #}
                                 <div class="col-md-2 text-center appointment-recruiter-col">
                                     {% if recruiter and not appointment.hideRecruiter %}
+                                        {% set recruiterHref = recruiter.website ?? recruiter.url %}
                                         {% if recruiter.logo|length %}
-                                            <img src="{{ recruiter.logo.one().url('height100') }}"
-                                                 alt="{{ recruiter.title }}"
-                                                 style="max-height: 70px; max-width: 100%; margin-bottom: 0.5rem;">
+                                            <a href="{{ recruiterHref }}" target="_blank" rel="noopener noreferrer">
+                                                <img src="{{ recruiter.logo.one().url('height100') }}"
+                                                     alt="{{ recruiter.title }}"
+                                                     style="max-height: 70px; max-width: 100%; margin-bottom: 0.5rem;">
+                                            </a>
                                         {% else %}
                                             {# Initials fallback #}
                                             {% set words = recruiter.title|split(' ') %}
@@ -85,10 +89,12 @@
                                                     {% set initials = initials ~ word|slice(0, 1)|upper %}
                                                 {% endif %}
                                             {% endfor %}
-                                            <div class="org-initials mx-auto mb-2"
-                                                 style="width: 60px; height: 60px; background-color: #e3f2fd; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                                                <span style="font-size: 1rem; font-weight: 600; color: #1976d2;">{{ initials }}</span>
-                                            </div>
+                                            <a href="{{ recruiterHref }}" target="_blank" rel="noopener noreferrer">
+                                                <div class="org-initials mx-auto mb-2"
+                                                     style="width: 60px; height: 60px; background-color: #e3f2fd; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                                    <span style="font-size: 1rem; font-weight: 600; color: #1976d2;">{{ initials }}</span>
+                                                </div>
+                                            </a>
                                         {% endif %}
                                         <p class="text-muted small fst-italic mb-0">
                                             {{ recruiter.title }}<br>
@@ -111,7 +117,13 @@
 
                                     {# School name + location #}
                                     {% if school %}
-                                        <h3 class="h5 fw-bold mb-0"><a href="{{ appointment.url }}" class="text-decoration-none">{{ school.title }}</a></h3>
+                                        <h3 class="h5 fw-bold mb-0">
+                                            {% if school.website %}
+                                                <a href="{{ school.website }}" target="_blank" rel="noopener noreferrer" class="text-decoration-none">{{ school.title }}</a>
+                                            {% else %}
+                                                {{ school.title }}
+                                            {% endif %}
+                                        </h3>
                                         <p class="text-muted fst-italic mb-2 small">
                                             {% if school.jobCity is defined and school.jobCity|length %}{{ school.jobCity }}{% if school.jobState is defined and school.jobState|length %}, {% endif %}{% endif %}
                                             {% if school.jobState is defined and school.jobState|length %}{{ school.jobState }}{% endif %}
@@ -223,16 +235,17 @@
         background-color: var(--cnvs-themecolor);
     }
 
-    .btn-group .btn-primary {
-        background-color: var(--cnvs-themecolor);
-        border-color: var(--cnvs-themecolor);
-        color: white;
+    .filter-btn-all {
+        background-color: #555 !important;
     }
-
-    .btn-group .btn-secondary {
-        background-color: var(--cnvs-secondarycolor);
-        border-color: var(--cnvs-secondarycolor);
-        color: white;
+    .filter-btn-hos {
+        background-color: var(--cnvs-secondarycolor) !important;
+    }
+    .filter-btn-sl {
+        background-color: var(--cnvs-themecolor) !important;
+    }
+    .filter-inactive {
+        opacity: 0.45;
     }
 </style>
 
