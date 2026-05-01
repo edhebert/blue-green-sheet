@@ -459,7 +459,6 @@ return [
                                         // Get the price from line items
                                         if (!empty($checkoutSession->line_items->data)) {
                                             $lineItem = $checkoutSession->line_items->data[0];
-                                            $priceId = $lineItem->price->id;
                                             // Use unit_amount (original price before discounts) to determine duration
                                             // amount_total reflects post-discount price and would misidentify promo-code purchases
                                             $unitAmountInCents = $lineItem->price->unit_amount;
@@ -842,7 +841,11 @@ return [
                 \craft\stripe\services\Checkout::class,
                 \craft\stripe\services\Checkout::EVENT_BEFORE_START_CHECKOUT_SESSION,
                 static function(\craft\stripe\events\CheckoutSessionEvent $event) {
-                    $event->params['customer_creation'] = 'always';
+                    // Only set customer_creation when no existing customer ID is being passed.
+                    // Stripe rejects requests that include both 'customer' and 'customer_creation'.
+                    if (!isset($event->params['customer'])) {
+                        $event->params['customer_creation'] = 'always';
+                    }
                 }
             );
 
